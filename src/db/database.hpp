@@ -34,12 +34,41 @@ class Database {
 	public:
 		virtual void createTables() = 0;
 
+                /**
+                 * Starts a new game in the database might also start a transaction
+                 *
+                 * @param gametype - integer of the gametype DM=0,CTF=4, Elim=8 and so on
+                 * @param mapname - the mapname used for this game
+                 * @param basegame - the mod... normally baseoa
+                 */
 		virtual void startGame(int gametype, string mapname, string basegame) = 0;
-                
+
+                /**
+                 * Called then a game ends.
+                 *
+                 * @param second - relative time since game start
+                 */
                 virtual void endGame(int second) = 0;
 
+                /**
+                 * Document getGameNumber() here...
+                 *
+                 * @return the gamenumber that we are working on. Retrieved from the db.
+                 */
                 virtual int getGameNumber() = 0;
 
+                /**
+                 * Document setPlayerInfo(string,string,bool,int,int,string,string,int) here...
+                 *
+                 * @param guid - the hashed GUID of the player
+                 * @param nickname - The players nickname
+                 * @param isBot - true if a bot, false otherwise
+                 * @param second - relative time for the event
+                 * @param team - team number to join, -1 if leaving
+                 * @param model - model used
+                 * @param headmodel - headmodel used
+                 * @param skill - bot skill, bots only
+                 */
 		virtual void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill = -1) = 0;
 
 		virtual void addKill(int second, string attackerID, string targetID, int type) = 0;

@@ -30,7 +30,12 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 using namespace std;
 
 #include "db/database.hpp"
+#ifdef USESTDOUT
 #include "db/db2stdout.h"
+#endif
+#ifdef USEPOSTGRESQL
+#include "db/Db2PostgreSQL.h"
+#endif
 #include "oastatstruct.h"
 #include "oss2db/struct2db.h"
 #include "local.h"
@@ -44,7 +49,7 @@ string clientIdMap[MAX_ID];
 
 static void processStdIn();
 
-DB2stdout *db;
+Database *db;
 
 vector<Struct2Db*> commands;
 
@@ -67,20 +72,36 @@ void addCommands()
     }
 }
 
-int main ()
+int main (int argc, const char* argv[])
 {
+    string dbargs = "";
+    for(int i=1;i<argc;i++) {
+        bool onemore = i+1<argc;
+        if(string(argv[i]) == "-dbarg" && onemore ) {
+            i++;
+            dbargs = string(argv[i]);
+        }
+    }
+    try{
+        #if USESTDOUT
 	cout << "INFO: oastat " << VERSION << " ready to process data" << endl;
         db = new DB2stdout();
+        #endif
+
+        #if USEPOSTGRESQL
+        if(dbargs.length()<1)
+            db = new Db2PostgreSQL();
+        else
+            db = new Db2PostgreSQL(dbargs);
+        #endif
 
         addCommands();
 
         processStdIn();
 
-        /*while(true) {
-            string line;
-            cin >> line >> endl;
-
-        }*/
+    }catch (const char *s) {
+        cout << "Crashed: " << s << endl;
+    }
 
         return 0;
         //Rest of file is for testing
@@ -121,14 +142,15 @@ static void processStdIn() {
 
 /**
  * Hashes the user id so they cannot be recovered from the db.
- * param1 The unhashed id
- * return the hashed id
+ *
+ * @param unhashedID - The unhashed id
+ * @return the hashed id
  */
 string getHashedId(string unhashedID) {
     int msg_len = unhashedID.length();
     int hash_len = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
     unsigned char hash_binary[ hash_len ];
-    char hash_hex[ hash_len*2+1 ];
+    char hash_hex[ hash_len*2+1 ]; //surpriseingly this works
     char *out = hash_hex; //(char *) malloc( sizeof(char) * ((hash_len*2)+1) );
     char *p = out;
 

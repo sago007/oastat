@@ -37,6 +37,20 @@ static int gamecount = 1; //Only to standard out, normally this should be read f
 
 static char* booltext[2] = {"false","true"};
 
+static string sqlescape(string sql) {
+    string output = "";
+    string::iterator itr;
+    for(itr = sql.begin();itr<sql.end();itr++) {
+        if(*itr == '\'') {
+            output+="\'\'";
+        } else
+        {
+            output += *itr;
+        }
+    }
+    return output;
+}
+
 DB2stdout::DB2stdout() {
 }
 
@@ -46,7 +60,6 @@ DB2stdout::~DB2stdout() {
 void DB2stdout::createTables()
 {
     //Nothing to do
-    cout << "CREATE TABLE(S) ..." << endl;
 }
 
 void DB2stdout::startGame(int gametype, string mapname, string basegame)
@@ -66,12 +79,12 @@ void DB2stdout::setPlayerInfo(string guid, string nickname, bool isBot, int seco
     //If team < 0 then it is a disconnect event that need not to be in
     if(team>-1)
     {
-        printf(PLAYERSINSERT,guid.c_str(),nickname.c_str(),booltext[isBot],model.c_str(),headmodel.c_str());
+        printf(PLAYERSINSERT,guid.c_str(),sqlescape(nickname).c_str(),booltext[isBot],sqlescape(model).c_str(),sqlescape(headmodel).c_str());
         cout << endl;
-        printf(PLAYERSUPDATE,nickname.c_str(),booltext[isBot],model.c_str(),headmodel.c_str(),guid.c_str());
+        printf(PLAYERSUPDATE,sqlescape(nickname).c_str(),booltext[isBot],sqlescape(model).c_str(),sqlescape(headmodel).c_str(),guid.c_str());
         cout << endl;
     }
-    printf(USERINFOINSERT,getGameNumber(),second,guid.c_str(),team,model.c_str(),skill);
+    printf(USERINFOINSERT,getGameNumber(),second,guid.c_str(),team,sqlescape(model).c_str(),skill);
     cout << endl;
 }
 
