@@ -44,6 +44,7 @@ using namespace std;
 #include "oss2db/shutdown2db.h"
 #include "oss2db/userinfo2db.h"
 #include "oss2db/Disconnect2Db.h"
+#include "oss2db/Award2Db.h"
 
 string clientIdMap[MAX_ID];
 
@@ -65,6 +66,7 @@ void addCommands()
     commands.push_back(new Shutdown2Db());
     commands.push_back(new Userinfo2Db());
     commands.push_back(new Disconnect2Db());
+    commands.push_back(new Award2Db());
     //Add more commands just above here
 
     for(int i=0;i<commands.size();i++) {

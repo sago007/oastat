@@ -103,6 +103,7 @@ Db2PostgreSQL::Db2PostgreSQL() {
     conn = PQconnectdb("dbname=oastat"); //Connect to the database
     if (PQstatus(conn) == CONNECTION_BAD)
         throw "Failed to open connection to DB!";
+    gamenumber = -1;
     cout << "CONNECTED" << endl;
 }
 
