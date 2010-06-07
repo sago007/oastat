@@ -71,10 +71,32 @@ class Database {
                  */
 		virtual void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill = -1) = 0;
 
+                /**
+                 * Represents a kill
+                 *
+                 * @param second time of the kill
+                 * @param attackerID hashed guid of the attacker
+                 * @param targetID hashed guid of the victim
+                 * @param type weapon number
+                 */
 		virtual void addKill(int second, string attackerID, string targetID, int type) = 0;
 
+                /**
+                 * A flag/skull capture or obelisk destruction
+                 *
+                 * @param second time of the event
+                 * @param player guid of the player if any, empty if none
+                 * @param team
+                 */
                 virtual void addCapture(int second, string player, int team) = 0;
 
+                /**
+                 * Add an award: Like Defence, Excelent, Gauntlet and so on
+                 *
+                 * @param second time of the
+                 * @param player hashed guid of the player
+                 * @param award the award, numbers must be found in code
+                 */
                 virtual void addAward(int second, string player, int award) = 0;
 };
 

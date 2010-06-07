@@ -129,7 +129,7 @@ void Db2PostgreSQL::createTables()
 void Db2PostgreSQL::startGame(int gametype, string mapname, string basegame)
 {
     simpleQuery("BEGIN");
-    simpleQuery("LOCK TABLE OASTAT_GAMES IN SHARE ROW EXCLUSIVE"); //Hold a lock until we have selected the just inserted line
+    //simpleQuery("LOCK TABLE OASTAT_GAMES IN SHARE ROW EXCLUSIVE"); //Hold a lock until we have selected the just inserted line
     gamenumber = -1; //Prevent any following sql commands from completing until this is set!
     sprintf(query_string,STARTGAME,gametype,mapname.c_str(),basegame.c_str());
     res = PQexec(conn, query_string);
@@ -140,7 +140,8 @@ void Db2PostgreSQL::startGame(int gametype, string mapname, string basegame)
         return;
     }
     PQclear(res);
-    res = PQexec(conn, "SELECT MAX(gamenumber) FROM OASTAT_GAMES");
+    //res = PQexec(conn, "SELECT MAX(gamenumber) FROM OASTAT_GAMES");
+    res = PQexec(conn, "SELECT currval('oastat_games_gamenumber_seq')");
     if (PQresultStatus(res) != PGRES_TUPLES_OK ) {
         PQclear(res);
         simpleQuery("ROLLBACK");
@@ -149,8 +150,8 @@ void Db2PostgreSQL::startGame(int gametype, string mapname, string basegame)
     gamenumber = atoi(PQgetvalue(res,0,0));
     cout << "GAME: " << PQgetvalue(res,0,0) << ":" << gamenumber << endl;
     PQclear(res);
-    simpleQuery("COMMIT"); //release lock
-    simpleQuery("BEGIN"); //This is just for performace...
+    //simpleQuery("COMMIT"); //release lock
+    //simpleQuery("BEGIN"); //This is just for performace...
 }
 
 int Db2PostgreSQL::getGameNumber()
