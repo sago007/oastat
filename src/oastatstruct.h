@@ -45,6 +45,7 @@ public:
     string restOfLine;
 
     void parseLine(string line);
+    void clear();
 
     /*
      *Parses the rest of the line to an info string

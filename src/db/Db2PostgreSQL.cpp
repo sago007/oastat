@@ -129,6 +129,7 @@ void Db2PostgreSQL::createTables()
 
 void Db2PostgreSQL::startGame(int gametype, string mapname, string basegame)
 {
+    simpleQuery("ROLLBACK"); //In case we have just completed warmup or 
     simpleQuery("BEGIN");
     //simpleQuery("LOCK TABLE OASTAT_GAMES IN SHARE ROW EXCLUSIVE"); //Hold a lock until we have selected the just inserted line
     gamenumber = -1; //Prevent any following sql commands from completing until this is set!

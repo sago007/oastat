@@ -36,6 +36,9 @@ using namespace std;
 #ifdef USEPOSTGRESQL
 #include "db/Db2PostgreSQL.h"
 #endif
+#ifdef USEDBIXX
+#include "db/Db2DbiXX.hpp"
+#endif
 #include "oastatstruct.h"
 #include "oss2db/struct2db.h"
 #include "local.h"
@@ -48,7 +51,7 @@ using namespace std;
 
 string clientIdMap[MAX_ID];
 
-static void processStdIn();
+static int processStdIn();
 
 Database *db;
 
@@ -90,11 +93,20 @@ int main (int argc, const char* argv[])
         db = new DB2stdout();
         #endif
 
-        #if USEPOSTGRESQL
+        /*#if USEPOSTGRESQL
+        cout << "Using postgreSQL" << endl;
         if(dbargs.length()<1)
             db = new Db2PostgreSQL();
         else
             db = new Db2PostgreSQL(dbargs);
+        #endif*/
+
+        #if USEDBIXX
+        cout << "Using DBI" << endl;
+        if(dbargs.length()<1)
+            db = new Db2DbiXX();
+        else
+            db = new Db2DbiXX(dbargs);
         #endif
 
         addCommands();
@@ -103,12 +115,13 @@ int main (int argc, const char* argv[])
 
     }catch (const char *s) {
         cout << "Crashed: " << s << endl;
+        return -1;
     }
 
         return 0;
         //Rest of file is for testing
 
-        string line = "  3:33 Kill: 2 5 6: aaargh!!!!!!!!!!!!!! killed RALV by MOD_ROCKET";
+        /*string line = "  3:33 Kill: 2 5 6: aaargh!!!!!!!!!!!!!! killed RALV by MOD_ROCKET";
 
         OaStatStruct oss;
         oss.parseLine(line);
@@ -128,18 +141,38 @@ int main (int argc, const char* argv[])
 
         db->addKill(10, "DSAGOJSAOGFJWA55555555AGA", "AHFDSHDFBSDTRHSJYFDSGFA", 3);
 
-	return 0;
+	return 0;*/
 }
 
-static void processStdIn() {
+static int processStdIn() {
     string line;
+    OaStatStruct oss;
+    bool done = true;
+    try{
     while( getline(cin,line) ) {
-        OaStatStruct oss;
+        oss.clear();
         oss.parseLine(line);
         for(int i=0;i<commands.size();i++) {
+            try {
             commands.at(i)->process(oss);
+            } catch (exception &e) {
+                cerr << "oastat: Sql_error at line: \"" << line << "\"" << endl <<
+                        "oastat: Error is: " << e.what() <<
+                        "oastat: Last error will be ignored" << endl;
+            }
         }
     }
+    } catch (exception &e2) {
+        /*
+         If there is an error write it in the log and try again continue
+         */
+        cerr << "oastat: Crashed at line: \"" << line << "\"" << endl <<
+                "oastat: Error is: " << e2.what();
+        done = false;
+    }
+    if (!done)
+        return processStdIn();
+    return 0;
 }
 
 /**

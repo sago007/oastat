@@ -29,7 +29,7 @@ using namespace std;
 OaStatStruct::OaStatStruct() {
     second = 0;
     command = "";
-    parameters.empty();
+    parameters.clear();
     restOfLine = "";
 }
 
@@ -41,6 +41,13 @@ OaStatStruct::OaStatStruct(const OaStatStruct& orig) {
 }
 
 OaStatStruct::~OaStatStruct() {
+}
+
+void OaStatStruct::clear() {
+    second=0;
+    command = "";
+    parameters.clear();
+    restOfLine = "";
 }
 
 void OaStatStruct::parseLine(string line) {

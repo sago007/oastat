@@ -1,5 +1,6 @@
 #This is the makefile
-USEPOSTGRESQL=1
+USEPOSTGRESQL=0
+USEDBIXX=1
 USESTDOUT=0
 
 BASE_LIBS=-lgcrypt
@@ -18,6 +19,12 @@ ifeq ($(USEPOSTGRESQL),1)
 	BASE_CFLAGS+= -DUSEPOSTGRESQL=1
 endif
 
+ifeq ($(USEDBIXX),1)
+        BASE_LIBS+= -ldbixx
+        O_FILES+= build/db2dbixx.o
+        BASE_CFLAGS+= -DUSEDBIXX=1
+endif
+
 build/oastat: $(O_FILES)
 	g++ -O -o build/oastat $(O_FILES) $(BASE_LIBS)
 
@@ -32,6 +39,11 @@ endif
 ifeq ($(USEPOSTGRESQL),1)
 build/db2postgresql.o: db/Db2PostgreSQL.cpp db/Db2PostgreSQL.h db/database.hpp
 	g++ $(BASE_CFLAGS) db/Db2PostgreSQL.cpp  -o build/db2postgresql.o
+endif
+
+ifeq ($(USEDBIXX),1)
+build/db2dbixx.o: db/Db2DbiXX.cpp db/Db2DbiXX.hpp db/database.hpp
+	g++ $(BASE_CFLAGS) db/Db2DbiXX.cpp -o build/db2dbixx.o
 endif
 
 build/oastatstruct.o: oastatstruct.cpp oastatstruct.h
