@@ -34,6 +34,8 @@ public:
     string getCommand();
 
     void process(OaStatStruct oss);
+
+    bool shouldCommit();
 private:
 
 };

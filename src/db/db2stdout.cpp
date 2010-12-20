@@ -111,3 +111,7 @@ void DB2stdout::addAward(int second, string player, int award)
     printf(AWARD,gamenumber,second,player.c_str(),award);
     cout << endl;
 }
+
+void addCtf(int second, string player, int team, int event) {
+    cout << "missing" << endl;
+}

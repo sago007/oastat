@@ -40,3 +40,7 @@ void Shutdown2Db::process(OaStatStruct oss) {
         return;
     dp->endGame(oss.second);
 }
+
+bool Shutdown2Db::shouldCommit() {
+    return true;
+}

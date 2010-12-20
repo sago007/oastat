@@ -52,6 +52,8 @@ class Struct2Db {
              */
             virtual void process(OaStatStruct oss) = 0;
 
+            virtual bool shouldCommit()  {  return false; };
+
         protected:
             Database *dp; //Pointer to the used db
 };

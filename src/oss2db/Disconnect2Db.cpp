@@ -40,5 +40,5 @@ void Disconnect2Db::process(OaStatStruct oss) {
 
     string player = clientIdMap[oss.parameters.at(0)];
 
-    dp->setPlayerInfo(player,"",false,oss.second,-1,"","",-1);
+    dp->setPlayerInfo(player,"",false,oss.second,-1,"","",-1,&oss);
 }

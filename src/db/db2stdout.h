@@ -38,6 +38,7 @@ public:
     void addKill(int second, string attackerID, string targetID, int type);
     void addCapture(int second, string player, int team);
     void addAward(int second, string player, int award);
+    void addCtf(int second, string player, int team, int event);
 private:
     int gamenumber;
 };

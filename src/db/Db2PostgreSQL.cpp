@@ -168,7 +168,7 @@ void Db2PostgreSQL::setPlayerInfo(string guid, string nickname, bool isBot, int 
     {
         /*
          Note: There is a possible race condition here!
-         * One might consider ending the transaction and using autocommit for this part.
+         * There should be
          */
         //simpleQuery("COMMIT");
         sprintf(query_string,"SELECT * FROM oastat_players WHERE GUID = '%s'",sqlescape(guid).c_str());

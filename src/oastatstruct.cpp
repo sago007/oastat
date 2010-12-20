@@ -25,6 +25,7 @@ using namespace std;
 #include <stdlib.h>
 #include <sstream>
 #include <iostream>
+#include <iomanip>
 
 OaStatStruct::OaStatStruct() {
     second = 0;
@@ -38,6 +39,7 @@ OaStatStruct::OaStatStruct(const OaStatStruct& orig) {
     command = orig.command;
     parameters = orig.parameters;
     restOfLine = orig.restOfLine;
+    _datetime = orig._datetime;
 }
 
 OaStatStruct::~OaStatStruct() {
@@ -57,6 +59,8 @@ void OaStatStruct::parseLine(string line) {
     string tempTimeString = line.substr(0,7);
     int posColon = tempTimeString.find(":");
     int minute = atoi(tempTimeString.substr(0,posColon).c_str());
+    time_t thetime = time(NULL);
+    gmtime_r(&thetime,&_datetime);
     second = atoi(tempTimeString.substr(posColon+1,7).c_str());
     second+=minute*60;
     line = line.substr(7,line.length()); //Cut the first part of the string.
@@ -123,3 +127,25 @@ map<string,string> OaStatStruct::GetInfostring(string restOfLine) {
 map<string,string> OaStatStruct::GetInfostring() {
     return GetInfostring(restOfLine);
 }
+
+tm OaStatStruct::getDateTime() {
+    return _datetime;
+}
+
+string ZeroPadNumber(int num, int size = 2)
+{
+    std::ostringstream ss;
+    ss.clear();
+    ss << setw( size ) << setfill( '0' ) << num;
+    return ss.str();
+}
+
+string OaStatStruct::getTimeStamp() {
+    string s;
+    s = "TIMESTAMP \'" + ZeroPadNumber(_datetime.tm_year+1900,4) + "-" + ZeroPadNumber(_datetime.tm_mon) + "-"
+            + ZeroPadNumber(_datetime.tm_mday) + " " + ZeroPadNumber(_datetime.tm_hour) + ":"
+            + ZeroPadNumber(_datetime.tm_min) + ":" + ZeroPadNumber(_datetime.tm_sec) + "\'";
+    return s;
+}
+
+

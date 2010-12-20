@@ -10,15 +10,20 @@
 #define GETNEXTGAMENUMBER "SELECT nextval('oastat_games_gamenumber_seq')"
 
 #define STARTGAME "INSERT INTO oastat_games(gamenumber,gametype, mapname, basegame) VALUES (?,?,?,?)"
-#define PLAYERSINSERT "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,now(),?,?,?)"
-#define PLAYERSUPDATE "UPDATE oastat_players SET nickname = ?,lastseen = now(),isBot = ?, model = ?, headmodel = ? WHERE guid = ?"
+#define PLAYERSINSERT "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,?,?,?,?)"
+#define PLAYERSUPDATE "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ?"
 #define USERINFOINSERT "INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES (?,?,?,?,?,?)"
 #define ENDGAME "UPDATE oastat_games SET second=?,time = now() where gamenumber = ?"
 #define KILL "INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES(?,?,?,?,?)"
 #define CAPTURE "INSERT INTO oastat_captures(gamenumber,second,player,team) VALUES (?,?,?,?)"
 #define AWARD "INSERT INTO oastat_awards(gamenumber,second,player,award) VALUES (?,?,?,?)"
+#define CTF "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,?,'ctf',?)"
 
 static char* booltext[2] = {"false","true"};
+
+static long long int MakeTimestamp(tm timestamp) {
+    return mktime(&timestamp);
+}
 
 Db2DbiXX::Db2DbiXX() {
     sql = new session("pgsql");
@@ -63,6 +68,7 @@ void Db2DbiXX::createTables() {
 }
 
 void Db2DbiXX::startGame(int gametype, string mapname, string basegame) {
+    sql->reconnect();
     Rollback(); //in case there was some garbage that could be comitted (like warmup or an unfinished game)
     SetOk(true);
     gamenumber = getNextGameNumber();
@@ -83,18 +89,18 @@ int Db2DbiXX::getGameNumber() {
     return gamenumber;
 }
 
-void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill) {
+void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, OaStatStruct *oss) {
     if(team>-1)
     {
         try{
             *sql << "SAVEPOINT SETPLAYER",exec();
-            *sql << PLAYERSINSERT,guid,nickname,booltext[isBot],model,headmodel,exec();
+            *sql << PLAYERSINSERT,guid,nickname,oss->getDateTime(),booltext[isBot],model,headmodel,exec();
             *sql << "RELEASE SAVEPOINT SETPLAYER",exec(); //Needed by postgresql
         }catch (dbixx_error &e) {
             DebugMessage("Already inserted? "+(string)e.what());
             *sql << "ROLLBACK TO SAVEPOINT SETPLAYER",exec();
         }
-        *sql << PLAYERSUPDATE,nickname,booltext[isBot],model,headmodel,guid,exec();
+        *sql << PLAYERSUPDATE,nickname,oss->getDateTime(),booltext[isBot],model,headmodel,guid,exec();
     }
     *sql << USERINFOINSERT,gamenumber,second,guid,team,model,skill,exec();
     DebugMessage("setPlayerInfo for "+nickname+" with GUID: "+guid);
@@ -113,6 +119,11 @@ void Db2DbiXX::addCapture(int second, string player, int team) {
 void Db2DbiXX::addAward(int second, string player, int award) {
     *sql << AWARD,gamenumber,second,player,award,exec();
     DebugMessage("addAward");
+}
+
+void Db2DbiXX::addCtf(int second, string player, int team, int event) {
+    *sql << CTF,gamenumber,second,team,player,event,exec();
+    DebugMessage("addCtf");
 }
 
 int Db2DbiXX::getNextGameNumber() {

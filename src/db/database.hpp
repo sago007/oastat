@@ -24,6 +24,7 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 
 #include <string>
 #include <iostream>
+#include "../oastatstruct.h"
 
 using namespace std;
 
@@ -69,7 +70,7 @@ class Database {
                  * @param headmodel - headmodel used
                  * @param skill - bot skill, bots only
                  */
-		virtual void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill = -1) = 0;
+		virtual void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, OaStatStruct *oss) = 0;
 
                 /**
                  * Represents a kill
@@ -98,6 +99,22 @@ class Database {
                  * @param award the award, numbers must be found in code
                  */
                 virtual void addAward(int second, string player, int award) = 0;
+
+                /**
+                 * Adds an event from a CTF-game.
+                 *
+                 * Note that event:
+                 * 0 | Flag is taken
+                 * 1 | Flag is captured
+                 * 2 | Flag is returned
+                 * 3 | Flagcarrier got killed
+                 *
+                 * @param second
+                 * @param player
+                 * @param team
+                 * @param event
+                 */
+                virtual void addCtf(int second, string player, int team, int event) = 0;
 };
 
 #endif //_DATABASE_H

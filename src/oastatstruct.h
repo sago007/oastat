@@ -25,6 +25,7 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 #include <vector>
 #include <string>
 #include <map>
+#include <time.h>
 
 using namespace std;
 
@@ -43,6 +44,7 @@ public:
     string command; //Like 'ClientConnect', 'Award' and 'Kill'
     vector<int> parameters; //The parameters for the command.
     string restOfLine;
+    tm getDateTime();
 
     void parseLine(string line);
     void clear();
@@ -56,8 +58,14 @@ public:
      *Same but uses this.restOfLine
      */
     map<string,string> GetInfostring();
-private:
 
+    /*
+     Returns a string with the time in the format:
+     * TIMESTAMP 'YYYY-MM-
+     */
+    string getTimeStamp();
+private:
+    tm _datetime;
 };
 
 #endif	/* _OASTATSTRUCT_H */

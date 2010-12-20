@@ -45,5 +45,5 @@ void Userinfo2Db::process(OaStatStruct oss) {
     else //bot
         clientIdMap[oss.parameters.at(0)] = arguments["n"];
 
-    dp->setPlayerInfo(clientIdMap[oss.parameters.at(0)],arguments["n"],arguments["id"]=="",oss.second,atoi(arguments["t"].c_str()), arguments["model"],arguments["hmodel"]);
+    dp->setPlayerInfo(clientIdMap[oss.parameters.at(0)],arguments["n"],arguments["id"]=="",oss.second,atoi(arguments["t"].c_str()), arguments["model"],arguments["hmodel"],-1,&oss);
 }
