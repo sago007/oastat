@@ -19,12 +19,13 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 ===========================================================================
 */
 
-#define VERSION "0.1 BETA"
+#define VERSION "0.2 BETA"
 
 #include <iostream>
 #include <vector>
 #include <gcrypt.h>
 #include <stdio.h>
+#include <list>
 
 
 using namespace std;
@@ -149,21 +150,34 @@ int main (int argc, const char* argv[])
 static int processStdIn() {
     string line;
     OaStatStruct oss;
+    list<OaStatStruct> osslist;
     bool done = true;
     try{
-    while( getline(cin,line) ) {
-        oss.clear();
-        oss.parseLine(line);
-        for(int i=0;i<commands.size();i++) {
-            try {
-            commands.at(i)->process(oss);
-            } catch (exception &e) {
-                cerr << "oastat: Sql_error at line: \"" << line << "\"" << endl <<
-                        "oastat: Error is: " << e.what() <<
-                        "oastat: Last error will be ignored" << endl;
+        while( getline(cin,line) )
+        {
+            oss.clear();
+            oss.parseLine(line);
+            osslist.push_back(oss);
+            if(oss.command=="ShutdownGame")
+            {
+                while(!osslist.empty())
+                {
+                    oss = osslist.front();
+                    osslist.pop_front();
+                    for(int i=0;i<commands.size();i++)
+                    {
+                        try {
+                        commands.at(i)->process(oss);
+                        } catch (exception &e)
+                        {
+                            cerr << "oastat: Sql_error at line: \"" << line << "\"" << endl <<
+                                    "oastat: Error is: " << e.what() <<
+                                    "oastat: Last error will be ignored" << endl;
+                        }
+                    }
+                }
             }
         }
-    }
     } catch (exception &e2) {
         /*
          If there is an error write it in the log and try again continue
