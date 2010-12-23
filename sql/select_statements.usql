@@ -1,0 +1,90 @@
+﻿SELECT * FROM OASTAT_GAMES ORDER BY gamenumber desc;
+SELECT nickname, guid, lastseen FROM OASTAT_PLAYERS ORDER BY lastseen DESC;
+SELECT nickname, guid, lastseen FROM OASTAT_PLAYERS ORDER BY nickname;
+SELECT * FROM OASTAT_PLAYERS, OASTAT_USERINFO WHERE OASTAT_PLAYERS.GUID = OASTAT_USERINFO.GUID;
+
+DELETE FROM OASTAT_GAMES WHERE second is null;
+SELECT * FROM OASTAT_GAMES WHERE SECOND IS NULL;
+
+--Most popular names
+SELECT nickname,count(0) as amount FROM OASTAT_PLAYERS group by nickname ORDER BY amount DESC ;
+
+--Kills in different gametypes (only dm at the moment):
+SELECT gametype, count(0) as kills FROM OASTAT_GAMES g, OASTAT_KILLS k WHERE g.gamenumber = k.gamenumber group by gametype;
+
+SELECT gametype, count(0) as times FROM OASTAT_GAMES GROUP BY gametype;
+
+--Table counts:
+--Number of games with at least one kill
+SELECT count(0) FROM OASTAT_GAMES g WHERE g.gamenumber in 
+(SELECT DISTINCT k.gamenumber FROM oastat_kills k, oastat_players p WHERE k.attacker = p.guid) ;
+--Number of kills on the server
+SELECT count(0) FROM OASTAT_KILLS k, OASTAT_PLAYERS p WHERE k.attacker = p.guid; 
+
+SELECT k.modtype, count(0) FROM OASTAT_KILLS k GROUP BY k.modtype ORDER BY k.modtype;
+
+--Count number of times there was played on dm4ish
+SELECT COUNT(0) FROM OASTAT_GAMES games
+WHERE games.gamenumber IN (SELECT DISTINCT gamenumber FROM OASTAT_KILLS) 
+AND games.mapname = 'dm4ish'; 
+
+-- Top players on dm4ish
+SELECT p.nickname, count(0) AS kills FROM OASTAT_PLAYERS p, OASTAT_KILLS k
+WHERE k.attacker = p.guid AND k.gamenumber IN (SELECT gamenumber FROM OASTAT_GAMES WHERE mapname = 'dm4ish') GROUP BY p.guid,p.nickname ORDER BY kills DESC;
+
+--Top killers on the server
+SELECT p.nickname, count(0) FROM OASTAT_PLAYERS p, OASTAT_KILLS k 
+WHERE k.attacker = p.guid GROUP BY p.guid, p.nickname ORDER BY count(0) DESC;
+
+-- Find GUID of sagoo007
+SELECT GUID FROM OASTAT_PLAYERS WHERE NICKNAME = 'Sago007';
+-- There might be more because of namestealers but the correct result is: "ED7E3235B252CA0BA15C0AA3A650D29D"
+
+-- Find Sago007's top pray:
+SELECT p.nickname, count(0) FROM OASTAT_PLAYERS p, OASTAT_KILLS k 
+WHERE k.target = p.guid AND k.attacker ='ED7E3235B252CA0BA15C0AA3A650D29D' 
+AND k.target != k.attacker --not suicides
+GROUP BY p.guid, p.nickname ORDER BY count(0) DESC;
+
+-- Find Sago007's top enemies
+SELECT p.nickname, count(0) FROM OASTAT_PLAYERS p, OASTAT_KILLS k 
+WHERE k.attacker = p.guid AND k.target ='ED7E3235B252CA0BA15C0AA3A650D29D' 
+AND k.target != k.attacker --not suicides
+GROUP BY p.guid, p.nickname ORDER BY count(0) DESC;
+
+--Total kills excluding suicides
+--Notice that inner joining attacker with the list of player guids is a way to exclude 
+SELECT COUNT(0) FROM OASTAT_KILLS k, OASTAT_PLAYERS p WHERE k.attacker = p.guid and k.attacker != k.target;
+
+--Totla kills excluding suicides and bots
+SELECT COUNT(0) FROM OASTAT_KILLS k WHERE LENGTH(k.attacker)=32 AND k.attacker != k.target;
+
+-- ALL kills with names of both killer and victim
+SELECT pa.nickname Killer, pt.nickname Victim FROM OASTAT_KILLS k, OASTAT_PLAYERS pa, OASTAT_PLAYERS pt
+WHERE k.attacker = pa.guid AND k.target = pt.guid AND k.attacker != k.target;
+
+-- ALL kills with names of both killer and victim
+SELECT pa.nickname Killer, pt.nickname Victim FROM OASTAT_KILLS k, OASTAT_PLAYERS pa, OASTAT_PLAYERS pt
+WHERE k.attacker = pa.guid AND k.target = pt.guid AND k.attacker != k.target ORDER BY k.eventnumber desc;
+
+-- Games on the different maps with avarage gametime, demand at least one kill
+SELECT g.mapname,count(0),sum(g.second)/count(0) as avgtime 
+FROM oastat_games g
+WHERE g.gamenumber in 
+(SELECT DISTINCT k.gamenumber FROM oastat_kills k, oastat_players p WHERE k.attacker = p.guid) 
+GROUP BY g.mapname;
+
+-- Maps with most kills:
+SELECT g.mapname,count(0)
+FROM oastat_games g, oastat_kills k, oastat_players p
+WHERE g.gamenumber = k.gamenumber AND k.attacker = p.guid
+GROUP BY g.mapname ORDER BY count(0) DESC;
+
+-- Most dangarous maps: most suicides
+SELECT g.mapname,count(0)
+FROM oastat_games g, oastat_kills k
+WHERE g.gamenumber = k.gamenumber AND k.attacker NOT IN ( SELECT guid FROM oastat_players)
+GROUP BY g.mapname ORDER BY count(0) DESC;
+
+--Favorite models:
+SELECT p.model, count(0) FROM oastat_players p GROUP BY p.model ORDER BY count(0) DESC;

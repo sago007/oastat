@@ -1,0 +1,116 @@
+﻿INSERT INTO OASTAT_GAMES(gametype,mapname,basegame) VALUES (0,'dm4ish','baseoa');
+
+SELECT * FROM OASTAT_GAMES;
+SELECT * FROM OASTAT_PLAYERS;
+SELECT * FROM OASTAT_PLAYERS, OASTAT_USERINFO WHERE OASTAT_PLAYERS.GUID = OASTAT_USERINFO.GUID;
+
+DELETE FROM OASTAT_PLAYERS WHERE LENGTH(GUID)<31; 
+
+DELETE FROM OASTAT_PLAYERS WHERE GUID LIKE '^3%';
+
+--Table counts:
+--Number of games with at least one kill
+SELECT count(0) FROM OASTAT_GAMES g WHERE g.gamenumber in 
+(SELECT DISTINCT k.gamenumber FROM oastat_kills k, oastat_players p WHERE k.attacker = p.guid) 
+--Number of kills on the server
+SELECT count(0) FROM OASTAT_KILLS k, OASTAT_PLAYERS p WHERE k.attacker = p.guid; 
+
+--Count number of times there was played on dm4ish
+SELECT COUNT(0) FROM OASTAT_GAMES games,OASTAT_USERINFO info 
+WHERE games.gamenumber = info.gamenumber AND games.mapname = 'dm4ish'; 
+
+--Count total kills on the server
+SELECT p.nickname, count(0) FROM OASTAT_PLAYERS p, OASTAT_KILLS k 
+WHERE k.attacker = p.guid GROUP BY p.guid, p.nickname ORDER BY count(0) DESC;
+
+-- Find GUID of sagoo007
+SELECT GUID FROM OASTAT_PLAYERS WHERE NICKNAME = 'Sago007';
+-- There might be more because of namestealers but the correct result is: "ED7E3235B252CA0BA15C0AA3A650D29D"
+
+-- Find Sago007's top pray:
+SELECT p.nickname, count(0) FROM OASTAT_PLAYERS p, OASTAT_KILLS k 
+WHERE k.target = p.guid AND k.attacker ='ED7E3235B252CA0BA15C0AA3A650D29D' 
+AND k.target != k.attacker --not suicides
+GROUP BY p.guid, p.nickname ORDER BY count(0) DESC;
+
+-- Find Sago007's top enemies
+SELECT p.nickname, count(0) FROM OASTAT_PLAYERS p, OASTAT_KILLS k 
+WHERE k.attacker = p.guid AND k.target ='ED7E3235B252CA0BA15C0AA3A650D29D' 
+AND k.target != k.attacker --not suicides
+GROUP BY p.guid, p.nickname ORDER BY count(0) DESC;
+
+--Total kills excluding suicides
+--Notice that inner joining attacker with the list of player guids is a way to exclude 
+SELECT COUNT(0) FROM OASTAT_KILLS k, OASTAT_PLAYERS p WHERE k.attacker = p.guid and k.attacker != k.target;
+
+--Totla kills excluding suicides and bots
+SELECT COUNT(0) FROM OASTAT_KILLS k WHERE LENGTH(k.attacker)=32 AND k.attacker != k.target;
+
+-- ALL kills with names of both killer and victim
+SELECT pa.nickname Killer, pt.nickname Victim FROM OASTAT_KILLS k, OASTAT_PLAYERS pa, OASTAT_PLAYERS pt
+WHERE k.attacker = pa.guid AND k.target = pt.guid AND k.attacker != k.target;
+
+-- Games on the different maps with avarage gametime, demand at least one kill
+SELECT g.mapname,count(0),sum(g.second)/count(0) as avgtime 
+FROM oastat_games g
+WHERE g.gamenumber in 
+(SELECT DISTINCT k.gamenumber FROM oastat_kills k, oastat_players p WHERE k.attacker = p.guid) 
+GROUP BY g.mapname;
+
+--Favorite models:
+SELECT p.model, count(0) FROM oastat_players p GROUP BY p.model ORDER BY count(0) DESC;
+
+INSERT INTO OASTAT_PLAYERS(guid,nickname) VALUES ('SAGOGUID','sago007');
+INSERT INTO OASTAT_PLAYERS(guid,nickname) VALUES ('SOMEGUID','Someone1');
+INSERT INTO OASTAT_PLAYERS(guid,nickname) VALUES ('SOMEGUID2','Someone2');
+
+INSERT INTO OASTAT_USERINFO(gamenumber,guid,team,model) VALUES (2,'SAGOGUID',0,'Sarge/default');
+INSERT INTO OASTAT_USERINFO(gamenumber,guid,team,model) VALUES (3,'SAGOGUID',0,'Sarge/default');
+
+
+INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES ('Arivederchy','Arivederchy',now(),false,'beret/blue','beret/blue');
+
+UPDATE oastat_players SET nickname = 'MyNick',lastseen = now(),isBot = false, model = 'beret/blue', headmodel = 'beret/blue' WHERE guid = 'Arivederchy';
+
+INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES (2,11336,'Bras nao atira en BR',-1,'',-1);
+
+UPDATE oastat_games SET second=100,time = now() where gamenumber = 1;
+
+INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES(2,54871,'Leonard','UnnamedPlayer',3);
+
+--Larger amount of data
+INSERT INTO oastat_games(gametype, mapname, basegame) VALUES (0,'aggressor','baseoa');
+INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES ('DAB4544C5FBEBC52E649ABC9E94601EB','Eltarin',now(),false,'assassin/default','assassin/default');
+INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES (3,0,'DAB4544C5FBEBC52E649ABC9E94601EB',0,'assassin/default',-1);
+INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES ('91CFBFDE8E762A07BA2008065672473D','Kira',now(),false,'major/blue','major/blue');
+INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES (3,0,'91CFBFDE8E762A07BA2008065672473D',0,'major/blue',-1);
+INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES ('889BBF46C42203FBA84B8ADE4B505F8A','Sp1ral',now(),false,'sarge','sarge');
+INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES (3,0,'889BBF46C42203FBA84B8ADE4B505F8A',0,'sarge',-1);
+INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES ('36CF8E170B3B273A2A8782DB5785E5D1','Silver',now(),false,'marvin/darthm','marvin/darthm');
+INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES (3,0,'36CF8E170B3B273A2A8782DB5785E5D1',0,'marvin/darthm',-1);
+--INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES ('91CFBFDE8E762A07BA2008065672473D','Kira',now(),false,'major/blue','major/blue');
+--INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES (4,4,'91CFBFDE8E762A07BA2008065672473D',0,'major/blue',-1);
+--INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES ('36CF8E170B3B273A2A8782DB5785E5D1','Silver',now(),false,'marvin/darthm','marvin/darthm');
+--INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES (4,4,'36CF8E170B3B273A2A8782DB5785E5D1',0,'marvin/darthm',-1);
+INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES(3,4,'WORLD','36CF8E170B3B273A2A8782DB5785E5D1',20);
+INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES (3,4,'36CF8E170B3B273A2A8782DB5785E5D1',-1,'',-1);
+--INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES ('DAB4544C5FBEBC52E649ABC9E94601EB','Eltarin',now(),false,'assassin/default','assassin/default');
+--INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES (3,6,'DAB4544C5FBEBC52E649ABC9E94601EB',0,'assassin/default',-1);
+INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES(3,9,'889BBF46C42203FBA84B8ADE4B505F8A','91CFBFDE8E762A07BA2008065672473D',10);
+
+PREPARE addkill(int,int,text,text,int) AS INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES($1,$2,$3,$4,$5);
+PREPARE addgame(int,text,text) AS INSERT INTO oastat_games(gametype, mapname, basegame) VALUES ($1,$2,$3);
+PREPARE endgame(int,int) AS UPDATE oastat_games SET second=$2,time = now() where gamenumber = $1;
+PREPARE addplayer(text,text,boolean,text,text) AS INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES ($1,$2,now(),$3,$4,$5);
+PREPARE updateplayer(text,text,boolean,text,text) AS UPDATE oastat_players SET nickname = $2,lastseen = now(),isBot = $3, model = $4, headmodel = $5 WHERE guid = $6;
+PREPARE adduserinfo(int,int,text,int,text,int) AS INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES ($1,$2,$3,$4,$5,$6);
+PREPARE addcapture(int,int,text,int) AS INSERT INTO oastat_captures(gamenumber,second,player,team) VALUES ($1,$2,$3,$4);
+PREPARE addaward(int,int,text,int) AS INSERT INTO oastat_awards(gamenumber,second,player,award) VALUES ($1,$2,$3,$4);
+
+EXECUTE addkill(3,9,'889BBF46C42203FBA84B8ADE4B505F8A','91CFBFDE8E762A07BA2008065672473D',10);
+
+SELECT MAX(gamenumber) FROM OASTAT_GAMES;
+
+INSERT INTO oastat_games(gametype, mapname, basegame) VALUES (0,'dm4ish','baseoa');
+
+INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES (4857,14989,'^3^^8/Eli^7te/^3-^3^^8VeRt^7!go^3*',0,'tony/default',-1);
