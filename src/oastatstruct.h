@@ -64,8 +64,13 @@ public:
      * TIMESTAMP 'YYYY-MM-
      */
     string getTimeStamp();
+
+    /*
+     Sets _datetime. Requires input in the format: "YYYY-MM-DD HH:MM:SS"
+     */
+    void setTimeStamp(string timestring);
 private:
-    tm _datetime;
+    static tm _datetime;
 };
 
 #endif	/* _OASTATSTRUCT_H */

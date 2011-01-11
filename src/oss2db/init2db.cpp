@@ -42,6 +42,8 @@ void Init2Db::process(OaStatStruct oss) {
     int gametype = atoi(arguments["g_gametype"].c_str());
     string basegame = arguments["gamename"];
     string mapname = arguments["mapname"];
+    string servername = arguments["sv_hostname"];
+    oss.setTimeStamp(arguments["g_timestamp"]);
 
-    dp->startGame(gametype,mapname,basegame);
+    dp->startGame(gametype,mapname,basegame,servername,&oss);
 }

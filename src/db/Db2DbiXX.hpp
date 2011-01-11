@@ -24,14 +24,16 @@ public:
     Db2DbiXX(const Db2DbiXX& orig);
     virtual ~Db2DbiXX();
     void createTables();
-    void startGame(int gametype, string mapname, string basegame);
+    void startGame(int gametype, string mapname, string basegame, string servername, OaStatStruct *oss);
     void endGame(int second);
     int getGameNumber();
     void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, OaStatStruct *oss);
     void addKill(int second, string attackerID, string targetID, int type);
-    void addCapture(int second, string player, int team);
+    //void addCapture(int second, string player, int team);
     void addAward(int second, string player, int award);
+    void addScoreInfo(int second, string player, int score);
     void addCtf(int second, string player, int team, int event);
+    void addCtf1f(int second, string player, int team, int event);
 private:
     session *sql;
     transaction *commitlock;

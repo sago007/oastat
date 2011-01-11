@@ -27,6 +27,8 @@ using namespace std;
 #include <iostream>
 #include <iomanip>
 
+tm OaStatStruct::_datetime;
+
 OaStatStruct::OaStatStruct() {
     second = 0;
     command = "";
@@ -59,8 +61,8 @@ void OaStatStruct::parseLine(string line) {
     string tempTimeString = line.substr(0,7);
     int posColon = tempTimeString.find(":");
     int minute = atoi(tempTimeString.substr(0,posColon).c_str());
-    time_t thetime = time(NULL);
-    gmtime_r(&thetime,&_datetime);
+    /*time_t thetime = time(NULL);
+    gmtime_r(&thetime,&_datetime);*/
     second = atoi(tempTimeString.substr(posColon+1,7).c_str());
     second+=minute*60;
     line = line.substr(7,line.length()); //Cut the first part of the string.
@@ -142,10 +144,25 @@ string ZeroPadNumber(int num, int size = 2)
 
 string OaStatStruct::getTimeStamp() {
     string s;
-    s = "TIMESTAMP \'" + ZeroPadNumber(_datetime.tm_year+1900,4) + "-" + ZeroPadNumber(_datetime.tm_mon) + "-"
+    s = "TIMESTAMP \'" + ZeroPadNumber(_datetime.tm_year+1900,4) + "-" + ZeroPadNumber(_datetime.tm_mon+1) + "-"
             + ZeroPadNumber(_datetime.tm_mday) + " " + ZeroPadNumber(_datetime.tm_hour) + ":"
             + ZeroPadNumber(_datetime.tm_min) + ":" + ZeroPadNumber(_datetime.tm_sec) + "\'";
     return s;
 }
 
-
+void OaStatStruct::setTimeStamp(string timestring) {
+    std::stringstream ss(timestring);
+    string tmp;
+    getline(ss,tmp,'-');
+    _datetime.tm_year = atoi(tmp.c_str())-1900;
+    getline(ss,tmp,'-');
+    _datetime.tm_mon = atoi(tmp.c_str())-1;
+    getline(ss,tmp,' ');
+    _datetime.tm_mday = atoi(tmp.c_str());
+    getline(ss,tmp,':');
+    _datetime.tm_hour = atoi(tmp.c_str());
+    getline(ss,tmp,':');
+    _datetime.tm_min = atoi(tmp.c_str());
+    getline(ss,tmp);
+    _datetime.tm_sec = atoi(tmp.c_str());
+}

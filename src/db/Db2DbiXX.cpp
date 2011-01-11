@@ -9,21 +9,21 @@
 
 #define GETNEXTGAMENUMBER "SELECT nextval('oastat_games_gamenumber_seq')"
 
-#define STARTGAME "INSERT INTO oastat_games(gamenumber,gametype, mapname, basegame) VALUES (?,?,?,?)"
+#define STARTGAME "INSERT INTO oastat_games(gamenumber,gametype, mapname, basegame,servername,time) VALUES (?,?,LOWER(?),?,?,?)"
 #define PLAYERSINSERT "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,?,?,?,?)"
-#define PLAYERSUPDATE "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ?"
+#define PLAYERSUPDATE "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ? AND lastseen < ?"
 #define USERINFOINSERT "INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES (?,?,?,?,?,?)"
-#define ENDGAME "UPDATE oastat_games SET second=?,time = now() where gamenumber = ?"
+#define ENDGAME "UPDATE oastat_games SET second=? WHERE gamenumber = ?"
 #define KILL "INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES(?,?,?,?,?)"
-#define CAPTURE "INSERT INTO oastat_captures(gamenumber,second,player,team) VALUES (?,?,?,?)"
 #define AWARD "INSERT INTO oastat_awards(gamenumber,second,player,award) VALUES (?,?,?,?)"
+#define POINT "INSERT INTO oastat_points(gamenumber,second,player,score) VALUES (?,?,?,?)"
 #define CTF "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,?,'ctf',?)"
+#define CTF1F "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,?,'1fctf',?)"
+#define ELIMINATION "INSERT INTO oastat_team_events(gamenumber,second,team,eventtype,generic1,gametype) VALUES (?,?,?,?,?,'elimination')"
+#define CTF_ELIM "INSERT INTO oastat_team_events(gamenumber,second,team,player,eventtype,generic1,gametype) VALUES (?,?,?,?,?,?,'ctfelim')"
+
 
 static char* booltext[2] = {"false","true"};
-
-static long long int MakeTimestamp(tm timestamp) {
-    return mktime(&timestamp);
-}
 
 Db2DbiXX::Db2DbiXX() {
     sql = new session("pgsql");
@@ -67,12 +67,12 @@ void Db2DbiXX::createTables() {
 
 }
 
-void Db2DbiXX::startGame(int gametype, string mapname, string basegame) {
+void Db2DbiXX::startGame(int gametype, string mapname, string basegame, string servername, OaStatStruct *oss) {
     sql->reconnect();
     Rollback(); //in case there was some garbage that could be comitted (like warmup or an unfinished game)
     SetOk(true);
     gamenumber = getNextGameNumber();
-    *sql << STARTGAME,gamenumber,gametype,mapname,basegame,exec();
+    *sql << STARTGAME,gamenumber,gametype,mapname,basegame,servername,oss->getDateTime(),exec();
     DebugMessage("startGame");
 }
 
@@ -100,7 +100,7 @@ void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int secon
             DebugMessage("Already inserted? "+(string)e.what());
             *sql << "ROLLBACK TO SAVEPOINT SETPLAYER",exec();
         }
-        *sql << PLAYERSUPDATE,nickname,oss->getDateTime(),booltext[isBot],model,headmodel,guid,exec();
+        *sql << PLAYERSUPDATE,nickname,oss->getDateTime(),booltext[isBot],model,headmodel,guid,oss->getDateTime(),exec();
     }
     *sql << USERINFOINSERT,gamenumber,second,guid,team,model,skill,exec();
     DebugMessage("setPlayerInfo for "+nickname+" with GUID: "+guid);
@@ -111,19 +111,29 @@ void Db2DbiXX::addKill(int second, string attackerID, string targetID, int type)
     DebugMessage("addKill");
 }
 
-void Db2DbiXX::addCapture(int second, string player, int team) {
+/*void Db2DbiXX::addCapture(int second, string player, int team) {
     *sql<< CAPTURE,gamenumber,second,player,team,exec();
     DebugMessage("addCapture");
-}
+}*/
 
 void Db2DbiXX::addAward(int second, string player, int award) {
     *sql << AWARD,gamenumber,second,player,award,exec();
     DebugMessage("addAward");
 }
 
+void Db2DbiXX::addScoreInfo(int second, string player, int score) {
+    *sql << POINT,gamenumber,second,player,score,exec();
+    DebugMessage("addScoreInfo");
+}
+
 void Db2DbiXX::addCtf(int second, string player, int team, int event) {
     *sql << CTF,gamenumber,second,team,player,event,exec();
     DebugMessage("addCtf");
+}
+
+void Db2DbiXX::addCtf1f(int second, string player, int team, int event) {
+    *sql << CTF1F,gamenumber,second,team,player,event,exec();
+    DebugMessage("addCtf1f");
 }
 
 int Db2DbiXX::getNextGameNumber() {

@@ -50,6 +50,8 @@ using namespace std;
 #include "oss2db/Disconnect2Db.h"
 #include "oss2db/Award2Db.h"
 #include "oss2db/Ctf2Db.hpp"
+#include "oss2db/Ctf1f2Db.hpp"
+#include "oss2db/Point2Db.hpp"
 
 string clientIdMap[MAX_ID];
 
@@ -73,6 +75,8 @@ void addCommands()
     commands.push_back(new Disconnect2Db());
     commands.push_back(new Award2Db());
     commands.push_back(new Ctf2Db());
+    commands.push_back(new Point2Db());
+    commands.push_back(new Ctf1f2Db());
     //Add more commands just above here
 
     for(int i=0;i<commands.size();i++) {
@@ -122,29 +126,6 @@ int main (int argc, const char* argv[])
     }
 
         return 0;
-        //Rest of file is for testing
-
-        /*string line = "  3:33 Kill: 2 5 6: aaargh!!!!!!!!!!!!!! killed RALV by MOD_ROCKET";
-
-        OaStatStruct oss;
-        oss.parseLine(line);
-
-        cout << "Time: '" << oss.second << "' command: '" << oss.command << "' restOfLine: '" << oss.restOfLine << "'" << endl;
-
-        for (int i=0; i<oss.parameters.size(); i++) {
-            cout << i << ": " << oss.parameters.at(i) << endl;
-        }
-
-        Kill2Db k2db;
-        Struct2Db *s2dp = &k2db;
-
-        s2dp->setDb(db);
-
-        s2dp->process(oss);
-
-        db->addKill(10, "DSAGOJSAOGFJWA55555555AGA", "AHFDSHDFBSDTRHSJYFDSGFA", 3);
-
-	return 0;*/
 }
 
 static int processStdIn() {
