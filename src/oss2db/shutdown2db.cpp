@@ -36,7 +36,7 @@ string Shutdown2Db::getCommand() {
 }
 
 bool Shutdown2Db::canProcess(OaStatStruct oss) {
-    if(oss.command != getCommand() || oss.parameters.size()<1)
+    if(oss.command != getCommand())
         return false;
     return true;
 }

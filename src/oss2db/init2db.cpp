@@ -36,7 +36,7 @@ string Init2Db::getCommand() {
 }
 
 bool Init2Db::canProcess(OaStatStruct oss) {
-    if(oss.command != getCommand() || oss.parameters.size()<1)
+    if(oss.command != getCommand())
         return false;
     return true;
 }
