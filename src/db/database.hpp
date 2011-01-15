@@ -142,6 +142,8 @@ class Database {
                  * @param event
                  */
                 virtual void addCtf1f(int second, string player, int team, int event) = 0;
+
+                virtual void addElimination(int second, int roundnumber, int team, int event) = 0;
 };
 
 #endif //_DATABASE_H

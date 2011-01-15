@@ -34,6 +34,7 @@ public:
     void addScoreInfo(int second, string player, int score);
     void addCtf(int second, string player, int team, int event);
     void addCtf1f(int second, string player, int team, int event);
+    void addElimination(int second, int roundnumber, int team, int event);
 private:
     session *sql;
     transaction *commitlock;

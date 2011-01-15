@@ -136,6 +136,11 @@ void Db2DbiXX::addCtf1f(int second, string player, int team, int event) {
     DebugMessage("addCtf1f");
 }
 
+void Db2DbiXX::addElimination(int second, int roundnumber, int team, int event) {
+    *sql << ELIMINATION,gamenumber,second,team,event,roundnumber,exec();
+    DebugMessage("addElimination");
+}
+
 int Db2DbiXX::getNextGameNumber() {
     int result = -1;
     row r;
