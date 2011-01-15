@@ -35,6 +35,12 @@ string Init2Db::getCommand() {
     return "InitGame";
 }
 
+bool Init2Db::canProcess(OaStatStruct oss) {
+    if(oss.command != getCommand() || oss.parameters.size()<1)
+        return false;
+    return true;
+}
+
 void Init2Db::process(OaStatStruct oss) {
     if(oss.command != getCommand())
         return; //Invalid oss

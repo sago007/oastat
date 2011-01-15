@@ -35,6 +35,12 @@ string Shutdown2Db::getCommand() {
     return "ShutdownGame";
 }
 
+bool Shutdown2Db::canProcess(OaStatStruct oss) {
+    if(oss.command != getCommand() || oss.parameters.size()<1)
+        return false;
+    return true;
+}
+
 void Shutdown2Db::process(OaStatStruct oss) {
     if(oss.command != getCommand())
         return;

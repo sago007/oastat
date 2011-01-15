@@ -20,6 +20,12 @@ string Elimination2Db::getCommand() {
     return "ELIMINATION";
 }
 
+bool Elimination2Db::canProcess(OaStatStruct oss) {
+    if(oss.command != getCommand() || oss.parameters.size()<1)
+        return false;
+    return true;
+}
+
 void Elimination2Db::process(OaStatStruct oss) {
     if(oss.command != getCommand() || oss.parameters.size()<3 || oss.parameters.at(0)<0)
         return; //Invalid oss

@@ -20,6 +20,12 @@ string Ctf1f2Db::getCommand() {
     return "1FCTF";
 }
 
+bool Ctf1f2Db::canProcess(OaStatStruct oss) {
+    if(oss.command != getCommand() || oss.parameters.size()<1)
+        return false;
+    return true;
+}
+
 void Ctf1f2Db::process(OaStatStruct oss) {
     if(oss.command != getCommand() || oss.parameters.size()<3 || oss.parameters.at(0)<0)
         return; //Invalid oss

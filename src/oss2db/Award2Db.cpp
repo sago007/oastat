@@ -22,6 +22,12 @@ string Award2Db::getCommand() {
     return "Award";
 }
 
+bool Award2Db::canProcess(OaStatStruct oss) {
+    if(oss.command != getCommand() || oss.parameters.size()<1)
+        return false;
+    return true;
+}
+
 void Award2Db::process(OaStatStruct oss) {
     if(oss.command != getCommand() || oss.parameters.size()<2 || oss.parameters.at(0)<0)
         return; //Invalid oss

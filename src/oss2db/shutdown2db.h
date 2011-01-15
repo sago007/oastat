@@ -32,6 +32,7 @@ public:
     virtual ~Shutdown2Db();
 
     string getCommand();
+    bool canProcess(OaStatStruct oss);
 
     void process(OaStatStruct oss);
 

@@ -35,6 +35,12 @@ string Userinfo2Db::getCommand() {
     return "ClientUserinfoChanged";
 }
 
+bool Userinfo2Db::canProcess(OaStatStruct oss) {
+    if(oss.command != getCommand() || oss.parameters.size()<1)
+        return false;
+    return true;
+}
+
 void Userinfo2Db::process(OaStatStruct oss) {
     if(oss.command != getCommand() || oss.parameters.size()<1)
         return; //Invalid oss

@@ -28,6 +28,7 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 class Kill2Db : public Struct2Db {
 
     string getCommand();
+    bool canProcess(OaStatStruct oss);
 
     void process(OaStatStruct oss);
     

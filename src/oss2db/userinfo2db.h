@@ -33,6 +33,8 @@ public:
 
     string getCommand();
 
+    bool canProcess(OaStatStruct oss);
+
     void process(OaStatStruct oss);
 private:
 
