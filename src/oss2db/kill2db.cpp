@@ -33,7 +33,7 @@ bool Kill2Db::canProcess(OaStatStruct oss) {
 }
 
 void Kill2Db::process(OaStatStruct oss) {
-    if(oss.command != "Kill" || oss.parameters.size()<=3)
+    if(!canProcess(oss))
         return; //Invalid oss
     string target = ""; //Parameter 1
     string killer = ""; //Parameter 0

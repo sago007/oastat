@@ -42,7 +42,7 @@ bool Userinfo2Db::canProcess(OaStatStruct oss) {
 }
 
 void Userinfo2Db::process(OaStatStruct oss) {
-    if(oss.command != getCommand() || oss.parameters.size()<1)
+    if(!canProcess(oss))
         return; //Invalid oss
     map<string,string> arguments = oss.GetInfostring();
 

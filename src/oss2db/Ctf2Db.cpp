@@ -28,7 +28,7 @@ bool Ctf2Db::canProcess(OaStatStruct oss) {
 }
 
 void Ctf2Db::process(OaStatStruct oss) {
-    if(oss.command != getCommand() || oss.parameters.size()<3 || oss.parameters.at(0)<0)
+    if(!canProcess(oss))
         return; //Invalid oss
 
     string player = "";

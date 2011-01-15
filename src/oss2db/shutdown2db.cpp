@@ -42,7 +42,7 @@ bool Shutdown2Db::canProcess(OaStatStruct oss) {
 }
 
 void Shutdown2Db::process(OaStatStruct oss) {
-    if(oss.command != getCommand())
+    if(!canProcess(oss))
         return;
     dp->endGame(oss.second);
 }

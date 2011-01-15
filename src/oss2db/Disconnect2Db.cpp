@@ -41,7 +41,7 @@ bool Disconnect2Db::canProcess(OaStatStruct oss) {
 }
 
 void Disconnect2Db::process(OaStatStruct oss) {
-    if(oss.command != getCommand() || oss.parameters.size()<1)
+    if(!canProcess(oss))
         return; //Invalid oss
 
     string player = clientIdMap[oss.parameters.at(0)];
