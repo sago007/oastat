@@ -7,15 +7,6 @@
 
 #include "Ctf2Db.hpp"
 
-Ctf2Db::Ctf2Db() {
-}
-
-Ctf2Db::Ctf2Db(const Ctf2Db& orig) {
-}
-
-Ctf2Db::~Ctf2Db() {
-}
-
 
 string Ctf2Db::getCommand() {
     return "CTF";

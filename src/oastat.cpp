@@ -52,6 +52,7 @@ using namespace std;
 #include "oss2db/Ctf2Db.hpp"
 #include "oss2db/Ctf1f2Db.hpp"
 #include "oss2db/Point2Db.hpp"
+#include "oss2db/Elimination2Db.hpp"
 
 string clientIdMap[MAX_ID];
 
@@ -77,6 +78,7 @@ void addCommands()
     commands.push_back(new Ctf2Db());
     commands.push_back(new Point2Db());
     commands.push_back(new Ctf1f2Db());
+    commands.push_back(new Elimination2Db());
     //Add more commands just above here
 
     for(int i=0;i<commands.size();i++) {
@@ -152,8 +154,8 @@ static int processStdIn() {
                         } catch (exception &e)
                         {
                             cerr << "oastat: Sql_error at line: \"" << line << "\"" << endl <<
-                                    "oastat: Error is: " << e.what() <<
-                                    "oastat: Last error will be ignored" << endl;
+                                    "oastat:   Error is: " << e.what() <<
+                                    "oastat:   Last error will be ignored" << endl;
                         }
                     }
                 }
@@ -163,8 +165,8 @@ static int processStdIn() {
         /*
          If there is an error write it in the log and try again continue
          */
-        cerr << "oastat: Crashed at line: \"" << line << "\"" << endl <<
-                "oastat: Error is: " << e2.what();
+        cerr << "oastat: Crashed (NEAR FATAL EXCEPTION) at line: \"" << line << "\"" << endl <<
+                "oastat:   Error is: " << e2.what();
         done = false;
     }
     if (!done)
@@ -190,6 +192,8 @@ string getHashedId(string unhashedID) {
     for ( int i = 0; i < hash_len; i++, p += 2 ) {
         snprintf ( p, 3, "%02x", hash_binary[i] );
     }
+
+    unhashedID = hash_hex;
 
     //free(out);
     return  unhashedID; //Replace with md5 at some point

@@ -27,9 +27,6 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 
 class Disconnect2Db : public Struct2Db {
 public:
-    Disconnect2Db();
-    Disconnect2Db(const Disconnect2Db& orig);
-    virtual ~Disconnect2Db();
 
     string getCommand();
     bool canProcess(OaStatStruct oss);

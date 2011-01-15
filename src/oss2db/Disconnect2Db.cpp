@@ -21,14 +21,6 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 
 #include "Disconnect2Db.h"
 
-Disconnect2Db::Disconnect2Db() {
-}
-
-Disconnect2Db::Disconnect2Db(const Disconnect2Db& orig) {
-}
-
-Disconnect2Db::~Disconnect2Db() {
-}
 
 string Disconnect2Db::getCommand() {
     return "ClientDisconnect";

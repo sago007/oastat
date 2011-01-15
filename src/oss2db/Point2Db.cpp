@@ -7,14 +7,6 @@
 
 #include "Point2Db.hpp"
 
-Point2Db::Point2Db() {
-}
-
-Point2Db::Point2Db(const Point2Db& orig) {
-}
-
-Point2Db::~Point2Db() {
-}
 
 string Point2Db::getCommand() {
     return "PlayerScore";

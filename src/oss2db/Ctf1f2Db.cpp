@@ -7,14 +7,6 @@
 
 #include "Ctf1f2Db.hpp"
 
-Ctf1f2Db::Ctf1f2Db() {
-}
-
-Ctf1f2Db::Ctf1f2Db(const Ctf1f2Db& orig) {
-}
-
-Ctf1f2Db::~Ctf1f2Db() {
-}
 
 string Ctf1f2Db::getCommand() {
     return "1FCTF";

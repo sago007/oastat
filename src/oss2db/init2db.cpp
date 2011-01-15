@@ -22,14 +22,6 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 #include "init2db.h"
 #include <stdlib.h>
 
-Init2Db::Init2Db() {
-}
-
-Init2Db::Init2Db(const Init2Db& orig) {
-}
-
-Init2Db::~Init2Db() {
-}
 
 string Init2Db::getCommand() {
     return "InitGame";

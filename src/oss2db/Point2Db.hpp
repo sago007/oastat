@@ -13,10 +13,6 @@
 
 class Point2Db : public Struct2Db {
 public:
-    Point2Db();
-    Point2Db(const Point2Db& orig);
-    virtual ~Point2Db();
-
     string getCommand();
     bool canProcess(OaStatStruct oss);
 

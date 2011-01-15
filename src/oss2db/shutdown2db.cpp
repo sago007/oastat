@@ -22,14 +22,6 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 #include "shutdown2db.h"
 
 
-Shutdown2Db::Shutdown2Db() {
-}
-
-Shutdown2Db::Shutdown2Db(const Shutdown2Db& orig) {
-}
-
-Shutdown2Db::~Shutdown2Db() {
-}
 
 string Shutdown2Db::getCommand() {
     return "ShutdownGame";

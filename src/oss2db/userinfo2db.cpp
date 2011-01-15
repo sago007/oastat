@@ -22,14 +22,6 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 #include "userinfo2db.h"
 #include <stdlib.h> 
 
-Userinfo2Db::Userinfo2Db() {
-}
-
-Userinfo2Db::Userinfo2Db(const Userinfo2Db& orig) {
-}
-
-Userinfo2Db::~Userinfo2Db() {
-}
 
 string Userinfo2Db::getCommand() {
     return "ClientUserinfoChanged";

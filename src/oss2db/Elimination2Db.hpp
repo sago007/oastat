@@ -13,10 +13,6 @@
 
 class Elimination2Db : public Struct2Db {
 public:
-    Elimination2Db();
-    Elimination2Db(const Elimination2Db& orig);
-    virtual ~Elimination2Db();
-
     string getCommand();
     bool canProcess(OaStatStruct oss);
 

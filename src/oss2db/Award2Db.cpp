@@ -7,15 +7,6 @@
 
 #include "Award2Db.h"
 
-Award2Db::Award2Db() {
-}
-
-Award2Db::Award2Db(const Award2Db& orig) {
-}
-
-Award2Db::~Award2Db() {
-}
-
 
 
 string Award2Db::getCommand() {

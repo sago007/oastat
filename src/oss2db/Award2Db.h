@@ -13,9 +13,6 @@
 
 class Award2Db : public Struct2Db {
 public:
-    Award2Db();
-    Award2Db(const Award2Db& orig);
-    virtual ~Award2Db();
 
     string getCommand();
     bool canProcess(OaStatStruct oss);

@@ -27,9 +27,6 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 
 class Shutdown2Db : public Struct2Db{
 public:
-    Shutdown2Db();
-    Shutdown2Db(const Shutdown2Db& orig);
-    virtual ~Shutdown2Db();
 
     string getCommand();
     bool canProcess(OaStatStruct oss);

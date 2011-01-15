@@ -27,9 +27,6 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 
 class Userinfo2Db : public Struct2Db{
 public:
-    Userinfo2Db();
-    Userinfo2Db(const Userinfo2Db& orig);
-    virtual ~Userinfo2Db();
 
     string getCommand();
 

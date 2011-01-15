@@ -7,14 +7,6 @@
 
 #include "Elimination2Db.hpp"
 
-Elimination2Db::Elimination2Db() {
-}
-
-Elimination2Db::Elimination2Db(const Elimination2Db& orig) {
-}
-
-Elimination2Db::~Elimination2Db() {
-}
 
 string Elimination2Db::getCommand() {
     return "ELIMINATION";

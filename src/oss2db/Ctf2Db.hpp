@@ -13,9 +13,6 @@
 
 class Ctf2Db : public Struct2Db {
 public:
-    Ctf2Db();
-    Ctf2Db(const Ctf2Db& orig);
-    virtual ~Ctf2Db();
 
     string getCommand();
     bool canProcess(OaStatStruct oss);

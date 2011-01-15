@@ -27,9 +27,6 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 
 class Init2Db : public Struct2Db {
 public:
-    Init2Db();
-    Init2Db(const Init2Db& orig);
-    virtual ~Init2Db();
 
     string getCommand();
     bool canProcess(OaStatStruct oss);
