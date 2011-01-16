@@ -42,11 +42,15 @@ private:
     bool debug;
     int gamenumber;
     int getNextGameNumber();
+    int getLastGameNumber();
     void Commit();
     void Rollback();
     bool Ok();
     void SetOk(bool ok);
     void DebugMessage(string msg);
+    void InitStrings(string backend);
+    string sql_backend;
+    bool last_value;
 };
 
 #endif	/* _DB2DBIXX_HPP */

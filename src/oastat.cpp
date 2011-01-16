@@ -149,14 +149,14 @@ static int processStdIn() {
                     osslist.pop_front();
                     for(int i=0;i<commands.size();i++)
                     {
-                        try {
+                        //try {
                         commands.at(i)->process(oss);
-                        } catch (exception &e)
+                        /*} catch (exception &e)
                         {
                             cerr << "oastat: Sql_error at line: \"" << line << "\"" << endl <<
                                     "oastat:   Error is: " << e.what() <<
                                     "oastat:   Last error will be ignored" << endl;
-                        }
+                        }*/
                     }
                 }
             }

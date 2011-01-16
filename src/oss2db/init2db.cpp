@@ -34,7 +34,7 @@ bool Init2Db::canProcess(OaStatStruct oss) {
 }
 
 void Init2Db::process(OaStatStruct oss) {
-    if(oss.command != getCommand())
+    if(!canProcess(oss))
         return; //Invalid oss
     map<string,string> arguments = oss.GetInfostring();
     int gametype = atoi(arguments["g_gametype"].c_str());
