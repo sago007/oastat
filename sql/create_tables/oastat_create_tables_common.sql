@@ -99,6 +99,15 @@ ALTER TABLE oastat_games
 
 -- CHECKs END
 
+-- PRIMARY KEYS START
+
+
+ALTER TABLE oastat_players
+    ADD CONSTRAINT oastat_players_pk PRIMARY KEY (guid);
+
+
+-- PRIMARY KEYS END
+
 -- FOREIGN KEYS START
 
 set foreign_key_checks = 0 ; -- RESTRICT2MYSQL

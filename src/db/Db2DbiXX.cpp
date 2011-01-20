@@ -9,7 +9,7 @@
 
 //PostgreSQL:
 #define GETNEXTGAMENUMBER "SELECT nextval('oastat_games_gamenumber_seq')"
-#define GETLASTGAMENUMBER "SELECT curval('oastat_games_gamenumber_seq')"
+#define GETLASTGAMENUMBER "SELECT currval('oastat_games_gamenumber_seq')"
 //MySQL:
 #define GETLASTGAMENUMBER_MYSQL "SELECT LAST_INSERT_ID() FROM DUAL"
 
@@ -72,7 +72,7 @@ Db2DbiXX::Db2DbiXX(string dbargs)
     string holder;
     stream >> holder;
     sql = new session(holder);
-    InitStrings("mysql");
+    InitStrings(holder);
     while(!stream.eof()) {
         stream >> holder;
         if(!stream.eof()) {
