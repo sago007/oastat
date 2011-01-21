@@ -144,6 +144,17 @@ class Database {
                 virtual void addCtf1f(int second, string player, int team, int event) = 0;
 
                 virtual void addElimination(int second, int roundnumber, int team, int event) = 0;
+
+                /**
+                 * Events for the CTF Elimination gametype
+                 *
+                 * @param second second from game start
+                 * @param roundnumber the round number
+                 * @param player the player the event is about. Possible blank
+                 * @param team the team the event is about
+                 * @param event the event type
+                 */
+                virtual void addCtfElimination(int second, int roundnumber, string player, int team, int event) = 0;
 };
 
 #endif //_DATABASE_H

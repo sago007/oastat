@@ -183,6 +183,11 @@ void Db2DbiXX::addElimination(int second, int roundnumber, int team, int event) 
     DebugMessage("addElimination");
 }
 
+void Db2DbiXX::addCtfElimination(int second, int roundnumber, string player, int team, int event) {
+    *sql << S_CTF_ELIM,gamenumber,second,team,player,event,roundnumber,exec();
+    DebugMessage("addCtfElimination");
+}
+
 int Db2DbiXX::getNextGameNumber() {
     int result = -1;
     row r;

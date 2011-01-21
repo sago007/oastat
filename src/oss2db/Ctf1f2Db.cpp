@@ -13,7 +13,7 @@ string Ctf1f2Db::getCommand() {
 }
 
 bool Ctf1f2Db::canProcess(OaStatStruct oss) {
-    if(oss.command != getCommand() || oss.parameters.size()<3 || oss.parameters.at(0)<0)
+    if(oss.command != getCommand() || oss.parameters.size()<3)
         return false;
     return true;
 }
