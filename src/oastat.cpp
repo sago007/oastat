@@ -22,6 +22,7 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 #define VERSION "0.2 BETA"
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <gcrypt.h>
 #include <stdio.h>
@@ -53,10 +54,11 @@ using namespace std;
 #include "oss2db/Ctf1f2Db.hpp"
 #include "oss2db/Point2Db.hpp"
 #include "oss2db/Elimination2Db.hpp"
+#include "oss2db/CtfElimination2Db.hpp"
 
 string clientIdMap[MAX_ID];
 
-static int processStdIn();
+static int processStdIn(istream* in_p);
 
 Database *db;
 
@@ -79,6 +81,7 @@ void addCommands()
     commands.push_back(new Point2Db());
     commands.push_back(new Ctf1f2Db());
     commands.push_back(new Elimination2Db());
+    commands.push_back(new CtfElimination2Db());
     //Add more commands just above here
 
     for(int i=0;i<commands.size();i++) {
@@ -89,11 +92,20 @@ void addCommands()
 int main (int argc, const char* argv[])
 {
     string dbargs = "";
+    string filename = "";
+    /////////////
+    dbargs = "mysql dbname oastat username poul";
+    filename = "/home/poul/.openarena/elimination/games.log";
+    ////////////
     for(int i=1;i<argc;i++) {
         bool onemore = i+1<argc;
         if(string(argv[i]) == "-dbarg" && onemore ) {
             i++;
             dbargs = string(argv[i]);
+        }
+        if(string(argv[i]) == "-f" && onemore) {
+            i++;
+            filename = string(argv[i]);
         }
     }
     try{
@@ -120,7 +132,11 @@ int main (int argc, const char* argv[])
 
         addCommands();
 
-        processStdIn();
+        if(filename.length()>0) {
+            ifstream in(filename.c_str(),ifstream::in);
+            processStdIn(&in);
+        } else
+            processStdIn(&cin);
 
     }catch (const char *s) {
         cout << "Crashed: " << s << endl;
@@ -130,13 +146,13 @@ int main (int argc, const char* argv[])
         return 0;
 }
 
-static int processStdIn() {
+static int processStdIn(istream* in_p) {
     string line;
     OaStatStruct oss;
     list<OaStatStruct> osslist;
     bool done = true;
     try{
-        while( getline(cin,line) )
+        while( getline(*in_p,line) )
         {
             oss.clear();
             oss.parseLine(line);
@@ -145,12 +161,19 @@ static int processStdIn() {
             {
                 while(!osslist.empty())
                 {
+                    cout << "next: " << oss.command << endl;
                     oss = osslist.front();
+                    cout << "gotten, now popping" << endl;
                     osslist.pop_front();
+                    cout << "popping complete" << endl;
                     for(int i=0;i<commands.size();i++)
                     {
                         //try {
-                        commands.at(i)->process(oss);
+                        cout << "checking " << commands.at(i)->getCommand() << endl;
+                        if(commands.at(i)->canProcess(oss)) {
+                            cout << "Exectured by " << commands.at(i)->getCommand();
+                            commands.at(i)->process(oss);
+                        }
                         /*} catch (exception &e)
                         {
                             cerr << "oastat: Sql_error at line: \"" << line << "\"" << endl <<
@@ -158,6 +181,7 @@ static int processStdIn() {
                                     "oastat:   Last error will be ignored" << endl;
                         }*/
                     }
+                    cout << "returned" << endl;
                 }
             }
         }
@@ -170,7 +194,7 @@ static int processStdIn() {
         done = false;
     }
     if (!done)
-        return processStdIn();
+        return processStdIn(in_p);
     return 0;
 }
 

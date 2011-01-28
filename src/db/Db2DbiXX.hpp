@@ -25,6 +25,7 @@ public:
     virtual ~Db2DbiXX();
     void createTables();
     void startGame(int gametype, string mapname, string basegame, string servername, OaStatStruct *oss);
+    void addGameCvar(string cvar, string value);
     void endGame(int second);
     int getGameNumber();
     void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, OaStatStruct *oss);

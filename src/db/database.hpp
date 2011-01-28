@@ -45,6 +45,14 @@ class Database {
 		virtual void startGame(int gametype, string mapname, string basegame, string servername, OaStatStruct *oss) = 0;
 
                 /**
+                 * Adds information about a cvar to the last started game
+                 *
+                 * @param cvar - The name of the cvar (limited to 100 chars)
+                 * @param value - The value of the cvar as a string
+                 */
+                virtual void addGameCvar(string cvar, string value) = 0;
+
+                /**
                  * Called then a game ends.
                  *
                  * @param second - relative time since game start

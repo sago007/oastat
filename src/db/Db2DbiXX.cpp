@@ -14,6 +14,7 @@
 #define GETLASTGAMENUMBER_MYSQL "SELECT LAST_INSERT_ID() FROM DUAL"
 
 #define STARTGAME "INSERT INTO oastat_games(gamenumber,gametype, mapname, basegame,servername,time) VALUES (?,?,LOWER(?),?,?,?)"
+#define ADDCVAR "INSERT INTO oastat_gamecvars(gamenumber,cvar,value,numericvalue) VALUES (?,LOWER(?),?,?)"
 #define STARTGAME_LASTVALUE "INSERT INTO oastat_games(gametype, mapname, basegame,servername,time) VALUES (?,LOWER(?),?,?,?)"
 #define PLAYERSINSERT "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,?,?,?,?)"
 #define PLAYERSUPDATE "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ? AND lastseen < ?"
@@ -29,6 +30,7 @@
 
 static string S_GETLASTGAMENUMBER = GETLASTGAMENUMBER;
 static string S_STARTGAME = STARTGAME;
+static string S_ADDCVAR = ADDCVAR;
 static string S_STARTGAME_LASTVALUE = STARTGAME_LASTVALUE;
 static string S_PLAYERSINSERT = PLAYERSINSERT;
 static string S_PLAYERSUPDATE = PLAYERSUPDATE;
@@ -116,6 +118,11 @@ void Db2DbiXX::startGame(int gametype, string mapname, string basegame, string s
         *sql << S_STARTGAME,gamenumber,gametype,mapname,basegame,servername,oss->getDateTime(),exec();
     }
     DebugMessage("startGame");
+}
+
+void Db2DbiXX::addGameCvar(string cvar, string value) {
+    *sql << S_ADDCVAR,gamenumber,cvar,value,0,exec();
+    DebugMessage("addCvar");
 }
 
 /*

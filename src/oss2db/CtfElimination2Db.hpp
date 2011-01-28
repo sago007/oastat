@@ -12,7 +12,7 @@
 #include "struct2db.h"
 #include "../local.h"
 
-class CtfElimination2Db : Struct2Db {
+class CtfElimination2Db : public  Struct2Db {
 public:
     string getCommand();
     bool canProcess(OaStatStruct oss);
