@@ -91,7 +91,7 @@ CREATE TABLE oastat_points (
 
 CREATE TABLE oastat_userinfo (
     eventNumber SERIAL PRIMARY KEY,
-    gamenumber integer NOT NULL,
+    gamenumber bigint NOT NULL,
     guid character varying(64) NOT NULL,
     team integer,
     model character varying(64) NOT NULL,
@@ -101,8 +101,8 @@ CREATE TABLE oastat_userinfo (
 
 CREATE TABLE oastat_uservars (
     userinfoevent bigint NOT NULL, -- will be used as primary key
-    key character varying(100) NOT NULL, -- will be used as primary key later
-    value character varying(256),
+    thekey character varying(100) NOT NULL, -- will be used as primary key later
+    thevalue character varying(256),
     numericvalue float -- if value is a float or int, then the value will also be stored here for easier comparison
 );
 
@@ -117,13 +117,13 @@ ALTER TABLE oastat_games
 
 
 ALTER TABLE oastat_players
-    ADD CONSTRAINT oastat_players_pk PRIMARY KEY (guid);
+    ADD CONSTRAINT oastat_players_pk pRIMARY KEY (guid);
 
 ALTER TABLE oastat_gamecvars
-    ADD CONSTRAINT oastat_gamecvars_pk PRIMARY KEY (gamenumber,cvar);
+    ADD CONSTRAINT oastat_gamecvars_pk pRIMARY KEY (gamenumber,cvar);
 
 ALTER TABLE oastat_uservars
-    ADD CONSTRAINT oastat_gamevars_pk PRIMARY KEY (userinfoevent,key);
+    ADD CONSTRAINT oastat_gamevars_pk pRIMARY KEY (userinfoevent,thekey);
 
 
 -- PRIMARY KEYS END

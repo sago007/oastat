@@ -100,6 +100,13 @@ void OaStatStruct::parseLine(string line) {
     restOfLine = line;
 }
 
+void makeLower(string &x) {
+    for(int i=0; i<x.length();i++) {
+        if(x[i] >= 'A' && x[i] <= 'X')
+            x[i] = x[i]-'A'+'a';
+    }
+}
+
 map<string,string> OaStatStruct::GetInfostring(string restOfLine) {
     map<string,string> list;
     int curPos = 0, lastPos = 0;
@@ -116,6 +123,7 @@ map<string,string> OaStatStruct::GetInfostring(string restOfLine) {
         } else {
             value = restOfLine.substr(lastPos,curPos-lastPos);
             //list.insert(pair<string,string>(key,value));
+            makeLower(key);
             if(key.length()>0)
                 list[key] = value;
             //cout << key << ":" << value << endl;

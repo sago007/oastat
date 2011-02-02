@@ -44,4 +44,16 @@ void Init2Db::process(OaStatStruct oss) {
     oss.setTimeStamp(arguments["g_timestamp"]);
 
     dp->startGame(gametype,mapname,basegame,servername,&oss);
+    map<string,string>::iterator it;
+    for(it = arguments.begin(); it != arguments.end(); it++) {
+        if(
+                it->first == "g_gametype" ||
+                it->first == "gamename" ||
+                it->first == "mapname" ||
+                it->first == "sv_hostname" ||
+                it->first == "g_timestamp"
+          )
+               continue; //Skip the ones on the games-table
+        dp->addGameCvar(it->first,it->second);
+    }
 }
