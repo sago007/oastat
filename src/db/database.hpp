@@ -163,6 +163,18 @@ class Database {
                  * @param event the event type
                  */
                 virtual void addCtfElimination(int second, int roundnumber, string player, int team, int event) = 0;
+
+                /**
+                 * Document addHarvester(int,string,string,int,int,int) here...
+                 *
+                 * @param second time from gamestart
+                 * @param player1 the player the event is about
+                 * @param player2 the second player the event is about (player2 is fragcarrier)
+                 * @param team the team from the logging event
+                 * @param event the event number
+                 * @param score number of skulls brought in in one capture
+                 */
+                virtual void addHarvester(int second, string player1, string player2, int team, int event, int score) = 0;
 };
 
 #endif //_DATABASE_H

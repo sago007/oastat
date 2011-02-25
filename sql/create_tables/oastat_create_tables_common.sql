@@ -23,6 +23,7 @@ CREATE TABLE oastat_team_events (
     amount integer DEFAULT 1,
     gametype character varying(20) NOT NULL,
     player character varying(64),
+    player2 character varying(64),
     eventtype integer NOT NULL,
     generic1 integer
 );

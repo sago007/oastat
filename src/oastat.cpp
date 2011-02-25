@@ -55,6 +55,7 @@ using namespace std;
 #include "oss2db/Point2Db.hpp"
 #include "oss2db/Elimination2Db.hpp"
 #include "oss2db/CtfElimination2Db.hpp"
+#include "oss2db/Harvester2Db.hpp"
 
 string clientIdMap[MAX_ID];
 
@@ -82,6 +83,7 @@ void addCommands()
     commands.push_back(new Ctf1f2Db());
     commands.push_back(new Elimination2Db());
     commands.push_back(new CtfElimination2Db());
+    commands.push_back(new Harvester2Db());
     //Add more commands just above here
 
     for(int i=0;i<commands.size();i++) {
@@ -161,17 +163,17 @@ static int processStdIn(istream* in_p) {
             {
                 while(!osslist.empty())
                 {
-                    cout << "next: " << oss.command << endl;
+                    //cout << "next: " << oss.command << endl;
                     oss = osslist.front();
-                    cout << "gotten, now popping" << endl;
+                    //cout << "gotten, now popping" << endl;
                     osslist.pop_front();
-                    cout << "popping complete" << endl;
+                    //cout << "popping complete" << endl;
                     for(int i=0;i<commands.size();i++)
                     {
                         //try {
-                        cout << "checking " << commands.at(i)->getCommand() << endl;
+                        //cout << "checking " << commands.at(i)->getCommand() << endl;
                         if(commands.at(i)->canProcess(oss)) {
-                            cout << "Exectured by " << commands.at(i)->getCommand();
+                            //cout << "Exectured by " << commands.at(i)->getCommand();
                             commands.at(i)->process(oss);
                         }
                         /*} catch (exception &e)
@@ -181,7 +183,7 @@ static int processStdIn(istream* in_p) {
                                     "oastat:   Last error will be ignored" << endl;
                         }*/
                     }
-                    cout << "returned" << endl;
+                    //cout << "returned" << endl;
                 }
             }
         }
@@ -190,7 +192,7 @@ static int processStdIn(istream* in_p) {
          If there is an error write it in the log and try again continue
          */
         cerr << "oastat: Crashed (NEAR FATAL EXCEPTION) at line: \"" << line << "\"" << endl <<
-                "oastat:   Error is: " << e2.what();
+                "oastat:   Error is: " << e2.what() << endl;
         done = false;
     }
     if (!done)

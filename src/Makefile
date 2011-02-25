@@ -6,7 +6,7 @@ USESTDOUT=0
 BASE_LIBS=-lgcrypt
 BASE_CFLAGS=-c -g -O0
 
-O_FILES=build/oastat.o build/oastatstruct.o build/kill2db.o build/init2db.o build/shutdown2db.o build/userinfo2db.o build/disconnect2db.o build/award2db.o build/ctf2db.o build/point2db.o build/ctf1f2db.o build/elimination2db.o build/ctfelim2db.o
+O_FILES=build/oastat.o build/oastatstruct.o build/kill2db.o build/init2db.o build/shutdown2db.o build/userinfo2db.o build/disconnect2db.o build/award2db.o build/ctf2db.o build/point2db.o build/ctf1f2db.o build/elimination2db.o build/ctfelim2db.o build/harvester2db.o
 
 ifeq ($(USESTDOUT),1)
 	O_FILES+= build/db2stdout.o
@@ -87,3 +87,5 @@ build/ctfelim2db.o: oss2db/CtfElimination2Db.cpp
 build/point2db.o: oss2db/Point2Db.cpp oss2db/Point2Db.hpp
 	g++ $(BASE_CFLAGS) oss2db/Point2Db.cpp -o build/point2db.o
 
+build/harvester2db.o: oss2db/Harvester2Db.cpp oss2db/Harvester2Db.hpp
+	g++ $(BASE_CFLAGS) oss2db/Harvester2Db.cpp -o build/harvester2db.o

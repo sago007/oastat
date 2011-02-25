@@ -27,6 +27,7 @@
 #define CTF1F "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,?,'1fctf',?)"
 #define ELIMINATION "INSERT INTO oastat_team_events(gamenumber,second,team,eventtype,generic1,gametype) VALUES (?,?,?,?,?,'elimination')"
 #define CTF_ELIM "INSERT INTO oastat_team_events(gamenumber,second,team,player,eventtype,generic1,gametype) VALUES (?,?,?,?,?,?,'ctfelim')"
+#define HARVESTER "INSERT INTO oastat_team_events(gamenumber,second,team,player,player2,eventtype,amount,gametype) VALUES (?,?,?,?,?,?,?,'harvester')"
 
 static string S_GETLASTGAMENUMBER = GETLASTGAMENUMBER;
 static string S_STARTGAME = STARTGAME;
@@ -43,6 +44,7 @@ static string S_CTF = CTF;
 static string S_CTF1F = CTF1F;
 static string S_ELIMINATION = ELIMINATION;
 static string S_CTF_ELIM = CTF_ELIM;
+static string S_HARVESTER = HARVESTER;
 
 static string booltext[2] = {"n","y"};
 
@@ -193,6 +195,11 @@ void Db2DbiXX::addElimination(int second, int roundnumber, int team, int event) 
 void Db2DbiXX::addCtfElimination(int second, int roundnumber, string player, int team, int event) {
     *sql << S_CTF_ELIM,gamenumber,second,team,player,event,roundnumber,exec();
     DebugMessage("addCtfElimination");
+}
+
+void Db2DbiXX::addHarvester(int second, string player1, string player2, int team, int event, int score) {
+    *sql << S_HARVESTER,gamenumber,second,team,player1,player2,event,score,exec();
+    DebugMessage("addHarvester");
 }
 
 int Db2DbiXX::getNextGameNumber() {
