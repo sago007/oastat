@@ -71,6 +71,7 @@ CREATE TABLE oastat_kills (
 
 CREATE TABLE oastat_players (
     guid character varying(64) NOT NULL,
+    playerid SERIAL NOT NULL,
     lastseen DATETIME NOT NULL,
     isbot char(1) DEFAULT 'n' NOT NULL,
     model character varying(64) NOT NULL,

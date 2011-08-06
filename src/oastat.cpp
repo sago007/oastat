@@ -149,54 +149,56 @@ int main (int argc, const char* argv[])
 }
 
 static int processStdIn(istream* in_p) {
-    string line;
-    OaStatStruct oss;
-    list<OaStatStruct> osslist;
     bool done = true;
-    try{
-        while( getline(*in_p,line) )
-        {
-            oss.clear();
-            oss.parseLine(line);
-            osslist.push_back(oss);
-            if(oss.command=="ShutdownGame")
+    do
+    {
+        string line = "";
+        OaStatStruct oss;
+        list<OaStatStruct> osslist;
+        try{
+            while( getline(*in_p,line) )
             {
-                while(!osslist.empty())
+                oss.clear();
+                oss.parseLine(line);
+                osslist.push_back(oss);
+                if(oss.command=="ShutdownGame")
                 {
-                    //cout << "next: " << oss.command << endl;
-                    oss = osslist.front();
-                    //cout << "gotten, now popping" << endl;
-                    osslist.pop_front();
-                    //cout << "popping complete" << endl;
-                    for(int i=0;i<commands.size();i++)
+                    while(!osslist.empty())
                     {
-                        //try {
-                        //cout << "checking " << commands.at(i)->getCommand() << endl;
-                        if(commands.at(i)->canProcess(oss)) {
-                            //cout << "Exectured by " << commands.at(i)->getCommand();
-                            commands.at(i)->process(oss);
-                        }
-                        /*} catch (exception &e)
+                        //cout << "next: " << oss.command << endl;
+                        oss = osslist.front();
+                        //cout << "gotten, now popping" << endl;
+                        osslist.pop_front();
+                        //cout << "popping complete" << endl;
+                        for(int i=0;i<commands.size();i++)
                         {
-                            cerr << "oastat: Sql_error at line: \"" << line << "\"" << endl <<
-                                    "oastat:   Error is: " << e.what() <<
-                                    "oastat:   Last error will be ignored" << endl;
-                        }*/
+                            //try {
+                            //cout << "checking " << commands.at(i)->getCommand() << endl;
+                            if(commands.at(i)->canProcess(oss)) {
+                                //cout << "Exectured by " << commands.at(i)->getCommand();
+                                commands.at(i)->process(oss);
+                            }
+                            /*} catch (exception &e)
+                            {
+                                cerr << "oastat: Sql_error at line: \"" << line << "\"" << endl <<
+                                        "oastat:   Error is: " << e.what() <<
+                                        "oastat:   Last error will be ignored" << endl;
+                            }*/
+                        }
+                        //cout << "returned" << endl;
                     }
-                    //cout << "returned" << endl;
                 }
             }
+        } catch (exception &e2) {
+            /*
+             If there is an error write it in the log and try again continue
+             */
+            osslist.clear(); 
+            cerr << "oastat: Crashed (NEAR FATAL EXCEPTION) at line: \"" << line << "\"" << endl <<
+                    "oastat:   Error is: " << e2.what() << endl;
+            done = false;
         }
-    } catch (exception &e2) {
-        /*
-         If there is an error write it in the log and try again continue
-         */
-        cerr << "oastat: Crashed (NEAR FATAL EXCEPTION) at line: \"" << line << "\"" << endl <<
-                "oastat:   Error is: " << e2.what() << endl;
-        done = false;
-    }
-    if (!done)
-        return processStdIn(in_p);
+    } while (!done);
     return 0;
 }
 
