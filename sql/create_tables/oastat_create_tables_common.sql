@@ -111,7 +111,10 @@ CREATE TABLE oastat_uservars (
 -- CHECKS START
 
 ALTER TABLE oastat_games
-    ADD CONSTRAINT duplet_check UNIQUE (time, servername);
+    ADD CONSTRAINT oastat_duplet_check UNIQUE (time, servername);
+
+ALTER TABLE oastat_players
+    ADD CONSTRAINT oastat_player_index UNIQUE (playerid);
 
 -- CHECKs END
 
