@@ -22,8 +22,8 @@ CREATE TABLE oastat_team_events (
     team integer,
     amount integer DEFAULT 1,
     gametype character varying(20) NOT NULL,
-    player character varying(64),
-    player2 character varying(64),
+    player bigint,
+    player2 bigint,
     eventtype integer NOT NULL,
     generic1 integer
 );
@@ -33,7 +33,7 @@ CREATE TABLE oastat_team_events (
 CREATE TABLE oastat_challenges (
     eventnumber SERIAL PRIMARY KEY,
     gamenumber bigint NOT NULL,
-    player character varying(64) NOT NULL,
+    player bigint NOT NULL,
     challenge integer NOT NULL,
     amount integer DEFAULT 1 NOT NULL
 );
@@ -64,7 +64,7 @@ CREATE TABLE oastat_kills (
     gamenumber bigint NOT NULL,
     second integer NOT NULL,
     attacker character varying(64) NOT NULL,
-    target character varying(64) NOT NULL,
+    target bigint NOT NULL,
     modtype integer NOT NULL
 );
 
@@ -83,7 +83,7 @@ CREATE TABLE oastat_players (
 
 CREATE TABLE oastat_points (
     eventnumber SERIAL PRIMARY KEY,
-    player character varying(64) NOT NULL,
+    player bigint NOT NULL,
     second integer NOT NULL,
     score integer NOT NULL,
     gamenumber bigint NOT NULL
@@ -94,7 +94,7 @@ CREATE TABLE oastat_points (
 CREATE TABLE oastat_userinfo (
     eventNumber SERIAL PRIMARY KEY,
     gamenumber bigint NOT NULL,
-    guid character varying(64) NOT NULL,
+    player bigint NOT NULL,
     team integer,
     model character varying(64) NOT NULL,
     skill integer,
