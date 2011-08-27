@@ -38,6 +38,8 @@ public:
     void addElimination(int second, int roundnumber, int team, int event);
     void addCtfElimination(int second, int roundnumber, string player, int team, int event);
     void addHarvester(int second, string player1, string player2, int team, int event, int score);
+    void addChallenge(int second, string player, int challenge, int amount);
+    void doNotCommit();
 private:
     session *sql;
     transaction *commitlock;

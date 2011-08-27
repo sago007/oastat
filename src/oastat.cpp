@@ -56,6 +56,8 @@ using namespace std;
 #include "oss2db/Elimination2Db.hpp"
 #include "oss2db/CtfElimination2Db.hpp"
 #include "oss2db/Harvester2Db.hpp"
+#include "oss2db/Challenge2Db.hpp"
+#include "oss2db/Warmup2Db.hpp"
 
 string clientIdMap[MAX_ID];
 
@@ -84,6 +86,8 @@ void addCommands()
     commands.push_back(new Elimination2Db());
     commands.push_back(new CtfElimination2Db());
     commands.push_back(new Harvester2Db());
+    commands.push_back(new Challenge2Db());
+    commands.push_back(new Warmup2Db());
     //Add more commands just above here
 
     for(int i=0;i<commands.size();i++) {

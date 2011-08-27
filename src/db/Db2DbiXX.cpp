@@ -19,6 +19,7 @@
 #define PLAYERSINSERT "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,?,?,?,?)"
 #define PLAYERSUPDATE "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ? AND lastseen < ?"
 #define USERINFOINSERT "INSERT INTO oastat_userinfo(gamenumber,second,player,team,model,skill) VALUES (?,?,(SELECT playerid FROM oastat_players WHERE guid = ?),?,?,?)"
+#define USERINFOUPDATE "UPDATE oastat_userinfo SET team = ?, model = ?, skill = ? WHERE gamenumber = ? AND second = ? AND player IN (SELECT playerid FROM oastat_players WHERE GUID = ?)"
 #define ENDGAME "UPDATE oastat_games SET second=? WHERE gamenumber = ?"
 #define KILL "INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES(?,?,?,(SELECT playerid FROM oastat_players WHERE guid = ?),?)"
 #define AWARD "INSERT INTO oastat_awards(gamenumber,second,player,award) VALUES (?,?,(SELECT playerid FROM oastat_players WHERE guid = ?),?)"
@@ -28,6 +29,7 @@
 #define ELIMINATION "INSERT INTO oastat_team_events(gamenumber,second,team,eventtype,generic1,gametype) VALUES (?,?,?,?,?,'elimination')"
 #define CTF_ELIM "INSERT INTO oastat_team_events(gamenumber,second,team,player,eventtype,generic1,gametype) VALUES (?,?,?,(SELECT playerid FROM oastat_players WHERE guid = ?),?,?,'ctfelim')"
 #define HARVESTER "INSERT INTO oastat_team_events(gamenumber,second,team,player,player2,eventtype,amount,gametype) VALUES (?,?,?,(SELECT playerid FROM oastat_players WHERE guid = ?),(SELECT playerid FROM oastat_players WHERE guid = ?),?,?,'harvester')"
+#define CHALLENGES "INSERT INTO oastat_challenges(gamenumber,player,challenge,amount) VALUES (?,(SELECT playerid FROM oastat_players WHERE guid = ?),?,?)"
 
 static string S_GETLASTGAMENUMBER = GETLASTGAMENUMBER;
 static string S_STARTGAME = STARTGAME;
@@ -36,6 +38,7 @@ static string S_STARTGAME_LASTVALUE = STARTGAME_LASTVALUE;
 static string S_PLAYERSINSERT = PLAYERSINSERT;
 static string S_PLAYERSUPDATE = PLAYERSUPDATE;
 static string S_USERINFOINSERT = USERINFOINSERT;
+static string S_USERINFOUPDATE = USERINFOUPDATE;
 static string S_ENDGAME = ENDGAME;
 static string S_KILL = KILL;
 static string S_AWARD = AWARD;
@@ -45,6 +48,7 @@ static string S_CTF1F = CTF1F;
 static string S_ELIMINATION = ELIMINATION;
 static string S_CTF_ELIM = CTF_ELIM;
 static string S_HARVESTER = HARVESTER;
+static string S_CHALLENGES = CHALLENGES;
 
 static string booltext[2] = {"n","y"};
 
@@ -153,7 +157,14 @@ void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int secon
         }
         *sql << S_PLAYERSUPDATE,nickname,oss->getDateTime(),booltext[isBot],model,headmodel,guid,oss->getDateTime(),exec();
     }
-    *sql << S_USERINFOINSERT,gamenumber,second,guid,team,model,skill,exec();
+    try{
+        *sql << "SAVEPOINT SETUSERINFO",exec();
+        *sql << S_USERINFOINSERT,gamenumber,second,guid,team,model,skill,exec();
+        *sql << "RELEASE SAVEPOINT SETUSERINFO",exec(); //Needed by postgresql
+    }catch (dbixx_error &e) {
+        *sql << "ROLLBACK TO SAVEPOINT SETUSERINFO",exec();
+        *sql << S_USERINFOUPDATE,team,model,skill,gamenumber,second,guid,exec();
+    }
     DebugMessage("setPlayerInfo for "+nickname+" with GUID: "+guid);
 }
 
@@ -202,6 +213,11 @@ void Db2DbiXX::addHarvester(int second, string player1, string player2, int team
     DebugMessage("addHarvester");
 }
 
+void Db2DbiXX::addChallenge(int second, string player, int challenge, int amount) {
+    *sql << S_CHALLENGES,gamenumber,player,challenge,amount,exec();
+    DebugMessage("addChallenge");
+}
+
 int Db2DbiXX::getNextGameNumber() {
     int result = -1;
     row r;
@@ -236,6 +252,11 @@ int Db2DbiXX::getLastGameNumber() {
  This is a helper function so we never forget to start a new transaction after a commit.
  */
 void Db2DbiXX::Commit() {
+    if(!isok)
+    {
+        Rollback();
+        return;
+    }
     commitlock->commit();
     delete commitlock;
     commitlock = new transaction(*sql);
@@ -255,6 +276,10 @@ bool Db2DbiXX::Ok() {
 
 void Db2DbiXX::SetOk(bool ok) {
     isok = ok;
+}
+
+void Db2DbiXX::doNotCommit() {
+    SetOk(false);
 }
 
 void Db2DbiXX::DebugMessage(string msg) {

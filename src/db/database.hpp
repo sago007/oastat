@@ -67,6 +67,11 @@ class Database {
                 virtual int getGameNumber() = 0;
 
                 /**
+                 * If this is called the game will be not be written to the database. This is good for warmup or games ended prematurely. 
+                 */
+                virtual void doNotCommit() = 0;
+                
+                /**
                  * Document setPlayerInfo(string,string,bool,int,int,string,string,int) here...
                  *
                  * @param guid - the hashed GUID of the player
@@ -175,6 +180,16 @@ class Database {
                  * @param score number of skulls brought in in one capture
                  */
                 virtual void addHarvester(int second, string player1, string player2, int team, int event, int score) = 0;
+                
+                /**
+                 * Add information about a scored challenge
+                 * 
+                 * @param second time from gamestart
+                 * @param player player getting the challenge
+                 * @param challenge the challenge gotten (see challenges.h)
+                 * @param amount normally 1
+                 */
+                virtual void addChallenge(int second, string player, int challenge, int amount) = 0;
 };
 
 #endif //_DATABASE_H
