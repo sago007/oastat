@@ -108,6 +108,19 @@ CREATE TABLE oastat_uservars (
     numericvalue float -- if value is a float or int, then the value will also be stored here for easier comparison
 );
 
+CREATE TABLE oastat_config (
+    thekey character varying(64) PRIMARY KEY,
+    thevalue character varying(256)
+);
+
+CREATE TABLE oastat_config_uservars2save (
+    thekey character varying(100) PRIMARY KEY
+);
+
+CREATE TABLE oastat_config_gamevars2save (
+    cvar character varying(100) PRIMARY KEY
+);
+
 -- CHECKS START
 
 ALTER TABLE oastat_games
@@ -115,6 +128,9 @@ ALTER TABLE oastat_games
 
 ALTER TABLE oastat_players
     ADD CONSTRAINT oastat_player_index UNIQUE (playerid);
+
+ALTER TABLE oastat_userinfo
+    ADD CONSTRAINT oastat_userinfo_second_limit UNIQUE (gamenumber,player,second);
 
 -- CHECKs END
 
@@ -150,7 +166,7 @@ ALTER TABLE oastat_challenges -- RESTRICT2POSTGRESQL
 
 
 ALTER TABLE oastat_challenges -- RESTRICT2POSTGRESQL
-    ADD CONSTRAINT oastat_challenges_fk2 FOREIGN KEY (player) REFERENCES oastat_players(guid) ON UPDATE CASCADE ON DELETE RESTRICT; -- RESTRICT2POSTGRESQL
+    ADD CONSTRAINT oastat_challenges_fk2 FOREIGN KEY (player) REFERENCES oastat_players(playerid) ON UPDATE CASCADE ON DELETE RESTRICT; -- RESTRICT2POSTGRESQL
 
 
 ALTER TABLE oastat_kills -- RESTRICT2POSTGRESQL
@@ -162,7 +178,7 @@ ALTER TABLE oastat_points -- RESTRICT2POSTGRESQL
 
 
 ALTER TABLE oastat_points -- RESTRICT2POSTGRESQL
-    ADD CONSTRAINT oastat_points_fk2 FOREIGN KEY (player) REFERENCES oastat_players(guid) ON UPDATE CASCADE ON DELETE RESTRICT; -- RESTRICT2POSTGRESQL
+    ADD CONSTRAINT oastat_points_fk2 FOREIGN KEY (player) REFERENCES oastat_players(playerid) ON UPDATE CASCADE ON DELETE RESTRICT; -- RESTRICT2POSTGRESQL
 
 
 ALTER TABLE oastat_userinfo -- RESTRICT2POSTGRESQL
@@ -177,3 +193,14 @@ ALTER TABLE oastat_uservars -- RESTRICT2POSTGRESQL
 set foreign_key_checks = 1 ; -- RESTRICT2MYSQL
 
 -- FOREIGN KEYS END
+
+-- STANDARD VALUES
+
+INSERT INTO oastat_config_uservars2save (thekey) VALUES ('hc');
+
+INSERT INTO oastat_config_gamevars2save (cvar) VALUES ('g_instantgib');
+INSERT INTO oastat_config_gamevars2save (cvar) VALUES ('g_rockets');
+
+COMMIT;
+
+-- STANDARD VALUES END
