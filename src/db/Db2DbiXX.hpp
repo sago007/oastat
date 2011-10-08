@@ -13,6 +13,7 @@
 #include <dbixx/dbixx.h>
 #include <iostream>
 #include <sstream>
+#include <set>
 
 using namespace std;
 using namespace dbixx;
@@ -54,8 +55,11 @@ private:
     void SetOk(bool ok);
     void DebugMessage(string msg);
     void InitStrings(string backend);
+    void ReadConfigFromDb();
     string sql_backend;
     bool last_value;
+    set<string> cvars2save;
+    set<string> uservars2save;
 };
 
 #endif	/* _DB2DBIXX_HPP */

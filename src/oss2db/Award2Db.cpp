@@ -23,6 +23,9 @@ void Award2Db::process(OaStatStruct oss) {
     if(!canProcess(oss))
         return; //Invalid oss
 
+    if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<MAX_ID)
+        return; //Not valid player
+    
     string player = clientIdMap[oss.parameters.at(0)];
 
     dp->addAward(oss.second,player,oss.parameters.at(1));

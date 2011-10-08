@@ -26,10 +26,14 @@ void Harvester2Db::process(OaStatStruct oss) {
 
     if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<MAX_ID) {
         player1 = clientIdMap[oss.parameters.at(0)];
+    } else {
+        player1 = "WORLD";
     }
 
     if(oss.parameters.at(3)>-1 && oss.parameters.at(3)<MAX_ID) {
         player2 = clientIdMap[oss.parameters.at(3)];
+    } else {
+        player2 = "WORLD";
     }
 
     dp->addHarvester(oss.second,player1,player2,oss.parameters.at(1) /*team*/,oss.parameters.at(2) /*event*/, oss.parameters.at(4) /*score*/ );

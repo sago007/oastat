@@ -165,7 +165,7 @@ static int processStdIn(istream* in_p) {
                 oss.clear();
                 oss.parseLine(line);
                 osslist.push_back(oss);
-                if(oss.command=="ShutdownGame")
+                if(true || oss.command=="ShutdownGame")
                 {
                     while(!osslist.empty())
                     {

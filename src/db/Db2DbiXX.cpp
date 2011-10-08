@@ -18,18 +18,21 @@
 #define STARTGAME_LASTVALUE "INSERT INTO oastat_games(gametype, mapname, basegame,servername,time) VALUES (?,LOWER(?),?,?,?)"
 #define PLAYERSINSERT "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,?,?,?,?)"
 #define PLAYERSUPDATE "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ? AND lastseen < ?"
-#define USERINFOINSERT "INSERT INTO oastat_userinfo(gamenumber,second,player,team,model,skill) VALUES (?,?,(SELECT playerid FROM oastat_players WHERE guid = ?),?,?,?)"
-#define USERINFOUPDATE "UPDATE oastat_userinfo SET team = ?, model = ?, skill = ? WHERE gamenumber = ? AND second = ? AND player IN (SELECT playerid FROM oastat_players WHERE GUID = ?)"
+#define USERINFOINSERT "INSERT INTO oastat_userinfo(gamenumber,second,player,team,model,skill) VALUES (?,?,COALESCE(SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?,?)"
+#define USERINFOUPDATE "UPDATE oastat_userinfo SET team = ?, model = ?, skill = ? WHERE gamenumber = ? AND second = ? AND player = COALESCE((SELECT playerid FROM oastat_players WHERE GUID = ?),0)"
 #define ENDGAME "UPDATE oastat_games SET second=? WHERE gamenumber = ?"
-#define KILL "INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES(?,?,?,(SELECT playerid FROM oastat_players WHERE guid = ?),?)"
-#define AWARD "INSERT INTO oastat_awards(gamenumber,second,player,award) VALUES (?,?,(SELECT playerid FROM oastat_players WHERE guid = ?),?)"
-#define POINT "INSERT INTO oastat_points(gamenumber,second,player,score) VALUES (?,?,(SELECT playerid FROM oastat_players WHERE guid = ?),?)"
-#define CTF "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,(SELECT playerid FROM oastat_players WHERE guid = ?),'ctf',?)"
-#define CTF1F "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,(SELECT playerid FROM oastat_players WHERE guid = ?),'1fctf',?)"
+#define KILL "INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES(?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?)"
+#define AWARD "INSERT INTO oastat_awards(gamenumber,second,player,award) VALUES (?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?)"
+#define POINT "INSERT INTO oastat_points(gamenumber,second,player,score) VALUES (?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?)"
+#define CTF "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),'ctf',?)"
+#define CTF1F "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),'1fctf',?)"
 #define ELIMINATION "INSERT INTO oastat_team_events(gamenumber,second,team,eventtype,generic1,gametype) VALUES (?,?,?,?,?,'elimination')"
-#define CTF_ELIM "INSERT INTO oastat_team_events(gamenumber,second,team,player,eventtype,generic1,gametype) VALUES (?,?,?,(SELECT playerid FROM oastat_players WHERE guid = ?),?,?,'ctfelim')"
-#define HARVESTER "INSERT INTO oastat_team_events(gamenumber,second,team,player,player2,eventtype,amount,gametype) VALUES (?,?,?,(SELECT playerid FROM oastat_players WHERE guid = ?),(SELECT playerid FROM oastat_players WHERE guid = ?),?,?,'harvester')"
-#define CHALLENGES "INSERT INTO oastat_challenges(gamenumber,player,challenge,amount) VALUES (?,(SELECT playerid FROM oastat_players WHERE guid = ?),?,?)"
+#define CTF_ELIM "INSERT INTO oastat_team_events(gamenumber,second,team,player,eventtype,generic1,gametype) VALUES (?,?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?,'ctfelim')"
+#define HARVESTER "INSERT INTO oastat_team_events(gamenumber,second,team,player,player2,eventtype,amount,gametype) VALUES (?,?,?,NVL((SELECT playerid FROM oastat_players WHERE guid = ?),0),COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?,'harvester')"
+#define CHALLENGES "INSERT INTO oastat_challenges(gamenumber,player,challenge,amount) VALUES (?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?)"
+
+#define SELECT_USERVARS2SAVE "SELECT thekey FROM oastat_config_uservars2save"
+#define SELECT_CVARS2SAVE "SELECT cvar FROM oastat_config_gamevars2save"
 
 static string S_GETLASTGAMENUMBER = GETLASTGAMENUMBER;
 static string S_STARTGAME = STARTGAME;
@@ -64,11 +67,28 @@ void Db2DbiXX::InitStrings(string backend) {
     sql_backend = backend;
 }
 
+void Db2DbiXX::ReadConfigFromDb() {
+    result res;  
+    row r;
+    string value;
+    *sql<<SELECT_USERVARS2SAVE,res;
+    while(res.next(r)) {
+        r >> value;
+        uservars2save.insert(value);
+    }
+    *sql<< SELECT_CVARS2SAVE,res;
+    while(res.next(r)) {
+        r >> value;
+        cvars2save.insert(value);
+    }
+}
+
 Db2DbiXX::Db2DbiXX() {
     sql = new session("pgsql");
     InitStrings("pgsql");
     sql->param("dbname","oastat");
     sql->connect();
+    ReadConfigFromDb();
     commitlock = new transaction(*sql);
     debug = true;
 }
@@ -90,6 +110,7 @@ Db2DbiXX::Db2DbiXX(string dbargs)
         }
     }
     sql->connect();
+    ReadConfigFromDb();
     commitlock = new transaction(*sql);
     debug = true;
     //sql(dbargs);
@@ -105,7 +126,7 @@ Db2DbiXX::~Db2DbiXX() {
 }
 
 void Db2DbiXX::createTables() {
-
+    
 }
 
 void Db2DbiXX::startGame(int gametype, string mapname, string basegame, string servername, OaStatStruct *oss) {

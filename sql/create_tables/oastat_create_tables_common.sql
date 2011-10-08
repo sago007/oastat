@@ -1,4 +1,6 @@
--- oastat. General create table file
+-- oastat. General create table file RESTRICT2MYSQL RESTRICT2POSTGRESQL
+-- oastat. Create table file for PostgreSQL    RESTRICT2POSTGRESQL
+-- oastat. Create table file for MySQL         RESTRICT2MYSQL
 
 -- Note: Lines containing RESTRICT2MYSQL are MySQL specific
 -- Note: Lines containing RESTRICT2POSTGRESQL are PostgreSQL specific
@@ -63,7 +65,7 @@ CREATE TABLE oastat_kills (
     eventnumber SERIAL PRIMARY KEY,
     gamenumber bigint NOT NULL,
     second integer NOT NULL,
-    attacker character varying(64) NOT NULL,
+    attacker bigint NOT NULL,
     target bigint NOT NULL,
     modtype integer NOT NULL
 );
@@ -136,7 +138,7 @@ ALTER TABLE oastat_userinfo
 
 -- PRIMARY KEYS START
 
-
+-- Notice that pRIMARY KEY must not be only uppercase letters or it will be replaced by a script! 
 ALTER TABLE oastat_players
     ADD CONSTRAINT oastat_players_pk pRIMARY KEY (guid);
 
@@ -196,10 +198,23 @@ set foreign_key_checks = 1 ; -- RESTRICT2MYSQL
 
 -- STANDARD VALUES
 
+-- default uservars to save:
 INSERT INTO oastat_config_uservars2save (thekey) VALUES ('hc');
 
+-- default cvars to save:
 INSERT INTO oastat_config_gamevars2save (cvar) VALUES ('g_instantgib');
 INSERT INTO oastat_config_gamevars2save (cvar) VALUES ('g_rockets');
+INSERT INTO oastat_config_gamevars2save (cvar) VALUES ('dmflags');
+INSERT INTO oastat_config_gamevars2save (cvar) VALUES ('g_lms_mode');
+INSERT INTO oastat_config_gamevars2save (cvar) VALUES ('elimination_roundtime');
+INSERT INTO oastat_config_gamevars2save (cvar) VALUES ('capturelimit');
+INSERT INTO oastat_config_gamevars2save (cvar) VALUES ('sv_maxclients');
+INSERT INTO oastat_config_gamevars2save (cvar) VALUES ('fraglimit');
+INSERT INTO oastat_config_gamevars2save (cvar) VALUES ('bot_minplayers');
+
+
+-- default player for WORLD events:
+INSERT INTO oastat_players (guid,playerid,lastseen, isbot, model,headmodel,nickname) VALUES ('WORLD',-1,now(),'n','-','-','-');
 
 COMMIT;
 
