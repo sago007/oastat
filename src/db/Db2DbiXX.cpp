@@ -34,6 +34,8 @@
 #define SELECT_USERVARS2SAVE "SELECT thekey FROM oastat_config_uservars2save"
 #define SELECT_CVARS2SAVE "SELECT cvar FROM oastat_config_gamevars2save"
 
+#define SELECT_DUPLICATE "SELECT 'X' FROM oastat_games WHERE servername = ? AND time = ?"
+
 static string S_GETLASTGAMENUMBER = GETLASTGAMENUMBER;
 static string S_STARTGAME = STARTGAME;
 static string S_ADDCVAR = ADDCVAR;
@@ -81,6 +83,15 @@ void Db2DbiXX::ReadConfigFromDb() {
         r >> value;
         cvars2save.insert(value);
     }
+}
+
+bool Db2DbiXX::IsDuplicate(string servername, tm thetime) {
+    result res;
+    *sql << SELECT_DUPLICATE,servername,thetime,res;
+    if(res.rows())
+        return true;
+    else
+        return false;
 }
 
 Db2DbiXX::Db2DbiXX() {
@@ -133,6 +144,11 @@ void Db2DbiXX::startGame(int gametype, string mapname, string basegame, string s
     sql->reconnect();
     Rollback(); //in case there was some garbage that could be comitted (like warmup or an unfinished game)
     SetOk(true);
+    if(IsDuplicate(servername,oss->getDateTime())) {
+        SetOk(false);
+        cout << "Duplicate:" << servername << ", " << oss->getTimeStamp() << endl;
+        return;
+    }
     if(last_value) {
         *sql << S_STARTGAME_LASTVALUE,gametype,mapname,basegame,servername,oss->getDateTime(),exec();
         gamenumber = getLastGameNumber();
@@ -148,6 +164,8 @@ void Db2DbiXX::startGame(int gametype, string mapname, string basegame, string s
 }
 
 void Db2DbiXX::addGameCvar(string cvar, string value) {
+    if(!isok)
+        return;
     *sql << S_ADDCVAR,gamenumber,cvar,value,0,exec();
     DebugMessage("addCvar");
 }
@@ -156,6 +174,8 @@ void Db2DbiXX::addGameCvar(string cvar, string value) {
  endGame is called then we finnish the game. This also means that it is safe to commit
  */
 void Db2DbiXX::endGame(int second) {
+    if(!isok)
+        return;
     *sql << S_ENDGAME,second,gamenumber,exec();
     Commit(); //Game have ended, transaction is in a stable state
     DebugMessage("endgame");
@@ -166,6 +186,8 @@ int Db2DbiXX::getGameNumber() {
 }
 
 void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, OaStatStruct *oss) {
+    if(!isok)
+        return;
     if(team>-1)
     {
         try{
@@ -190,6 +212,8 @@ void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int secon
 }
 
 void Db2DbiXX::addKill(int second, string attackerID, string targetID, int type) {
+    if(!isok)
+        return;
     *sql<< S_KILL,gamenumber,second,attackerID,targetID,type,exec();
     DebugMessage("addKill");
 }
@@ -200,41 +224,57 @@ void Db2DbiXX::addKill(int second, string attackerID, string targetID, int type)
 }*/
 
 void Db2DbiXX::addAward(int second, string player, int award) {
+    if(!isok)
+        return;
     *sql << S_AWARD,gamenumber,second,player,award,exec();
     DebugMessage("addAward");
 }
 
 void Db2DbiXX::addScoreInfo(int second, string player, int score) {
+    if(!isok)
+        return;
     *sql << S_POINT,gamenumber,second,player,score,exec();
     DebugMessage("addScoreInfo");
 }
 
 void Db2DbiXX::addCtf(int second, string player, int team, int event) {
+    if(!isok)
+        return;
     *sql << S_CTF,gamenumber,second,team,player,event,exec();
     DebugMessage("addCtf");
 }
 
 void Db2DbiXX::addCtf1f(int second, string player, int team, int event) {
+    if(!isok)
+        return;
     *sql << S_CTF1F,gamenumber,second,team,player,event,exec();
     DebugMessage("addCtf1f");
 }
 
 void Db2DbiXX::addElimination(int second, int roundnumber, int team, int event) {
+    if(!isok)
+        return;
     *sql << S_ELIMINATION,gamenumber,second,team,event,roundnumber,exec();
     DebugMessage("addElimination");
 }
 
 void Db2DbiXX::addCtfElimination(int second, int roundnumber, string player, int team, int event) {
+    if(!isok)
+        return;
     *sql << S_CTF_ELIM,gamenumber,second,team,player,event,roundnumber,exec();
     DebugMessage("addCtfElimination");
 }
 
 void Db2DbiXX::addHarvester(int second, string player1, string player2, int team, int event, int score) {
+    if(!isok)
+        return;
     *sql << S_HARVESTER,gamenumber,second,team,player1,player2,event,score,exec();
     DebugMessage("addHarvester");
 }
 
 void Db2DbiXX::addChallenge(int second, string player, int challenge, int amount) {
+    if(!isok)
+        return;
     *sql << S_CHALLENGES,gamenumber,player,challenge,amount,exec();
     DebugMessage("addChallenge");
 }

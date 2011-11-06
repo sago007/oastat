@@ -56,6 +56,7 @@ private:
     void DebugMessage(string msg);
     void InitStrings(string backend);
     void ReadConfigFromDb();
+    bool IsDuplicate(string servername, tm thetime);
     string sql_backend;
     bool last_value;
     set<string> cvars2save;
