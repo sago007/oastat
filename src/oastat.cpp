@@ -154,6 +154,8 @@ int main (int argc, const char* argv[])
 
 static int processStdIn(istream* in_p) {
     bool done = true;
+    OaStatStruct *startstruct;
+    startstruct = NULL;
     do
     {
         string line = "";
@@ -165,6 +167,10 @@ static int processStdIn(istream* in_p) {
                 oss.clear();
                 oss.parseLine(line);
                 osslist.push_back(oss);
+		if(oss.command=="InitGame")
+		    startstruct = &osslist.back();
+		if(oss.command=="Warmup" && startstruct)
+		    startstruct->restOfLine. += "\\isWarmup\\1"; //Workaround to stop warmup 
                 if(oss.command=="ShutdownGame")
                 {
                     while(!osslist.empty())
@@ -191,6 +197,7 @@ static int processStdIn(istream* in_p) {
                         }
                         //cout << "returned" << endl;
                     }
+		    startstruct = NULL;
                 }
             }
         } catch (exception &e2) {

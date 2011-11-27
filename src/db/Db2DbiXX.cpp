@@ -28,7 +28,7 @@
 #define CTF1F "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),'1fctf',?)"
 #define ELIMINATION "INSERT INTO oastat_team_events(gamenumber,second,team,eventtype,generic1,gametype) VALUES (?,?,?,?,?,'elimination')"
 #define CTF_ELIM "INSERT INTO oastat_team_events(gamenumber,second,team,player,eventtype,generic1,gametype) VALUES (?,?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?,'ctfelim')"
-#define HARVESTER "INSERT INTO oastat_team_events(gamenumber,second,team,player,player2,eventtype,amount,gametype) VALUES (?,?,?,NVL((SELECT playerid FROM oastat_players WHERE guid = ?),0),COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?,'harvester')"
+#define HARVESTER "INSERT INTO oastat_team_events(gamenumber,second,team,player,player2,eventtype,amount,gametype) VALUES (?,?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?,'harvester')"
 #define CHALLENGES "INSERT INTO oastat_challenges(gamenumber,player,challenge,amount) VALUES (?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?)"
 
 #define SELECT_USERVARS2SAVE "SELECT thekey FROM oastat_config_uservars2save"
@@ -101,7 +101,7 @@ Db2DbiXX::Db2DbiXX() {
     sql->connect();
     ReadConfigFromDb();
     commitlock = new transaction(*sql);
-    debug = true;
+    debug = false;
 }
 
 Db2DbiXX::Db2DbiXX(string dbargs)
@@ -123,7 +123,7 @@ Db2DbiXX::Db2DbiXX(string dbargs)
     sql->connect();
     ReadConfigFromDb();
     commitlock = new transaction(*sql);
-    debug = true;
+    debug = false;
     //sql(dbargs);
 }
 
@@ -144,11 +144,17 @@ void Db2DbiXX::startGame(int gametype, string mapname, string basegame, string s
     sql->reconnect();
     Rollback(); //in case there was some garbage that could be comitted (like warmup or an unfinished game)
     SetOk(true);
+    if(oss->restOfLine.find("\\isWarmup\\1") != string::npos)
+    {
+	SetOk(false);
+	cout << "Warmup: " << servername << ", " << oss->getTimeStamp() << endl;
+	return;
+    }
     if(IsDuplicate(servername,oss->getDateTime())) {
         SetOk(false);
         cout << "Duplicate:" << servername << ", " << oss->getTimeStamp() << endl;
         return;
-    }
+    }  
     if(last_value) {
         *sql << S_STARTGAME_LASTVALUE,gametype,mapname,basegame,servername,oss->getDateTime(),exec();
         gamenumber = getLastGameNumber();
@@ -166,6 +172,8 @@ void Db2DbiXX::startGame(int gametype, string mapname, string basegame, string s
 void Db2DbiXX::addGameCvar(string cvar, string value) {
     if(!isok)
         return;
+    if(cvars2save.find(cvar) == cvars2save.end())
+        return; //not to be saved
     *sql << S_ADDCVAR,gamenumber,cvar,value,0,exec();
     DebugMessage("addCvar");
 }
