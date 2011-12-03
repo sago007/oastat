@@ -170,7 +170,7 @@ static int processStdIn(istream* in_p) {
 		if(oss.command=="InitGame")
 		    startstruct = &osslist.back();
 		if(oss.command=="Warmup" && startstruct)
-		    startstruct->restOfLine. += "\\isWarmup\\1"; //Workaround to stop warmup 
+		    startstruct->restOfLine += "\\isWarmup\\1"; //Workaround to stop warmup 
                 if(oss.command=="ShutdownGame")
                 {
                     while(!osslist.empty())
