@@ -36,13 +36,20 @@ bool Userinfo2Db::canProcess(OaStatStruct oss) {
 void Userinfo2Db::process(OaStatStruct oss) {
     if(!canProcess(oss))
         return; //Invalid oss
+    bool isBot = false;
     map<string,string> arguments = oss.GetInfostring();
 
-    if(arguments["id"].length()>0) //Not bot
-        clientIdMap[oss.parameters.at(0)] = getHashedId(arguments["id"]);
+    if(arguments["id"].length()>0 || arguments["hashedid"].length() > 0) //Not bot
+	if(arguments["id"].length()>0)
+		clientIdMap[oss.parameters.at(0)] = getHashedId(arguments["id"]);
+	else
+	    clientIdMap[oss.parameters.at(0)] = arguments["hashedid"];
     else //bot
+    {
         clientIdMap[oss.parameters.at(0)] = arguments["n"];
+	isBot = true;
+    }
     string player = clientIdMap[oss.parameters.at(0)];
 
-    dp->setPlayerInfo(player,arguments["n"],arguments["id"]=="",oss.second,atoi(arguments["t"].c_str()), arguments["model"],arguments["hmodel"],-1,&oss);
+    dp->setPlayerInfo(player,arguments["n"],isBot,oss.second,atoi(arguments["t"].c_str()), arguments["model"],arguments["hmodel"],-1,&oss);
 }

@@ -99,6 +99,7 @@ int main (int argc, const char* argv[])
 {
     string dbargs = "";
     string filename = "";
+    string backend = "DbiXX";
     /////////////
     dbargs = "mysql dbname oastat username poul";
     filename = "/home/poul/.openarena/elimination/games.log";
@@ -113,8 +114,13 @@ int main (int argc, const char* argv[])
             i++;
             filename = string(argv[i]);
         }
+	if(string(argv[i]) == "-backend" && onemore) {
+	    i++;
+	    backend = string(argv[i]);
+	}
     }
     try{
+	db = NULL;
         #if USESTDOUT
 	cout << "INFO: oastat " << VERSION << " ready to process data" << endl;
         db = new DB2stdout();
@@ -129,12 +135,20 @@ int main (int argc, const char* argv[])
         #endif*/
 
         #if USEDBIXX
-        cout << "Using DBI" << endl;
-        if(dbargs.length()<1)
-            db = new Db2DbiXX();
-        else
-            db = new Db2DbiXX(dbargs);
+	if(backend == "DbiXX") {
+	    cout << "Using DBI" << endl;
+	    if(dbargs.length()<1)
+		db = new Db2DbiXX();
+	    else
+		db = new Db2DbiXX(dbargs);
+	}
         #endif
+
+	if(!db) {
+	    string error("Failed to find backend: ");
+	    error += backend;
+	    throw error.c_str();
+	}
 
         addCommands();
 
