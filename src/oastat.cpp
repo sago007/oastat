@@ -41,6 +41,9 @@ using namespace std;
 #ifdef USEDBIXX
 #include "db/Db2DbiXX.hpp"
 #endif
+
+#include "db/Db2Xml.hpp"
+
 #include "oastatstruct.h"
 #include "oss2db/struct2db.h"
 #include "local.h"
@@ -143,6 +146,13 @@ int main (int argc, const char* argv[])
 		db = new Db2DbiXX(dbargs);
 	}
         #endif
+		if(backend == "Xml") {
+			cout << "Using XML" << endl;
+			if(dbargs.length()<1)
+				db = new Db2Xml();
+			else
+				db = new Db2Xml(dbargs);
+		}
 
 	if(!db) {
 	    string error("Failed to find backend: ");

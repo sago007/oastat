@@ -50,8 +50,8 @@ void Init2Db::process(OaStatStruct oss) {
                 it->first == "g_gametype" ||
                 it->first == "gamename" ||
                 it->first == "mapname" ||
-                it->first == "sv_hostname" ||
-                it->first == "g_timestamp"
+                it->first == "sv_hostname" /*||
+                it->first == "g_timestamp" do not skip this one*/
           )
                continue; //Skip the ones on the games-table
         dp->addGameCvar(it->first,it->second);

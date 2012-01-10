@@ -27,6 +27,9 @@ ifeq ($(USEDBIXX),1)
         BASE_CFLAGS+= -DUSEDBIXX=1
 endif
 
+O_FILES+= build/db2xml.o
+BASE_CFLAGS+= -DUSEXML=1
+
 total: build/oastat
 
 clean: 
@@ -52,6 +55,9 @@ ifeq ($(USEDBIXX),1)
 build/db2dbixx.o: db/Db2DbiXX.cpp db/Db2DbiXX.hpp db/database.hpp
 	g++ $(BASE_CFLAGS) db/Db2DbiXX.cpp -o build/db2dbixx.o
 endif
+
+build/db2xml.o: db/Db2Xml.cpp db/Db2Xml.hpp db/database.hpp $(H_FILES)
+	g++ $(BASE_CFLAGS) db/Db2Xml.cpp -o build/db2xml.o
 
 build/oastatstruct.o: oastatstruct.cpp oastatstruct.h $(H_FILES)
 	g++ $(BASE_CFLAGS) oastatstruct.cpp -o build/oastatstruct.o
