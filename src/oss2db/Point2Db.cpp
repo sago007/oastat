@@ -22,7 +22,7 @@ void Point2Db::process(OaStatStruct oss) {
     if(!canProcess(oss))
         return; //Invalid oss
 
-    string player = clientIdMap[oss.parameters.at(0)];
+    string player = clientIdMap.at(oss.parameters.at(0));
 
     dp->addScoreInfo(oss.second,player,oss.parameters.at(1));
 }

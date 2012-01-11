@@ -25,13 +25,13 @@ void Harvester2Db::process(OaStatStruct oss) {
     string player2 = ""; //Parameter 3
 
     if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<MAX_ID) {
-        player1 = clientIdMap[oss.parameters.at(0)];
+        player1 = clientIdMap.at(oss.parameters.at(0));
     } else {
         player1 = "WORLD";
     }
 
     if(oss.parameters.at(3)>-1 && oss.parameters.at(3)<MAX_ID) {
-        player2 = clientIdMap[oss.parameters.at(3)];
+        player2 = clientIdMap.at(oss.parameters.at(3));
     } else {
         player2 = "WORLD";
     }

@@ -23,7 +23,7 @@ void CtfElimination2Db::process(OaStatStruct oss) {
 
     string player = "";
     if(oss.parameters.at(1)!=-1)
-        player= clientIdMap[oss.parameters.at(1)];
+        player= clientIdMap.at(oss.parameters.at(1));
 
     dp->addCtfElimination(oss.second,oss.parameters.at(0) /*roundnumber*/,
             player,oss.parameters.at(2) /*team*/, oss.parameters.at(3) /*event*/);

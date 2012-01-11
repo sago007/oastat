@@ -219,6 +219,8 @@ int Db2Xml::getPsoudoId(string guid)
 	if(ret > 0)
 		return ret;
 	ret = nextId++;
+	if(ret == 1022) //world
+		ret = nextId++;
 	psoudo_playerids[guid] = ret;
 	return ret;
 }

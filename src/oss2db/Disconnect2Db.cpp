@@ -36,7 +36,7 @@ void Disconnect2Db::process(OaStatStruct oss) {
     if(!canProcess(oss))
         return; //Invalid oss
 
-    string player = clientIdMap[oss.parameters.at(0)];
+    string player = clientIdMap.at(oss.parameters.at(0));
 
     dp->setPlayerInfo(player,"",false,oss.second,-1,"","",-1,&oss);
 }

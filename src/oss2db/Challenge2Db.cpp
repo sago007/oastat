@@ -25,7 +25,7 @@ void Challenge2Db::process(OaStatStruct oss) {
     if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<MAX_ID)
         return; //Not valid player
 
-    string player = clientIdMap[oss.parameters.at(0)];
+    string player = clientIdMap.at(oss.parameters.at(0));
 
     dp->addChallenge(oss.second,player,oss.parameters.at(1),oss.parameters.at(2));
 }

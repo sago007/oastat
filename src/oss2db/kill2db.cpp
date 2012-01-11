@@ -38,13 +38,13 @@ void Kill2Db::process(OaStatStruct oss) {
     string target = ""; //Parameter 1
     string killer = ""; //Parameter 0
     //mod is parameter 2
-    if(oss.parameters.at(1)>-1 && oss.parameters.at(1)<MAX_ID) {
-        target = clientIdMap[oss.parameters.at(1)];
+    if(oss.parameters.at(1)>-1 && oss.parameters.at(1)<clientIdMap.size() && oss.parameters.at(1)!=1022 ) {
+        target = clientIdMap.at(oss.parameters.at(1));
     } else
         target ="WORLD"; //Should not be possible... except maybe for NPC-creatures
 
-    if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<MAX_ID) {
-        killer = clientIdMap[oss.parameters.at(0)];
+    if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<clientIdMap.size() && oss.parameters.at(0)!=1022) {
+        killer = clientIdMap.at(oss.parameters.at(0));
     } else
         killer ="WORLD";
 

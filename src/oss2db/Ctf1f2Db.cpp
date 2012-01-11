@@ -24,7 +24,7 @@ void Ctf1f2Db::process(OaStatStruct oss) {
 
     string player = "";
     if(oss.parameters.at(0)!=-1)
-        player= clientIdMap[oss.parameters.at(0)];
+        player= clientIdMap.at(oss.parameters.at(0));
 
     dp->addCtf1f(oss.second,player,oss.parameters.at(1) /*team*/, oss.parameters.at(2) /*event*/);
 }

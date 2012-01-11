@@ -62,7 +62,7 @@ using namespace std;
 #include "oss2db/Challenge2Db.hpp"
 #include "oss2db/Warmup2Db.hpp"
 
-string clientIdMap[MAX_ID];
+vector<string> clientIdMap;
 
 static int processStdIn(istream* in_p);
 

@@ -27,7 +27,7 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 #include "oastatstruct.h"
 
 /* This array contains all the guid hashes of the players in a game */
-extern string clientIdMap[MAX_ID];
+extern vector<string> clientIdMap;
 
 /* returns the SHA-1 code of the parameter */
 extern string getHashedId(string unhashedID);
