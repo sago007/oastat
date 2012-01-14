@@ -18,7 +18,7 @@
 #define STARTGAME_LASTVALUE "INSERT INTO oastat_games(gametype, mapname, basegame,servername,time) VALUES (?,LOWER(?),?,?,?)"
 #define PLAYERSINSERT "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,?,?,?,?)"
 #define PLAYERSUPDATE "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ? AND lastseen < ?"
-#define USERINFOINSERT "INSERT INTO oastat_userinfo(gamenumber,second,player,team,model,skill) VALUES (?,?,COALESCE(SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?,?)"
+#define USERINFOINSERT "INSERT INTO oastat_userinfo(gamenumber,second,player,team,model,skill) VALUES (?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?,?)"
 #define USERINFOUPDATE "UPDATE oastat_userinfo SET team = ?, model = ?, skill = ? WHERE gamenumber = ? AND second = ? AND player = COALESCE((SELECT playerid FROM oastat_players WHERE GUID = ?),0)"
 #define ENDGAME "UPDATE oastat_games SET second=? WHERE gamenumber = ?"
 #define KILL "INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES(?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?)"

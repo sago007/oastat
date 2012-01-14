@@ -128,9 +128,6 @@ CREATE TABLE oastat_config_gamevars2save (
 ALTER TABLE oastat_games
     ADD CONSTRAINT oastat_duplet_check UNIQUE (time, servername);
 
-ALTER TABLE oastat_players
-    ADD CONSTRAINT oastat_player_index UNIQUE (playerid);
-
 ALTER TABLE oastat_userinfo
     ADD CONSTRAINT oastat_userinfo_second_limit UNIQUE (gamenumber,player,second);
 
@@ -215,6 +212,7 @@ INSERT INTO oastat_config_gamevars2save (cvar) VALUES ('bot_minplayers');
 
 -- default player for WORLD events:
 INSERT INTO oastat_players (guid,playerid,lastseen, isbot, model,headmodel,nickname) VALUES ('WORLD',-1,now(),'n','-','-','-');
+UPDATE oastat_players SET playerid = -1 WHERE guid = 'WORLD';
 
 COMMIT;
 
