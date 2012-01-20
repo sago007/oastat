@@ -45,11 +45,12 @@ void Userinfo2Db::process(OaStatStruct oss) {
 	while(clientIdMap.size() < oss.parameters.at(0)+2)
 		clientIdMap.push_back("");
 	
-    if(arguments["id"].length()>0 || arguments["hashedid"].length() > 0) //Not bot
-	if(arguments["id"].length()>0)
-		clientIdMap[oss.parameters.at(0)] = getHashedId(arguments["id"]);
-	else
-	    clientIdMap[oss.parameters.at(0)] = arguments["hashedid"];
+    if(arguments["id"].length()>0 || arguments["hashedid"].length() > 0) { //Not bot
+		if(arguments["id"].length()>0)
+			clientIdMap[oss.parameters.at(0)] = getHashedId(arguments["id"]);
+		else
+			clientIdMap[oss.parameters.at(0)] = arguments["hashedid"];
+	}
     else //bot
     {
         clientIdMap[oss.parameters.at(0)] = (boost::format("%1%_client%2%") % arguments["n"] % oss.parameters.at(0) ).str();
