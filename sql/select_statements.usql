@@ -29,9 +29,9 @@ WHERE games.gamenumber IN (SELECT DISTINCT gamenumber FROM OASTAT_KILLS)
 AND games.mapname = 'dm4ish'; 
 
 -- Top players on dm4ish
-SELECT p.nickname, count(0) AS kills FROM OASTAT_PLAYERS p, OASTAT_KILLS k
-WHERE k.attacker = p.guid AND k.gamenumber IN (SELECT gamenumber FROM OASTAT_GAMES WHERE LOWER(mapname) = 'dm4ish') 
-GROUP BY p.guid,p.nickname ORDER BY kills DESC;
+SELECT p.nickname, count(0) AS kills FROM oastat_players p, oastat_kills k
+WHERE k.attacker = p.playerid AND k.gamenumber IN (SELECT gamenumber FROM oastat_games WHERE LOWER(mapname) = 'dm4ish') 
+GROUP BY p.playerid,p.nickname ORDER BY kills DESC;
 
 --Top killers on the server
 SELECT p.nickname, count(0) FROM OASTAT_PLAYERS p, OASTAT_KILLS k 

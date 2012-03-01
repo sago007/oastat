@@ -23,6 +23,7 @@ Copyright (C) 2010 Poul Sander (oastat@poulsander.com)
 
 #include <iostream>
 #include <fstream>
+#include <pstreams/pstream.h>
 #include <vector>
 #include <gcrypt.h>
 #include <stdio.h>
@@ -70,6 +71,7 @@ Database *db;
 
 vector<Struct2Db*> commands;
 
+
 /**
  * This function adds objects that are inherited from the Struct2Db class
  * to the vector commands.
@@ -103,6 +105,7 @@ int main (int argc, const char* argv[])
     string dbargs = "";
     string filename = "";
     string backend = "DbiXX";
+	bool useTail = false;
     /////////////
     dbargs = "mysql dbname oastat username poul";
     filename = "/home/poul/.openarena/elimination/games.log";
@@ -117,6 +120,9 @@ int main (int argc, const char* argv[])
             i++;
             filename = string(argv[i]);
         }
+		if(string(argv[i]) == "-tail") {
+			useTail = true;
+		}
 	if(string(argv[i]) == "-backend" && onemore) {
 	    i++;
 	    backend = string(argv[i]);
@@ -163,8 +169,13 @@ int main (int argc, const char* argv[])
         addCommands();
 
         if(filename.length()>0) {
-            ifstream in(filename.c_str(),ifstream::in);
-            processStdIn(&in);
+			if(useTail) {
+				redi::ipstream in("tail -s 1 -f "+filename);
+				processStdIn(&in);
+			} else {
+				ifstream in(filename.c_str(),ifstream::in);
+				processStdIn(&in);
+			}
         } else
             processStdIn(&cin);
 

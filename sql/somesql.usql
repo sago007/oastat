@@ -114,3 +114,22 @@ SELECT MAX(gamenumber) FROM OASTAT_GAMES;
 INSERT INTO oastat_games(gametype, mapname, basegame) VALUES (0,'dm4ish','baseoa');
 
 INSERT INTO oastat_userinfo(gamenumber,second,guid,team,model,skill) VALUES (4857,14989,'^3^^8/Eli^7te/^3-^3^^8VeRt^7!go^3*',0,'tony/default',-1);
+
+(
+SELECT s.player, s.second, s.score
+FROM oastat_points s
+WHERE s.gamenumber =140
+ORDER BY SECOND
+)
+UNION ALL (
+
+SELECT s.player, g.second, s.score
+FROM oastat_games g, oastat_points s
+WHERE g.gamenumber = s.gamenumber
+AND g.gamenumber =140
+AND s.eventnumber = (
+SELECT max( maxs.eventnumber )
+FROM oastat_points maxs
+WHERE maxs.player = s.player
+AND maxs.gamenumber = g.gamenumber )
+)
