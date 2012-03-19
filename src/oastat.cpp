@@ -104,11 +104,13 @@ int main (int argc, const char* argv[])
 {
     string dbargs = "";
     string filename = "";
-    string backend = "DbiXX";
+    string backend = "Xml";
 	bool useTail = false;
     /////////////
-    dbargs = "mysql dbname oastat username poul";
-    filename = "/home/poul/.openarena/elimination/games.log";
+    //dbargs = "mysql dbname oastat";
+    boost::format f("%1%/.openarena/baseoa/games.log");
+    f % getenv("HOME");
+    filename = f.str();
     ////////////
     for(int i=1;i<argc;i++) {
         bool onemore = i+1<argc;
@@ -220,7 +222,7 @@ static int processStdIn(istream* in_p) {
                             //try {
                             //cout << "checking " << commands.at(i)->getCommand() << endl;
                             if(commands.at(i)->canProcess(oss)) {
-                                //cout << "Exectured by " << commands.at(i)->getCommand();
+                                //cout << "Execturedg by " << commands.at(i)->getCommand();
                                 commands.at(i)->process(oss);
                             }
                             /*} catch (exception &e)

@@ -10,16 +10,21 @@
 
 Db2Xml::Db2Xml() 
 {
-	p_output_dir = "~/oastat";
-	p_postscript = "";
 	psoudo_playerids.clear();
 	nextId = 1;
-	//mkdir(p_output_dir.c_str());
+        boost::format path("%1%/oastat");
+        path % getenv("HOME");
+        p_output_dir = path.str();
+        boost::format fmkdir("mkdir -p %1%");
+        fmkdir % p_output_dir;
+        system(fmkdir.str().c_str());
 }
 Db2Xml::Db2Xml(string dbargs)
 {
-	p_output_dir = "~/oastat";
-	p_postscript = "";
+	boost::format path("%1%/oastat");
+        path % getenv("HOME");
+        p_output_dir = path.str();
+        p_postscript = "";
 	psoudo_playerids.clear();
 	nextId = 1;
 	//mkdir(p_output_dir.c_str());
@@ -38,7 +43,10 @@ Db2Xml::Db2Xml(string dbargs)
 			if(holder == "postscript")
 				p_postscript = param;
 		}
-	}	
+	}
+        boost::format fmkdir("mkdir -p %1%");
+        fmkdir % p_output_dir;
+        system(fmkdir.str().c_str());
 }
 Db2Xml::Db2Xml(const Db2Xml& orig)
 {
@@ -82,6 +90,8 @@ void Db2Xml::endGame(int second)
 			% (p_gametime.tm_hour) % (p_gametime.tm_min) % (p_gametime.tm_sec) ).str();
 		ofstream outfile;
 		outfile.open (filename.c_str());
+                if(outfile.fail())
+                    cout << "could not create " << filename << endl;
 		outfile << p_xmlcontent;
 		outfile.close();
 		cout << "End game at " << second << "with size " << p_xmlcontent.length() << " written to " << filename << endl;
