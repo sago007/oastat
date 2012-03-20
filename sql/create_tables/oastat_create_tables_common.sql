@@ -10,22 +10,22 @@ SET table_type=INNODB; -- RESTRICT2MYSQL
 
 CREATE TABLE oastat_awards (
     eventNumber SERIAL PRIMARY KEY,
-    gamenumber bigint NOT NULL,
-    second integer,
-    player character varying(64),
+    gamenumber bigint unsigned NOT NULL,
+    second integer NOT NULL,
+    player bigint unsigned NOT NULL,
     award integer NOT NULL
 );
 
 
 CREATE TABLE oastat_team_events (
     eventnumber SERIAL PRIMARY KEY,
-    gamenumber bigint NOT NULL,
+    gamenumber bigint unsigned NOT NULL,
     second integer NOT NULL,
     team integer,
     amount integer DEFAULT 1,
     gametype character varying(20) NOT NULL,
-    player bigint,
-    player2 bigint,
+    player bigint unsigned,
+    player2 bigint unsigned,
     eventtype integer NOT NULL,
     generic1 integer
 );
@@ -34,8 +34,8 @@ CREATE TABLE oastat_team_events (
 
 CREATE TABLE oastat_challenges (
     eventnumber SERIAL PRIMARY KEY,
-    gamenumber bigint NOT NULL,
-    player bigint NOT NULL,
+    gamenumber bigint unsigned NOT NULL,
+    player bigint unsigned NOT NULL,
     challenge integer NOT NULL,
     amount integer DEFAULT 1 NOT NULL
 );
@@ -48,14 +48,14 @@ CREATE TABLE oastat_games (
     mapname character varying(64) NOT NULL,
     time DATETIME NOT NULL,
     basegame character varying(64) DEFAULT 'baseoa' NOT NULL,
-    second integer,
+    second integer, -- is null until the match is over
     servername character varying(64) DEFAULT 'noname' NOT NULL
 );
 
 COMMENT ON TABLE oastat_games IS 'Has the information common for an entire match/map'; -- RESTRICT2POSTGRESQL
 
 CREATE TABLE oastat_gamecvars (
-    gamenumber bigint NOT NULL, -- will be used as primary key later
+    gamenumber bigint unsigned NOT NULL, -- will be used as primary key later
     cvar character varying(100) NOT NULL, -- will be used as primary key later
     value character varying(256), -- defined as MAX_CVAR_VALUE_STRING in q_shared.h
     numericvalue float -- if value is a float or int, then the value will also be stored here for easier comparison
@@ -63,10 +63,10 @@ CREATE TABLE oastat_gamecvars (
 
 CREATE TABLE oastat_kills (
     eventnumber SERIAL PRIMARY KEY,
-    gamenumber bigint NOT NULL,
+    gamenumber bigint unsigned NOT NULL,
     second integer NOT NULL,
-    attacker bigint NOT NULL,
-    target bigint NOT NULL,
+    attacker bigint unsigned NOT NULL,
+    target bigint unsigned NOT NULL,
     modtype integer NOT NULL
 );
 
@@ -85,18 +85,18 @@ CREATE TABLE oastat_players (
 
 CREATE TABLE oastat_points (
     eventnumber SERIAL PRIMARY KEY,
-    player bigint NOT NULL,
+    player bigint unsigned NOT NULL,
     second integer NOT NULL,
     score integer NOT NULL,
-    gamenumber bigint NOT NULL
+    gamenumber bigint unsigned NOT NULL
 );
 
 
 
 CREATE TABLE oastat_userinfo (
     eventNumber SERIAL PRIMARY KEY,
-    gamenumber bigint NOT NULL,
-    player bigint NOT NULL,
+    gamenumber bigint unsigned NOT NULL,
+    player bigint unsigned NOT NULL,
     team integer,
     model character varying(64) NOT NULL,
     skill integer,
@@ -104,23 +104,23 @@ CREATE TABLE oastat_userinfo (
 );
 
 CREATE TABLE oastat_uservars (
-    userinfoevent bigint NOT NULL, -- will be used as primary key
+    userinfoevent bigint unsigned NOT NULL, -- will be used as primary key
     thekey character varying(100) NOT NULL, -- will be used as primary key later
     thevalue character varying(256),
     numericvalue float -- if value is a float or int, then the value will also be stored here for easier comparison
 );
 
 CREATE TABLE oastat_config (
-    thekey character varying(64) PRIMARY KEY,
+    thekey character varying(64) pRIMARY KEY,
     thevalue character varying(256)
 );
 
 CREATE TABLE oastat_config_uservars2save (
-    thekey character varying(100) PRIMARY KEY
+    thekey character varying(100) pRIMARY KEY
 );
 
 CREATE TABLE oastat_config_gamevars2save (
-    cvar character varying(100) PRIMARY KEY
+    cvar character varying(100) pRIMARY KEY
 );
 
 -- CHECKS START
@@ -133,7 +133,7 @@ ALTER TABLE oastat_userinfo
 
 -- CHECKs END
 
--- PRIMARY KEYS START
+-- pRIMARY KEYS START
 
 -- Notice that pRIMARY KEY must not be only uppercase letters or it will be replaced by a script! 
 ALTER TABLE oastat_players
@@ -146,48 +146,59 @@ ALTER TABLE oastat_uservars
     ADD CONSTRAINT oastat_gamevars_pk pRIMARY KEY (userinfoevent,thekey);
 
 
--- PRIMARY KEYS END
+-- pRIMARY KEYS END
 
 -- FOREIGN KEYS START
 
 set foreign_key_checks = 0 ; -- RESTRICT2MYSQL
 
-ALTER TABLE oastat_awards -- RESTRICT2POSTGRESQL
-    ADD CONSTRAINT oastat_awards_gn_fk FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber) ON UPDATE CASCADE ON DELETE CASCADE; -- RESTRICT2POSTGRESQL
+ALTER TABLE oastat_awards 
+    ADD CONSTRAINT oastat_awards_gn_fk FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber) ON UPDATE CASCADE ON DELETE CASCADE; 
 
+ALTER TABLE oastat_team_events 
+    ADD CONSTRAINT oastat_team_events_fk FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber) ON UPDATE CASCADE ON DELETE CASCADE; 
 
-ALTER TABLE oastat_team_events -- RESTRICT2POSTGRESQL
-    ADD CONSTRAINT oastat_captures_fk FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber) ON UPDATE CASCADE ON DELETE CASCADE; -- RESTRICT2POSTGRESQL
+ALTER TABLE oastat_challenges 
+    ADD CONSTRAINT oastat_challenges_fk1 FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber) ON UPDATE CASCADE ON DELETE CASCADE; 
 
+ALTER TABLE oastat_points 
+    ADD CONSTRAINT oastat_points_fk FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber) ON UPDATE CASCADE ON DELETE CASCADE; 
 
-ALTER TABLE oastat_challenges -- RESTRICT2POSTGRESQL
-    ADD CONSTRAINT oastat_challenges_fk1 FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber) ON UPDATE CASCADE ON DELETE CASCADE; -- RESTRICT2POSTGRESQL
+ALTER TABLE oastat_userinfo 
+    ADD CONSTRAINT oastat_userinfo_gn_fk FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber) ON UPDATE CASCADE ON DELETE CASCADE; 
 
+ALTER TABLE oastat_gamecvars 
+    ADD CONSTRAINT oastat_gamecvars_gn_fk FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber)  ON UPDATE CASCADE ON DELETE CASCADE; 
 
-ALTER TABLE oastat_challenges -- RESTRICT2POSTGRESQL
-    ADD CONSTRAINT oastat_challenges_fk2 FOREIGN KEY (player) REFERENCES oastat_players(playerid) ON UPDATE CASCADE ON DELETE RESTRICT; -- RESTRICT2POSTGRESQL
+ALTER TABLE oastat_kills 
+    ADD CONSTRAINT oastat_kills_gn_fk FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber) ON UPDATE CASCADE ON DELETE CASCADE; 
 
+ALTER TABLE oastat_uservars 
+    ADD CONSTRAINT oastat_uservars_ui_fk FOREIGN KEY (userinfoevent) REFERENCES oastat_userinfo(eventNumber) ON UPDATE CASCADE ON DELETE CASCADE; 
 
-ALTER TABLE oastat_kills -- RESTRICT2POSTGRESQL
-    ADD CONSTRAINT oastat_kills_gn_fk FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber) ON UPDATE CASCADE ON DELETE CASCADE; -- RESTRICT2POSTGRESQL
+ALTER TABLE oastat_challenges 
+    ADD CONSTRAINT oastat_challenges_fk2 FOREIGN KEY (player) REFERENCES oastat_players(playerid) ON UPDATE CASCADE ON DELETE RESTRICT; 
 
+ALTER TABLE oastat_points 
+    ADD CONSTRAINT oastat_points_fk2 FOREIGN KEY (player) REFERENCES oastat_players(playerid) ON UPDATE CASCADE ON DELETE RESTRICT; 
 
-ALTER TABLE oastat_points -- RESTRICT2POSTGRESQL
-    ADD CONSTRAINT oastat_points_fk FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber) ON UPDATE CASCADE ON DELETE CASCADE; -- RESTRICT2POSTGRESQL
+ALTER TABLE oastat_kills 
+    ADD CONSTRAINT oastat_kills_fk1 FOREIGN KEY (attacker) REFERENCES oastat_players(playerid) ON UPDATE CASCADE ON DELETE RESTRICT;
 
+ALTER TABLE oastat_kills 
+    ADD CONSTRAINT oastat_kills_fk2 FOREIGN KEY (target) REFERENCES oastat_players(playerid) ON UPDATE CASCADE ON DELETE RESTRICT;
 
-ALTER TABLE oastat_points -- RESTRICT2POSTGRESQL
-    ADD CONSTRAINT oastat_points_fk2 FOREIGN KEY (player) REFERENCES oastat_players(playerid) ON UPDATE CASCADE ON DELETE RESTRICT; -- RESTRICT2POSTGRESQL
+ALTER TABLE oastat_awards
+    ADD CONSTRAINT oastat_awards_fk1 FOREIGN KEY (player) REFERENCES oastat_players(playerid) ON UPDATE CASCADE ON DELETE RESTRICT;
 
+ALTER TABLE oastat_team_events
+    ADD CONSTRAINT oastat_team_events_fk2 FOREIGN KEY (player) REFERENCES oastat_players(playerid) ON UPDATE CASCADE ON DELETE RESTRICT;
 
-ALTER TABLE oastat_userinfo -- RESTRICT2POSTGRESQL
-    ADD CONSTRAINT oastat_userinfo_gn_fk FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber) ON UPDATE CASCADE ON DELETE CASCADE; -- RESTRICT2POSTGRESQL
+ALTER TABLE oastat_team_events
+    ADD CONSTRAINT oastat_team_events_fk3 FOREIGN KEY (player2) REFERENCES oastat_players(playerid) ON UPDATE CASCADE ON DELETE RESTRICT;
 
-ALTER TABLE oastat_gamecvars -- RESTRICT2POSTGRESQL
-    ADD CONSTRAINT oastat_gamecvars_gn_fk FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber)  ON UPDATE CASCADE ON DELETE CASCADE; -- RESTRICT2POSTGRESQL
-
-ALTER TABLE oastat_uservars -- RESTRICT2POSTGRESQL
-    ADD CONSTRAINT oastat_uservars_ui_fk FOREIGN KEY (userinfoevent) REFERENCES oastat_userinfo(eventNumber) ON UPDATE CASCADE ON DELETE CASCADE; -- RESTRICT2POSTGRESQL
+ALTER TABLE oastat_userinfo
+    ADD CONSTRAINT oastat_userinfo_fk1 FOREIGN KEY (player) REFERENCES oastat_players(playerid) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 set foreign_key_checks = 1 ; -- RESTRICT2MYSQL
 
@@ -211,8 +222,8 @@ INSERT INTO oastat_config_gamevars2save (cvar) VALUES ('bot_minplayers');
 
 
 -- default player for WORLD events:
-INSERT INTO oastat_players (guid,playerid,lastseen, isbot, model,headmodel,nickname) VALUES ('WORLD',-1,now(),'n','-','-','-');
-UPDATE oastat_players SET playerid = -1 WHERE guid = 'WORLD';
+INSERT INTO oastat_players (guid,lastseen, isbot, model,headmodel,nickname) VALUES ('WORLD',now(),'n','-','-','-');
+UPDATE oastat_players SET playerid = 0 WHERE guid = 'WORLD';
 
 COMMIT;
 
