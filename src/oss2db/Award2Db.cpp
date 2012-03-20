@@ -23,7 +23,7 @@ void Award2Db::process(OaStatStruct oss) {
     if(!canProcess(oss))
         return; //Invalid oss
 
-    if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<MAX_ID)
+    if(oss.parameters.at(0)==-1)
         return; //Not valid player
     
     string player = clientIdMap.at(oss.parameters.at(0));
