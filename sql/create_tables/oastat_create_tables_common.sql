@@ -73,7 +73,7 @@ CREATE TABLE oastat_kills (
 
 CREATE TABLE oastat_players (
     guid character varying(64) NOT NULL,
-    playerid SERIAL NOT NULL,
+    playerid SERIAL unique NOT NULL, -- all small UNIQUE will be removed in mySQL, required for postgres
     lastseen DATETIME NOT NULL,
     isbot char(1) DEFAULT 'n' NOT NULL,
     model character varying(64) NOT NULL,
