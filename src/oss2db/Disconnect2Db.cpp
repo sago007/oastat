@@ -24,21 +24,24 @@ http://code.google.com/p/oastat/
 #include "Disconnect2Db.h"
 
 
-string Disconnect2Db::getCommand() {
-    return "ClientDisconnect";
+string Disconnect2Db::getCommand()
+{
+	return "ClientDisconnect";
 }
 
-bool Disconnect2Db::canProcess(OaStatStruct oss) {
-    if(oss.command != getCommand() || oss.parameters.size()<1)
-        return false;
-    return true;
+bool Disconnect2Db::canProcess(OaStatStruct oss)
+{
+	if(oss.command != getCommand() || oss.parameters.size()<1)
+		return false;
+	return true;
 }
 
-void Disconnect2Db::process(OaStatStruct oss) {
-    if(!canProcess(oss))
-        return; //Invalid oss
+void Disconnect2Db::process(OaStatStruct oss)
+{
+	if(!canProcess(oss))
+		return; //Invalid oss
 
-    string player = clientIdMap.at(oss.parameters.at(0));
+	string player = clientIdMap.at(oss.parameters.at(0));
 
-    dp->setPlayerInfo(player,"",false,oss.second,-1,"","",-1,&oss);
+	dp->setPlayerInfo(player,"",false,oss.second,-1,"","",-1,&oss);
 }

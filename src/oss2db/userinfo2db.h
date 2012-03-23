@@ -27,14 +27,15 @@ http://code.google.com/p/oastat/
 #include "struct2db.h"
 #include "../local.h"
 
-class Userinfo2Db : public Struct2Db{
+class Userinfo2Db : public Struct2Db
+{
 public:
 
-    string getCommand();
+	string getCommand();
 
-    bool canProcess(OaStatStruct oss);
+	bool canProcess(OaStatStruct oss);
 
-    void process(OaStatStruct oss);
+	void process(OaStatStruct oss);
 private:
 
 };

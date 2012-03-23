@@ -24,23 +24,26 @@ http://code.google.com/p/oastat/
 #include "Ctf1f2Db.hpp"
 
 
-string Ctf1f2Db::getCommand() {
-    return "1FCTF";
+string Ctf1f2Db::getCommand()
+{
+	return "1FCTF";
 }
 
-bool Ctf1f2Db::canProcess(OaStatStruct oss) {
-    if(oss.command != getCommand() || oss.parameters.size()<3)
-        return false;
-    return true;
+bool Ctf1f2Db::canProcess(OaStatStruct oss)
+{
+	if(oss.command != getCommand() || oss.parameters.size()<3)
+		return false;
+	return true;
 }
 
-void Ctf1f2Db::process(OaStatStruct oss) {
-    if(!canProcess(oss))
-        return; //Invalid oss
+void Ctf1f2Db::process(OaStatStruct oss)
+{
+	if(!canProcess(oss))
+		return; //Invalid oss
 
-    string player = "";
-    if(oss.parameters.at(0)!=-1)
-        player= clientIdMap.at(oss.parameters.at(0));
+	string player = "";
+	if(oss.parameters.at(0)!=-1)
+		player= clientIdMap.at(oss.parameters.at(0));
 
-    dp->addCtf1f(oss.second,player,oss.parameters.at(1) /*team*/, oss.parameters.at(2) /*event*/);
+	dp->addCtf1f(oss.second,player,oss.parameters.at(1) /*team*/, oss.parameters.at(2) /*event*/);
 }

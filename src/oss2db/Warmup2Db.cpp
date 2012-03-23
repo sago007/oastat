@@ -23,19 +23,22 @@ http://code.google.com/p/oastat/
 
 #include "Warmup2Db.hpp"
 
-string Warmup2Db::getCommand() {
-    return "Warmup";
+string Warmup2Db::getCommand()
+{
+	return "Warmup";
 }
 
-bool Warmup2Db::canProcess(OaStatStruct oss) {
-    if(oss.command != getCommand())
-        return false;
-    return true;
+bool Warmup2Db::canProcess(OaStatStruct oss)
+{
+	if(oss.command != getCommand())
+		return false;
+	return true;
 }
 
-void Warmup2Db::process(OaStatStruct oss) {
-    if(!canProcess(oss))
-        return; //Invalid oss
+void Warmup2Db::process(OaStatStruct oss)
+{
+	if(!canProcess(oss))
+		return; //Invalid oss
 
-    dp->doNotCommit();
+	dp->doNotCommit();
 }

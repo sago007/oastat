@@ -24,31 +24,38 @@ http://code.google.com/p/oastat/
 
 #include "kill2db.h"
 
-string Kill2Db::getCommand() {
-    return "Kill";
+string Kill2Db::getCommand()
+{
+	return "Kill";
 }
 
-bool Kill2Db::canProcess(OaStatStruct oss) {
-    if(oss.command != getCommand() || oss.parameters.size()<=3)
-        return false;
-    return true;
+bool Kill2Db::canProcess(OaStatStruct oss)
+{
+	if(oss.command != getCommand() || oss.parameters.size()<=3)
+		return false;
+	return true;
 }
 
-void Kill2Db::process(OaStatStruct oss) {
-    if(!canProcess(oss))
-        return; //Invalid oss
-    string target = ""; //Parameter 1
-    string killer = ""; //Parameter 0
-    //mod is parameter 2
-    if(oss.parameters.at(1)>-1 && oss.parameters.at(1)<clientIdMap.size() && oss.parameters.at(1)!=1022 ) {
-        target = clientIdMap.at(oss.parameters.at(1));
-    } else
-        target ="WORLD"; //Should not be possible... except maybe for NPC-creatures
+void Kill2Db::process(OaStatStruct oss)
+{
+	if(!canProcess(oss))
+		return; //Invalid oss
+	string target = ""; //Parameter 1
+	string killer = ""; //Parameter 0
+	//mod is parameter 2
+	if(oss.parameters.at(1)>-1 && oss.parameters.at(1)<clientIdMap.size() && oss.parameters.at(1)!=1022 )
+	{
+		target = clientIdMap.at(oss.parameters.at(1));
+	}
+	else
+		target ="WORLD"; //Should not be possible... except maybe for NPC-creatures
 
-    if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<clientIdMap.size() && oss.parameters.at(0)!=1022) {
-        killer = clientIdMap.at(oss.parameters.at(0));
-    } else
-        killer ="WORLD";
+	if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<clientIdMap.size() && oss.parameters.at(0)!=1022)
+	{
+		killer = clientIdMap.at(oss.parameters.at(0));
+	}
+	else
+		killer ="WORLD";
 
-    dp->addKill(oss.second,killer,target,oss.parameters.at(2));
+	dp->addKill(oss.second,killer,target,oss.parameters.at(2));
 }

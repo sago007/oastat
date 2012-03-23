@@ -28,12 +28,13 @@ http://code.google.com/p/oastat/
 #include "struct2db.h"
 #include "../local.h"
 
-class CtfElimination2Db : public  Struct2Db {
+class CtfElimination2Db : public  Struct2Db
+{
 public:
-    string getCommand();
-    bool canProcess(OaStatStruct oss);
+	string getCommand();
+	bool canProcess(OaStatStruct oss);
 
-    void process(OaStatStruct oss);
+	void process(OaStatStruct oss);
 
 private:
 

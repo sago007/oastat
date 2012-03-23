@@ -24,21 +24,24 @@ http://code.google.com/p/oastat/
 #include "Point2Db.hpp"
 
 
-string Point2Db::getCommand() {
-    return "PlayerScore";
+string Point2Db::getCommand()
+{
+	return "PlayerScore";
 }
 
-bool Point2Db::canProcess(OaStatStruct oss) {
-    if(oss.command != getCommand() || oss.parameters.size()<2 || oss.parameters.at(0)<0)
-        return false;
-    return true;
+bool Point2Db::canProcess(OaStatStruct oss)
+{
+	if(oss.command != getCommand() || oss.parameters.size()<2 || oss.parameters.at(0)<0)
+		return false;
+	return true;
 }
 
-void Point2Db::process(OaStatStruct oss) {
-    if(!canProcess(oss))
-        return; //Invalid oss
+void Point2Db::process(OaStatStruct oss)
+{
+	if(!canProcess(oss))
+		return; //Invalid oss
 
-    string player = clientIdMap.at(oss.parameters.at(0));
+	string player = clientIdMap.at(oss.parameters.at(0));
 
-    dp->addScoreInfo(oss.second,player,oss.parameters.at(1));
+	dp->addScoreInfo(oss.second,player,oss.parameters.at(1));
 }

@@ -49,31 +49,35 @@ static char* booltext[2] = {"false","true"};
  * Escapes special chaecters. The best solution should be to use PQescapeStringConn
  * but unfortunatly I had limited success likely because the C++ string class
  * already handles encoding. The only char postgreSql can be cheated by is the
- * single quete, so that is the only one we removes. 
+ * single quete, so that is the only one we removes.
  *
  * @param unescaped string
  * @return escaped string
  */
-string Db2PostgreSQL::sqlescape(string sql) {
-    #if 1
-    string output = "";
-    string::iterator itr;
-    for(itr = sql.begin();itr<sql.end();itr++) {
-        if(*itr == '\'') {
-            output+="\'\'";
-        } else
-        {
-            output += *itr;
-        }
-    }
-    return output;
-    #else
-    char* tmp = (char*)malloc(sql.size()*2);
-    PQescapeStringConn(conn,tmp,sql.c_str(),sql.size()*2,NULL);
-    string res = tmp;
-    free(tmp);
-    return tmp;
-    #endif
+string Db2PostgreSQL::sqlescape(string sql)
+{
+#if 1
+	string output = "";
+	string::iterator itr;
+	for(itr = sql.begin(); itr<sql.end(); itr++)
+	{
+		if(*itr == '\'')
+		{
+			output+="\'\'";
+		}
+		else
+		{
+			output += *itr;
+		}
+	}
+	return output;
+#else
+	char* tmp = (char*)malloc(sql.size()*2);
+	PQescapeStringConn(conn,tmp,sql.c_str(),sql.size()*2,NULL);
+	string res = tmp;
+	free(tmp);
+	return tmp;
+#endif
 }
 
 /**
@@ -82,131 +86,141 @@ string Db2PostgreSQL::sqlescape(string sql) {
  * @param query to execute
  * @return <0 if fail, >=0 if succes and/or >0 if returned tubles
  */
-int Db2PostgreSQL::simpleQuery(const char* query) {
-    res = PQexec(conn, query_string);
-    int ret;
-    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-        if (PQresultStatus(res) == PGRES_TUPLES_OK ) {
-            //If a SELECT STATEMENT count results
-            ret = PQntuples(res);
-            PQclear(res);
-            return ret;
-        }
-        PQclear(res);
-        cout << "FAIL: " << query << endl;
-        return -1;
-    }
-    PQclear(res); //We don't relly care about the result
-    cout << "SUCCES: " << query << endl;
-    return 0;
+int Db2PostgreSQL::simpleQuery(const char* query)
+{
+	res = PQexec(conn, query_string);
+	int ret;
+	if (PQresultStatus(res) != PGRES_COMMAND_OK)
+	{
+		if (PQresultStatus(res) == PGRES_TUPLES_OK )
+		{
+			//If a SELECT STATEMENT count results
+			ret = PQntuples(res);
+			PQclear(res);
+			return ret;
+		}
+		PQclear(res);
+		cout << "FAIL: " << query << endl;
+		return -1;
+	}
+	PQclear(res); //We don't relly care about the result
+	cout << "SUCCES: " << query << endl;
+	return 0;
 }
 
-Db2PostgreSQL::Db2PostgreSQL() {
-    conn = PQconnectdb("dbname=oastat"); //Connect to the database
-    if (PQstatus(conn) == CONNECTION_BAD)
-        throw "Failed to open connection to DB!";
-    gamenumber = -1;
-    cout << "CONNECTED" << endl;
+Db2PostgreSQL::Db2PostgreSQL()
+{
+	conn = PQconnectdb("dbname=oastat"); //Connect to the database
+	if (PQstatus(conn) == CONNECTION_BAD)
+		throw "Failed to open connection to DB!";
+	gamenumber = -1;
+	cout << "CONNECTED" << endl;
 }
 
-Db2PostgreSQL::Db2PostgreSQL(string args) {
-    conn = PQconnectdb(args.c_str()); //Connect to the database
-    if (PQstatus(conn) == CONNECTION_BAD)
-        throw "Failed to open connection to DB!";
-    cout << "CONNECTED" << endl;
+Db2PostgreSQL::Db2PostgreSQL(string args)
+{
+	conn = PQconnectdb(args.c_str()); //Connect to the database
+	if (PQstatus(conn) == CONNECTION_BAD)
+		throw "Failed to open connection to DB!";
+	cout << "CONNECTED" << endl;
 }
 
-Db2PostgreSQL::Db2PostgreSQL(const Db2PostgreSQL& orig) {
-    throw "May not make copy of Db2PostgreSQL";
+Db2PostgreSQL::Db2PostgreSQL(const Db2PostgreSQL& orig)
+{
+	throw "May not make copy of Db2PostgreSQL";
 }
 
-Db2PostgreSQL::~Db2PostgreSQL() {
-    PQfinish(conn);
+Db2PostgreSQL::~Db2PostgreSQL()
+{
+	PQfinish(conn);
 }
 
 void Db2PostgreSQL::createTables()
 {
-    //Nothing to do
+	//Nothing to do
 }
 
 void Db2PostgreSQL::startGame(int gametype, string mapname, string basegame)
 {
-    simpleQuery("ROLLBACK"); //In case we have just completed warmup or 
-    simpleQuery("BEGIN");
-    //simpleQuery("LOCK TABLE OASTAT_GAMES IN SHARE ROW EXCLUSIVE"); //Hold a lock until we have selected the just inserted line
-    gamenumber = -1; //Prevent any following sql commands from completing until this is set!
-    sprintf(query_string,STARTGAME,gametype,mapname.c_str(),basegame.c_str());
-    res = PQexec(conn, query_string);
-    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-        PQclear(res);
-        cout << "FAIL: " << query_string << endl;
-        simpleQuery("ROLLBACK");
-        return;
-    }
-    PQclear(res);
-    //res = PQexec(conn, "SELECT MAX(gamenumber) FROM OASTAT_GAMES");
-    res = PQexec(conn, "SELECT currval('oastat_games_gamenumber_seq')");
-    if (PQresultStatus(res) != PGRES_TUPLES_OK ) {
-        PQclear(res);
-        simpleQuery("ROLLBACK");
-        return;
-    }
-    gamenumber = atoi(PQgetvalue(res,0,0));
-    cout << "GAME: " << PQgetvalue(res,0,0) << ":" << gamenumber << endl;
-    PQclear(res);
-    //simpleQuery("COMMIT"); //release lock
-    //simpleQuery("BEGIN"); //This is just for performace...
+	simpleQuery("ROLLBACK"); //In case we have just completed warmup or
+	simpleQuery("BEGIN");
+	//simpleQuery("LOCK TABLE OASTAT_GAMES IN SHARE ROW EXCLUSIVE"); //Hold a lock until we have selected the just inserted line
+	gamenumber = -1; //Prevent any following sql commands from completing until this is set!
+	sprintf(query_string,STARTGAME,gametype,mapname.c_str(),basegame.c_str());
+	res = PQexec(conn, query_string);
+	if (PQresultStatus(res) != PGRES_COMMAND_OK)
+	{
+		PQclear(res);
+		cout << "FAIL: " << query_string << endl;
+		simpleQuery("ROLLBACK");
+		return;
+	}
+	PQclear(res);
+	//res = PQexec(conn, "SELECT MAX(gamenumber) FROM OASTAT_GAMES");
+	res = PQexec(conn, "SELECT currval('oastat_games_gamenumber_seq')");
+	if (PQresultStatus(res) != PGRES_TUPLES_OK )
+	{
+		PQclear(res);
+		simpleQuery("ROLLBACK");
+		return;
+	}
+	gamenumber = atoi(PQgetvalue(res,0,0));
+	cout << "GAME: " << PQgetvalue(res,0,0) << ":" << gamenumber << endl;
+	PQclear(res);
+	//simpleQuery("COMMIT"); //release lock
+	//simpleQuery("BEGIN"); //This is just for performace...
 }
 
 int Db2PostgreSQL::getGameNumber()
 {
-    return gamenumber; //Only to standard out, normally this should be read from db!!!
+	return gamenumber; //Only to standard out, normally this should be read from db!!!
 }
 
 void Db2PostgreSQL::setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill)
 {
-    //If team < 0 then it is a disconnect event that need not to be in
-    if(team>-1)
-    {
-        /*
-         Note: There is a possible race condition here!
-         * There should be
-         */
-        //simpleQuery("COMMIT");
-        sprintf(query_string,"SELECT * FROM oastat_players WHERE GUID = '%s'",sqlescape(guid).c_str());
-        if(simpleQuery(query_string)<1) {
-            sprintf(query_string,PLAYERSINSERT,sqlescape(guid).c_str(),sqlescape(nickname).c_str(),booltext[isBot],sqlescape(model).c_str(),sqlescape(headmodel).c_str());
-            simpleQuery(query_string);
-        }
-        sprintf(query_string,PLAYERSUPDATE,sqlescape(nickname).c_str(),booltext[isBot],sqlescape(model).c_str(),sqlescape(headmodel).c_str(),guid.c_str());
-        simpleQuery(query_string);
-        //simpleQuery("BEGIN");
-    }
-    sprintf(query_string,USERINFOINSERT,getGameNumber(),second,sqlescape(guid).c_str(),team,sqlescape(model).c_str(),skill);
-    simpleQuery(query_string);
+	//If team < 0 then it is a disconnect event that need not to be in
+	if(team>-1)
+	{
+		/*
+		 Note: There is a possible race condition here!
+		 * There should be
+		 */
+		//simpleQuery("COMMIT");
+		sprintf(query_string,"SELECT * FROM oastat_players WHERE GUID = '%s'",sqlescape(guid).c_str());
+		if(simpleQuery(query_string)<1)
+		{
+			sprintf(query_string,PLAYERSINSERT,sqlescape(guid).c_str(),sqlescape(nickname).c_str(),booltext[isBot],sqlescape(model).c_str(),sqlescape(headmodel).c_str());
+			simpleQuery(query_string);
+		}
+		sprintf(query_string,PLAYERSUPDATE,sqlescape(nickname).c_str(),booltext[isBot],sqlescape(model).c_str(),sqlescape(headmodel).c_str(),guid.c_str());
+		simpleQuery(query_string);
+		//simpleQuery("BEGIN");
+	}
+	sprintf(query_string,USERINFOINSERT,getGameNumber(),second,sqlescape(guid).c_str(),team,sqlescape(model).c_str(),skill);
+	simpleQuery(query_string);
 }
 
 void Db2PostgreSQL::addKill(int second, string attackerID, string targetID, int type)
 {
-    sprintf(query_string,KILL,gamenumber,second,sqlescape(attackerID).c_str(),sqlescape(targetID).c_str(),type);
-    simpleQuery(query_string);
+	sprintf(query_string,KILL,gamenumber,second,sqlescape(attackerID).c_str(),sqlescape(targetID).c_str(),type);
+	simpleQuery(query_string);
 }
 
 void Db2PostgreSQL::endGame(int second)
 {
-    sprintf(query_string,ENDGAME,second,gamenumber);
-    simpleQuery(query_string);
-    simpleQuery("COMMIT"); //This is just for performace...
+	sprintf(query_string,ENDGAME,second,gamenumber);
+	simpleQuery(query_string);
+	simpleQuery("COMMIT"); //This is just for performace...
 }
 
 void Db2PostgreSQL::addCapture(int second, string player, int team)
 {
-    sprintf(query_string,CAPTURE,gamenumber,second,sqlescape(player).c_str(),team);
-    simpleQuery(query_string);
+	sprintf(query_string,CAPTURE,gamenumber,second,sqlescape(player).c_str(),team);
+	simpleQuery(query_string);
 }
 
 void Db2PostgreSQL::addAward(int second, string player, int award)
 {
-    sprintf(query_string,AWARD,gamenumber,second,sqlescape(player).c_str(),award);
-    simpleQuery(query_string);
+	sprintf(query_string,AWARD,gamenumber,second,sqlescape(player).c_str(),award);
+	simpleQuery(query_string);
 }

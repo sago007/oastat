@@ -24,34 +24,36 @@ http://code.google.com/p/oastat/
 #include "Db2Xml.hpp"
 
 
-Db2Xml::Db2Xml() 
+Db2Xml::Db2Xml()
 {
 	psoudo_playerids.clear();
 	nextId = 1;
-        boost::format path("%1%/oastat");
-        path % getenv("HOME");
-        p_output_dir = path.str();
-        boost::format fmkdir("mkdir -p %1%");
-        fmkdir % p_output_dir;
-        system(fmkdir.str().c_str());
+	boost::format path("%1%/oastat");
+	path % getenv("HOME");
+	p_output_dir = path.str();
+	boost::format fmkdir("mkdir -p %1%");
+	fmkdir % p_output_dir;
+	system(fmkdir.str().c_str());
 }
 Db2Xml::Db2Xml(string dbargs)
 {
 	boost::format path("%1%/oastat");
-        path % getenv("HOME");
-        p_output_dir = path.str();
-        p_postscript = "";
+	path % getenv("HOME");
+	p_output_dir = path.str();
+	p_postscript = "";
 	psoudo_playerids.clear();
 	nextId = 1;
 	//mkdir(p_output_dir.c_str());
-	
+
 	stringstream stream(stringstream::in | stringstream::out);
 	stream << dbargs;
 	string holder;
 	//stream >> holder;
-	while(!stream.eof()) {
+	while(!stream.eof())
+	{
 		stream >> holder;
-		if(!stream.eof()) {
+		if(!stream.eof())
+		{
 			string param;
 			stream >> param;
 			if(holder == "outputdir")
@@ -60,9 +62,9 @@ Db2Xml::Db2Xml(string dbargs)
 				p_postscript = param;
 		}
 	}
-        boost::format fmkdir("mkdir -p %1%");
-        fmkdir % p_output_dir;
-        system(fmkdir.str().c_str());
+	boost::format fmkdir("mkdir -p %1%");
+	fmkdir % p_output_dir;
+	system(fmkdir.str().c_str());
 }
 Db2Xml::Db2Xml(const Db2Xml& orig)
 {
@@ -70,7 +72,7 @@ Db2Xml::Db2Xml(const Db2Xml& orig)
 }
 Db2Xml::~Db2Xml()
 {
-    
+
 }
 void Db2Xml::startGame(int gametype, string mapname, string basegame, string servername, OaStatStruct *oss)
 {
@@ -83,9 +85,9 @@ void Db2Xml::startGame(int gametype, string mapname, string basegame, string ser
 	p_xmlcontent += (boost::format("    <gametype>%1%</gametype>\n") % gametype).str();
 	p_xmlcontent += (boost::format("    <mapname>%1%</mapname>\n") % getXmlEscaped(mapname) ).str();
 	p_xmlcontent += (boost::format("    <basegame>%1%</basegame>\n") % getXmlEscaped(basegame) ).str();
-	p_xmlcontent += (boost::format("    <gametime>%04i-%02i-%02iT%02i:%02i:%02i</gametime>\n") 
-			% (p_gametime.tm_year+1900) % (p_gametime.tm_mon+1) % (p_gametime.tm_mday)
-			% (p_gametime.tm_hour) % (p_gametime.tm_min) % (p_gametime.tm_sec) ).str();
+	p_xmlcontent += (boost::format("    <gametime>%04i-%02i-%02iT%02i:%02i:%02i</gametime>\n")
+					 % (p_gametime.tm_year+1900) % (p_gametime.tm_mon+1) % (p_gametime.tm_mday)
+					 % (p_gametime.tm_hour) % (p_gametime.tm_min) % (p_gametime.tm_sec) ).str();
 }
 void Db2Xml::addGameCvar(string cvar, string value)
 {
@@ -98,16 +100,17 @@ void Db2Xml::addGameCvar(string cvar, string value)
 }
 void Db2Xml::endGame(int second)
 {
-	if(isOk) {
+	if(isOk)
+	{
 		p_xmlcontent += (boost::format("    <second>%1%</second>\n") % second).str();
 		p_xmlcontent += "</OaStatGame>\n";
 		string filename = (boost::format("%1%/%2%_%3%-%4%-%5%_%6%-%7%-%8%.xml") % p_output_dir % p_servername
-			% (p_gametime.tm_year+1900) % (p_gametime.tm_mon+1) % (p_gametime.tm_mday)
-			% (p_gametime.tm_hour) % (p_gametime.tm_min) % (p_gametime.tm_sec) ).str();
+						   % (p_gametime.tm_year+1900) % (p_gametime.tm_mon+1) % (p_gametime.tm_mday)
+						   % (p_gametime.tm_hour) % (p_gametime.tm_min) % (p_gametime.tm_sec) ).str();
 		ofstream outfile;
 		outfile.open (filename.c_str());
-                if(outfile.fail())
-                    cout << "could not create " << filename << endl;
+		if(outfile.fail())
+			cout << "could not create " << filename << endl;
 		outfile << p_xmlcontent;
 		outfile.close();
 		cout << "End game at " << second << "with size " << p_xmlcontent.length() << " written to " << filename << endl;
@@ -119,7 +122,7 @@ int Db2Xml::getGameNumber()
 }
 void Db2Xml::setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, OaStatStruct *oss)
 {
-    if(!isOk)
+	if(!isOk)
 		return;
 	p_xmlcontent += "    <playerinfo>\n";
 	p_xmlcontent += (boost::format("        <hashedguid>%1%</hashedguid>\n") % guid).str();
@@ -135,7 +138,7 @@ void Db2Xml::setPlayerInfo(string guid, string nickname, bool isBot, int second,
 }
 void Db2Xml::addKill(int second, string attackerID, string targetID, int type)
 {
-    if(!isOk)
+	if(!isOk)
 		return;
 	p_xmlcontent += "    <kill>\n";
 	p_xmlcontent += (boost::format("        <second>%1%</second>\n") % second).str();
@@ -147,7 +150,7 @@ void Db2Xml::addKill(int second, string attackerID, string targetID, int type)
 //void addCapture(int second, string player, int team);
 void Db2Xml::addAward(int second, string player, int award)
 {
-    if(!isOk)
+	if(!isOk)
 		return;
 	p_xmlcontent += "    <award>\n";
 	p_xmlcontent += (boost::format("        <second>%1%</second>\n") % second).str();
@@ -157,7 +160,7 @@ void Db2Xml::addAward(int second, string player, int award)
 }
 void Db2Xml::addScoreInfo(int second, string player, int score)
 {
-    if(!isOk)
+	if(!isOk)
 		return;
 	p_xmlcontent += "    <score>\n";
 	p_xmlcontent += (boost::format("        <second>%1%</second>\n") % second).str();
@@ -167,7 +170,7 @@ void Db2Xml::addScoreInfo(int second, string player, int score)
 }
 void Db2Xml::addCtf(int second, string player, int team, int event)
 {
-    if(!isOk)
+	if(!isOk)
 		return;
 	p_xmlcontent += "    <ctf>\n";
 	p_xmlcontent += (boost::format("        <second>%1%</second>\n") % second).str();
@@ -178,7 +181,7 @@ void Db2Xml::addCtf(int second, string player, int team, int event)
 }
 void Db2Xml::addCtf1f(int second, string player, int team, int event)
 {
-    if(!isOk)
+	if(!isOk)
 		return;
 	p_xmlcontent += "    <ctf1flag>\n";
 	p_xmlcontent += (boost::format("        <second>%1%</second>\n") % second).str();
@@ -189,7 +192,7 @@ void Db2Xml::addCtf1f(int second, string player, int team, int event)
 }
 void Db2Xml::addElimination(int second, int roundnumber, int team, int event)
 {
-    if(!isOk)
+	if(!isOk)
 		return;
 	p_xmlcontent += "    <elimination>\n";
 	p_xmlcontent += (boost::format("        <second>%1%</second>\n") % second).str();
@@ -200,7 +203,7 @@ void Db2Xml::addElimination(int second, int roundnumber, int team, int event)
 }
 void Db2Xml::addCtfElimination(int second, int roundnumber, string player, int team, int event)
 {
-    if(!isOk)
+	if(!isOk)
 		return;
 	p_xmlcontent += "    <ctfelimination>\n";
 	p_xmlcontent += (boost::format("        <second>%1%</second>\n") % second).str();
@@ -208,11 +211,11 @@ void Db2Xml::addCtfElimination(int second, int roundnumber, string player, int t
 	p_xmlcontent += (boost::format("        <player>%1%</player>\n") % player).str();
 	p_xmlcontent += (boost::format("        <team>%1%</team>\n") % team).str();
 	p_xmlcontent += (boost::format("        <event>%1%</event>\n") % event).str();
-	p_xmlcontent += "    </ctfelimination>\n";    
+	p_xmlcontent += "    </ctfelimination>\n";
 }
 void Db2Xml::addHarvester(int second, string player1, string player2, int team, int event, int score)
 {
-    if(!isOk)
+	if(!isOk)
 		return;
 	p_xmlcontent += "    <harvester>\n";
 	p_xmlcontent += (boost::format("        <second>%1%</second>\n") % second).str();
@@ -221,11 +224,11 @@ void Db2Xml::addHarvester(int second, string player1, string player2, int team, 
 	p_xmlcontent += (boost::format("        <team>%1%</team>\n") % team).str();
 	p_xmlcontent += (boost::format("        <event>%1%</event>\n") % event).str();
 	p_xmlcontent += (boost::format("        <score>%1%</score>\n") % score).str();
-	p_xmlcontent += "    </harvester>\n";   
+	p_xmlcontent += "    </harvester>\n";
 }
 void Db2Xml::addChallenge(int second, string player, int challenge, int amount)
 {
-    if(!isOk)
+	if(!isOk)
 		return;
 	p_xmlcontent += "    <challenge>\n";
 	p_xmlcontent += (boost::format("        <second>%1%</second>\n") % second).str();
@@ -239,7 +242,7 @@ void Db2Xml::doNotCommit()
 	isOk = false;
 }
 
-int Db2Xml::getPsoudoId(string guid) 
+int Db2Xml::getPsoudoId(string guid)
 {
 	int ret = psoudo_playerids[guid];
 	if(ret > 0)
@@ -251,7 +254,7 @@ int Db2Xml::getPsoudoId(string guid)
 	return ret;
 }
 
-string Db2Xml::getXmlEscaped(string org) 
+string Db2Xml::getXmlEscaped(string org)
 {
 	string result = org;
 	boost::algorithm::replace_all(result,(string)"&",(string)"&amp;");
@@ -259,10 +262,11 @@ string Db2Xml::getXmlEscaped(string org)
 	boost::algorithm::replace_all(result,(string)">",(string)"&gt;");
 	boost::algorithm::replace_all(result,(string)"\"",(string)"&quot;");
 	boost::algorithm::replace_all(result,(string)"'",(string)"&apos;");
-	
+
 	return result;
 }
 
-void Db2Xml::createTables() {
-	
+void Db2Xml::createTables()
+{
+
 }

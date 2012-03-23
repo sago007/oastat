@@ -25,37 +25,41 @@ http://code.google.com/p/oastat/
 #include <stdlib.h>
 
 
-string Init2Db::getCommand() {
-    return "InitGame";
+string Init2Db::getCommand()
+{
+	return "InitGame";
 }
 
-bool Init2Db::canProcess(OaStatStruct oss) {
-    if(oss.command != getCommand())
-        return false;
-    return true;
+bool Init2Db::canProcess(OaStatStruct oss)
+{
+	if(oss.command != getCommand())
+		return false;
+	return true;
 }
 
-void Init2Db::process(OaStatStruct oss) {
-    if(!canProcess(oss))
-        return; //Invalid oss
-    map<string,string> arguments = oss.GetInfostring();
-    int gametype = atoi(arguments["g_gametype"].c_str());
-    string basegame = arguments["gamename"];
-    string mapname = arguments["mapname"];
-    string servername = arguments["sv_hostname"];
-    oss.setTimeStamp(arguments["g_timestamp"]);
+void Init2Db::process(OaStatStruct oss)
+{
+	if(!canProcess(oss))
+		return; //Invalid oss
+	map<string,string> arguments = oss.GetInfostring();
+	int gametype = atoi(arguments["g_gametype"].c_str());
+	string basegame = arguments["gamename"];
+	string mapname = arguments["mapname"];
+	string servername = arguments["sv_hostname"];
+	oss.setTimeStamp(arguments["g_timestamp"]);
 
-    dp->startGame(gametype,mapname,basegame,servername,&oss);
-    map<string,string>::iterator it;
-    for(it = arguments.begin(); it != arguments.end(); it++) {
-        if(
-                it->first == "g_gametype" ||
-                it->first == "gamename" ||
-                it->first == "mapname" ||
-                it->first == "sv_hostname" /*||
+	dp->startGame(gametype,mapname,basegame,servername,&oss);
+	map<string,string>::iterator it;
+	for(it = arguments.begin(); it != arguments.end(); it++)
+	{
+		if(
+			it->first == "g_gametype" ||
+			it->first == "gamename" ||
+			it->first == "mapname" ||
+			it->first == "sv_hostname" /*||
                 it->first == "g_timestamp" do not skip this one*/
-          )
-               continue; //Skip the ones on the games-table
-        dp->addGameCvar(it->first,it->second);
-    }
+		)
+			continue; //Skip the ones on the games-table
+		dp->addGameCvar(it->first,it->second);
+	}
 }

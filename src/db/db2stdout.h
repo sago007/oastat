@@ -28,21 +28,22 @@ http://code.google.com/p/oastat/
 
 using namespace std;
 
-class DB2stdout : public Database {
+class DB2stdout : public Database
+{
 public:
-    DB2stdout();
-    ~DB2stdout();
-    void createTables();
-    void startGame(int gametype, string mapname, string basegame);
-    void endGame(int second);
-    int getGameNumber();
-    void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill);
-    void addKill(int second, string attackerID, string targetID, int type);
-    void addCapture(int second, string player, int team);
-    void addAward(int second, string player, int award);
-    void addCtf(int second, string player, int team, int event);
+	DB2stdout();
+	~DB2stdout();
+	void createTables();
+	void startGame(int gametype, string mapname, string basegame);
+	void endGame(int second);
+	int getGameNumber();
+	void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill);
+	void addKill(int second, string attackerID, string targetID, int type);
+	void addCapture(int second, string player, int team);
+	void addAward(int second, string player, int award);
+	void addCtf(int second, string player, int team, int event);
 private:
-    int gamenumber;
+	int gamenumber;
 };
 
 #endif	/* _DB2STDOUT_H */

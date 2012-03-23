@@ -23,42 +23,46 @@ http://code.google.com/p/oastat/
 
 #include "userinfo2db.h"
 #include <stdlib.h>
-#include <boost/format/format_fwd.hpp> 
+#include <boost/format/format_fwd.hpp>
 #include <boost/format.hpp>
 
 
-string Userinfo2Db::getCommand() {
-    return "ClientUserinfoChanged";
+string Userinfo2Db::getCommand()
+{
+	return "ClientUserinfoChanged";
 }
 
-bool Userinfo2Db::canProcess(OaStatStruct oss) {
-    if(oss.command != getCommand() || oss.parameters.size()<1)
-        return false;
-    return true;
+bool Userinfo2Db::canProcess(OaStatStruct oss)
+{
+	if(oss.command != getCommand() || oss.parameters.size()<1)
+		return false;
+	return true;
 }
 
-void Userinfo2Db::process(OaStatStruct oss) {
-    if(!canProcess(oss))
-        return; //Invalid oss
-    bool isBot = false;
-    map<string,string> arguments = oss.GetInfostring();
+void Userinfo2Db::process(OaStatStruct oss)
+{
+	if(!canProcess(oss))
+		return; //Invalid oss
+	bool isBot = false;
+	map<string,string> arguments = oss.GetInfostring();
 
 	//grow clientIdMap until oss.parameters.at(0)+1
 	while(clientIdMap.size() < oss.parameters.at(0)+2)
 		clientIdMap.push_back("");
-	
-    if(arguments["id"].length()>0 || arguments["hashedid"].length() > 0) { //Not bot
+
+	if(arguments["id"].length()>0 || arguments["hashedid"].length() > 0)   //Not bot
+	{
 		if(arguments["id"].length()>0)
 			clientIdMap[oss.parameters.at(0)] = getHashedId(arguments["id"]);
 		else
 			clientIdMap[oss.parameters.at(0)] = arguments["hashedid"];
 	}
-    else //bot
-    {
-        clientIdMap[oss.parameters.at(0)] = (boost::format("%1%_client%2%") % arguments["n"] % oss.parameters.at(0) ).str();
-	isBot = true;
-    }
-    string player = clientIdMap[oss.parameters.at(0)];
+	else //bot
+	{
+		clientIdMap[oss.parameters.at(0)] = (boost::format("%1%_client%2%") % arguments["n"] % oss.parameters.at(0) ).str();
+		isBot = true;
+	}
+	string player = clientIdMap[oss.parameters.at(0)];
 
-    dp->setPlayerInfo(player,arguments["n"],isBot,oss.second,atoi(arguments["t"].c_str()), arguments["model"],arguments["hmodel"],-1,&oss);
+	dp->setPlayerInfo(player,arguments["n"],isBot,oss.second,atoi(arguments["t"].c_str()), arguments["model"],arguments["hmodel"],-1,&oss);
 }

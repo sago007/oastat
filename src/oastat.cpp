@@ -80,83 +80,92 @@ vector<Struct2Db*> commands;
  */
 void addCommands()
 {
-    //Add new commands here
-    commands.push_back(new Kill2Db());
-    commands.push_back(new Init2Db());
-    commands.push_back(new Shutdown2Db());
-    commands.push_back(new Userinfo2Db());
-    commands.push_back(new Disconnect2Db());
-    commands.push_back(new Award2Db());
-    commands.push_back(new Ctf2Db());
-    commands.push_back(new Point2Db());
-    commands.push_back(new Ctf1f2Db());
-    commands.push_back(new Elimination2Db());
-    commands.push_back(new CtfElimination2Db());
-    commands.push_back(new Harvester2Db());
-    commands.push_back(new Challenge2Db());
-    commands.push_back(new Warmup2Db());
-    //Add more commands just above here
+	//Add new commands here
+	commands.push_back(new Kill2Db());
+	commands.push_back(new Init2Db());
+	commands.push_back(new Shutdown2Db());
+	commands.push_back(new Userinfo2Db());
+	commands.push_back(new Disconnect2Db());
+	commands.push_back(new Award2Db());
+	commands.push_back(new Ctf2Db());
+	commands.push_back(new Point2Db());
+	commands.push_back(new Ctf1f2Db());
+	commands.push_back(new Elimination2Db());
+	commands.push_back(new CtfElimination2Db());
+	commands.push_back(new Harvester2Db());
+	commands.push_back(new Challenge2Db());
+	commands.push_back(new Warmup2Db());
+	//Add more commands just above here
 
-    for(int i=0;i<commands.size();i++) {
-        commands.at(i)->setDb(db);
-    }
+	for(int i=0; i<commands.size(); i++)
+	{
+		commands.at(i)->setDb(db);
+	}
 }
 
 int main (int argc, const char* argv[])
 {
-    string dbargs = "";
-    string filename = "";
-    string backend = "Xml";
+	string dbargs = "";
+	string filename = "";
+	string backend = "Xml";
 	bool useTail = false;
-    /////////////
-    //dbargs = "mysql dbname oastat";
-    boost::format f("%1%/.openarena/baseoa/games.log");
-    f % getenv("HOME");
-    filename = f.str();
-    ////////////
-    for(int i=1;i<argc;i++) {
-        bool onemore = i+1<argc;
-        if(string(argv[i]) == "-dbarg" && onemore ) {
-            i++;
-            dbargs = string(argv[i]);
-        }
-        if(string(argv[i]) == "-f" && onemore) {
-            i++;
-            filename = string(argv[i]);
-        }
-		if(string(argv[i]) == "-tail") {
+	/////////////
+	//dbargs = "mysql dbname oastat";
+	boost::format f("%1%/.openarena/baseoa/games.log");
+	f % getenv("HOME");
+	filename = f.str();
+	////////////
+	for(int i=1; i<argc; i++)
+	{
+		bool onemore = i+1<argc;
+		if(string(argv[i]) == "-dbarg" && onemore )
+		{
+			i++;
+			dbargs = string(argv[i]);
+		}
+		if(string(argv[i]) == "-f" && onemore)
+		{
+			i++;
+			filename = string(argv[i]);
+		}
+		if(string(argv[i]) == "-tail")
+		{
 			useTail = true;
 		}
-	if(string(argv[i]) == "-backend" && onemore) {
-	    i++;
-	    backend = string(argv[i]);
+		if(string(argv[i]) == "-backend" && onemore)
+		{
+			i++;
+			backend = string(argv[i]);
+		}
 	}
-    }
-    try{
-	db = NULL;
-        #if USESTDOUT
-	cout << "INFO: oastat " << VERSION << " ready to process data" << endl;
-        db = new DB2stdout();
-        #endif
+	try
+	{
+		db = NULL;
+#if USESTDOUT
+		cout << "INFO: oastat " << VERSION << " ready to process data" << endl;
+		db = new DB2stdout();
+#endif
 
-        /*#if USEPOSTGRESQL
-        cout << "Using postgreSQL" << endl;
-        if(dbargs.length()<1)
-            db = new Db2PostgreSQL();
-        else
-            db = new Db2PostgreSQL(dbargs);
-        #endif*/
+		/*#if USEPOSTGRESQL
+		cout << "Using postgreSQL" << endl;
+		if(dbargs.length()<1)
+		    db = new Db2PostgreSQL();
+		else
+		    db = new Db2PostgreSQL(dbargs);
+		#endif*/
 
-        #if USEDBIXX
-	if(backend == "DbiXX") {
-	    cout << "Using DBI" << endl;
-	    if(dbargs.length()<1)
-		db = new Db2DbiXX();
-	    else
-		db = new Db2DbiXX(dbargs);
-	}
-        #endif
-		if(backend == "Xml") {
+#if USEDBIXX
+		if(backend == "DbiXX")
+		{
+			cout << "Using DBI" << endl;
+			if(dbargs.length()<1)
+				db = new Db2DbiXX();
+			else
+				db = new Db2DbiXX(dbargs);
+		}
+#endif
+		if(backend == "Xml")
+		{
 			cout << "Using XML" << endl;
 			if(dbargs.length()<1)
 				db = new Db2Xml();
@@ -164,92 +173,106 @@ int main (int argc, const char* argv[])
 				db = new Db2Xml(dbargs);
 		}
 
-	if(!db) {
-	    string error("Failed to find backend: ");
-	    error += backend;
-	    throw error.c_str();
-	}
+		if(!db)
+		{
+			string error("Failed to find backend: ");
+			error += backend;
+			throw error.c_str();
+		}
 
-        addCommands();
+		addCommands();
 
-        if(filename.length()>0) {
-			if(useTail) {
+		if(filename.length()>0)
+		{
+			if(useTail)
+			{
 				redi::ipstream in("tail -s 1 -f "+filename);
 				processStdIn(&in);
-			} else {
+			}
+			else
+			{
 				ifstream in(filename.c_str(),ifstream::in);
 				processStdIn(&in);
 			}
-        } else
-            processStdIn(&cin);
+		}
+		else
+			processStdIn(&cin);
 
-    }catch (const char *s) {
-        cout << "Crashed: " << s << endl;
-        return -1;
-    }
+	}
+	catch (const char *s)
+	{
+		cout << "Crashed: " << s << endl;
+		return -1;
+	}
 
-        return 0;
+	return 0;
 }
 
-static int processStdIn(istream* in_p) {
-    bool done = true;
-    OaStatStruct *startstruct;
-    startstruct = NULL;
-    do
-    {
-        string line = "";
-        OaStatStruct oss;
-        list<OaStatStruct> osslist;
-        try{
-            while( getline(*in_p,line) )
-            {
-                oss.clear();
-                oss.parseLine(line);
-                osslist.push_back(oss);
-		if(oss.command=="InitGame")
-		    startstruct = &osslist.back();
-		if(oss.command=="Warmup" && startstruct)
-		    startstruct->restOfLine += "\\isWarmup\\1"; //Workaround to stop warmup 
-                if(oss.command=="ShutdownGame")
-                {
-                    while(!osslist.empty())
-                    {
-                        //cout << "next: " << oss.command << endl;
-                        oss = osslist.front();
-                        //cout << "gotten, now popping" << endl;
-                        osslist.pop_front();
-                        //cout << "popping complete" << endl;
-                        for(int i=0;i<commands.size();i++)
-                        {
-                            //try {
-                            //cout << "checking " << commands.at(i)->getCommand() << endl;
-                            if(commands.at(i)->canProcess(oss)) {
-                                //cout << "Execturedg by " << commands.at(i)->getCommand();
-                                commands.at(i)->process(oss);
-                            }
-                            /*} catch (exception &e)
-                            {
-                                cerr << "oastat: Sql_error at line: \"" << line << "\"" << endl <<
-                                        "oastat:   Error is: " << e.what() <<
-                                        "oastat:   Last error will be ignored" << endl;
-                            }*/
-                        }
-                        //cout << "returned" << endl;
-                    }
-		    startstruct = NULL;
-                }
-            }
-        } catch (exception &e2) {
-            /*
-             If there is an error write it in the log and try again continue
-             */
-            osslist.clear(); 
-            cerr << "oastat: Crashed (NEAR FATAL EXCEPTION) at line: \"" << line << "\"" << endl <<
-                    "oastat:   Error is: " << e2.what() << endl;
-            done = false;
-        }
-    } while (!done);
-    return 0;
+static int processStdIn(istream* in_p)
+{
+	bool done = true;
+	OaStatStruct *startstruct;
+	startstruct = NULL;
+	do
+	{
+		string line = "";
+		OaStatStruct oss;
+		list<OaStatStruct> osslist;
+		try
+		{
+			while( getline(*in_p,line) )
+			{
+				oss.clear();
+				oss.parseLine(line);
+				osslist.push_back(oss);
+				if(oss.command=="InitGame")
+					startstruct = &osslist.back();
+				if(oss.command=="Warmup" && startstruct)
+					startstruct->restOfLine += "\\isWarmup\\1"; //Workaround to stop warmup
+				if(oss.command=="ShutdownGame")
+				{
+					while(!osslist.empty())
+					{
+						//cout << "next: " << oss.command << endl;
+						oss = osslist.front();
+						//cout << "gotten, now popping" << endl;
+						osslist.pop_front();
+						//cout << "popping complete" << endl;
+						for(int i=0; i<commands.size(); i++)
+						{
+							//try {
+							//cout << "checking " << commands.at(i)->getCommand() << endl;
+							if(commands.at(i)->canProcess(oss))
+							{
+								//cout << "Execturedg by " << commands.at(i)->getCommand();
+								commands.at(i)->process(oss);
+							}
+							/*} catch (exception &e)
+							{
+							    cerr << "oastat: Sql_error at line: \"" << line << "\"" << endl <<
+							            "oastat:   Error is: " << e.what() <<
+							            "oastat:   Last error will be ignored" << endl;
+							}*/
+						}
+						//cout << "returned" << endl;
+					}
+					startstruct = NULL;
+				}
+			}
+		}
+		catch (exception &e2)
+		{
+			/*
+			 If there is an error write it in the log and try again continue
+			 */
+			osslist.clear();
+			cerr << "oastat: Crashed (NEAR FATAL EXCEPTION) at line: \"" << line << "\"" << endl <<
+				 "oastat:   Error is: " << e2.what() << endl;
+			done = false;
+		}
+	}
+	while (!done);
+	return 0;
 }
 
 /**
@@ -258,21 +281,23 @@ static int processStdIn(istream* in_p) {
  * @param unhashedID - The unhashed id
  * @return the hashed id
  */
-string getHashedId(string unhashedID) {
-    int msg_len = unhashedID.length();
-    int hash_len = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
-    unsigned char hash_binary[ hash_len ];
-    char hash_hex[ hash_len*2+1 ]; //surpriseingly this works
-    char *out = hash_hex; //(char *) malloc( sizeof(char) * ((hash_len*2)+1) );
-    char *p = out;
+string getHashedId(string unhashedID)
+{
+	int msg_len = unhashedID.length();
+	int hash_len = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
+	unsigned char hash_binary[ hash_len ];
+	char hash_hex[ hash_len*2+1 ]; //surpriseingly this works
+	char *out = hash_hex; //(char *) malloc( sizeof(char) * ((hash_len*2)+1) );
+	char *p = out;
 
-    gcry_md_hash_buffer( GCRY_MD_SHA1, hash_binary, unhashedID.c_str(), msg_len );
-    for ( int i = 0; i < hash_len; i++, p += 2 ) {
-        snprintf ( p, 3, "%02x", hash_binary[i] );
-    }
+	gcry_md_hash_buffer( GCRY_MD_SHA1, hash_binary, unhashedID.c_str(), msg_len );
+	for ( int i = 0; i < hash_len; i++, p += 2 )
+	{
+		snprintf ( p, 3, "%02x", hash_binary[i] );
+	}
 
-    unhashedID = hash_hex;
+	unhashedID = hash_hex;
 
-    //free(out);
-    return  unhashedID; //Replace with md5 at some point
+	//free(out);
+	return  unhashedID; //Replace with md5 at some point
 }

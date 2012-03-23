@@ -25,24 +25,27 @@ http://code.google.com/p/oastat/
 
 
 
-string Award2Db::getCommand() {
-    return "Award";
+string Award2Db::getCommand()
+{
+	return "Award";
 }
 
-bool Award2Db::canProcess(OaStatStruct oss) {
-    if(oss.command != getCommand() || oss.parameters.size()<2 || oss.parameters.at(0)<0)
-        return false;
-    return true;
+bool Award2Db::canProcess(OaStatStruct oss)
+{
+	if(oss.command != getCommand() || oss.parameters.size()<2 || oss.parameters.at(0)<0)
+		return false;
+	return true;
 }
 
-void Award2Db::process(OaStatStruct oss) {
-    if(!canProcess(oss))
-        return; //Invalid oss
+void Award2Db::process(OaStatStruct oss)
+{
+	if(!canProcess(oss))
+		return; //Invalid oss
 
-    if(oss.parameters.at(0)==-1)
-        return; //Not valid player
-    
-    string player = clientIdMap.at(oss.parameters.at(0));
+	if(oss.parameters.at(0)==-1)
+		return; //Not valid player
 
-    dp->addAward(oss.second,player,oss.parameters.at(1));
+	string player = clientIdMap.at(oss.parameters.at(0));
+
+	dp->addAward(oss.second,player,oss.parameters.at(1));
 }

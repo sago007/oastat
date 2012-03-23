@@ -39,81 +39,88 @@ static int gamecount = 1; //Only to standard out, normally this should be read f
 
 static char* booltext[2] = {"false","true"};
 
-static string sqlescape(string sql) {
-    string output = "";
-    string::iterator itr;
-    for(itr = sql.begin();itr<sql.end();itr++) {
-        if(*itr == '\'') {
-            output+="\'\'";
-        } else
-        {
-            output += *itr;
-        }
-    }
-    return output;
+static string sqlescape(string sql)
+{
+	string output = "";
+	string::iterator itr;
+	for(itr = sql.begin(); itr<sql.end(); itr++)
+	{
+		if(*itr == '\'')
+		{
+			output+="\'\'";
+		}
+		else
+		{
+			output += *itr;
+		}
+	}
+	return output;
 }
 
-DB2stdout::DB2stdout() {
+DB2stdout::DB2stdout()
+{
 }
 
-DB2stdout::~DB2stdout() {
+DB2stdout::~DB2stdout()
+{
 }
 
 void DB2stdout::createTables()
 {
-    //Nothing to do
+	//Nothing to do
 }
 
 void DB2stdout::startGame(int gametype, string mapname, string basegame)
 {
-    printf(STARTGAME,gametype,mapname.c_str(),basegame.c_str());
-    cout << endl;
-    gamecount++; //Only to standard out, normally this should be read from db!!!
+	printf(STARTGAME,gametype,mapname.c_str(),basegame.c_str());
+	cout << endl;
+	gamecount++; //Only to standard out, normally this should be read from db!!!
 }
 
 int DB2stdout::getGameNumber()
 {
-    return gamecount; //Only to standard out, normally this should be read from db!!!
+	return gamecount; //Only to standard out, normally this should be read from db!!!
 }
 
 void DB2stdout::setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill)
 {
-    //If team < 0 then it is a disconnect event that need not to be in
-    if(team>-1)
-    {
-        printf(PLAYERSINSERT,guid.c_str(),sqlescape(nickname).c_str(),booltext[isBot],sqlescape(model).c_str(),sqlescape(headmodel).c_str());
-        cout << endl;
-        printf(PLAYERSUPDATE,sqlescape(nickname).c_str(),booltext[isBot],sqlescape(model).c_str(),sqlescape(headmodel).c_str(),guid.c_str());
-        cout << endl;
-    }
-    printf(USERINFOINSERT,getGameNumber(),second,guid.c_str(),team,sqlescape(model).c_str(),skill);
-    cout << endl;
+	//If team < 0 then it is a disconnect event that need not to be in
+	if(team>-1)
+	{
+		printf(PLAYERSINSERT,guid.c_str(),sqlescape(nickname).c_str(),booltext[isBot],sqlescape(model).c_str(),sqlescape(headmodel).c_str());
+		cout << endl;
+		printf(PLAYERSUPDATE,sqlescape(nickname).c_str(),booltext[isBot],sqlescape(model).c_str(),sqlescape(headmodel).c_str(),guid.c_str());
+		cout << endl;
+	}
+	printf(USERINFOINSERT,getGameNumber(),second,guid.c_str(),team,sqlescape(model).c_str(),skill);
+	cout << endl;
 }
 
 void DB2stdout::addKill(int second, string attackerID, string targetID, int type)
 {
-    printf(KILL,gamenumber,second,attackerID.c_str(),targetID.c_str(),type);
-    cout << endl;
+	printf(KILL,gamenumber,second,attackerID.c_str(),targetID.c_str(),type);
+	cout << endl;
 }
 
 void DB2stdout::endGame(int second)
 {
-    printf(ENDGAME,second,gamenumber);
-    cout << endl;
+	printf(ENDGAME,second,gamenumber);
+	cout << endl;
 }
 
 void DB2stdout::addCapture(int second, string player, int team)
 {
-    printf(CAPTURE,gamenumber,second,player.c_str(),team);
-    cout << endl;
+	printf(CAPTURE,gamenumber,second,player.c_str(),team);
+	cout << endl;
 }
 
 void DB2stdout::addAward(int second, string player, int award)
 {
-    printf(AWARD,gamenumber,second,player.c_str(),award);
-    cout << endl;
+	printf(AWARD,gamenumber,second,player.c_str(),award);
+	cout << endl;
 }
 
-void addCtf(int second, string player, int team, int event) {
-    cout << "missing" << endl;
+void addCtf(int second, string player, int team, int event)
+{
+	cout << "missing" << endl;
 }

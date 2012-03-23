@@ -29,27 +29,28 @@ http://code.google.com/p/oastat/
 
 using namespace std;
 
-class Db2PostgreSQL : public Database{
+class Db2PostgreSQL : public Database
+{
 public:
-    Db2PostgreSQL();
-    Db2PostgreSQL(string args);
-    Db2PostgreSQL(const Db2PostgreSQL& orig);
-    virtual ~Db2PostgreSQL();
-    void createTables();
-    void startGame(int gametype, string mapname, string basegame);
-    void endGame(int second);
-    int getGameNumber();
-    void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill);
-    void addKill(int second, string attackerID, string targetID, int type);
-    void addCapture(int second, string player, int team);
-    void addAward(int second, string player, int award);
+	Db2PostgreSQL();
+	Db2PostgreSQL(string args);
+	Db2PostgreSQL(const Db2PostgreSQL& orig);
+	virtual ~Db2PostgreSQL();
+	void createTables();
+	void startGame(int gametype, string mapname, string basegame);
+	void endGame(int second);
+	int getGameNumber();
+	void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill);
+	void addKill(int second, string attackerID, string targetID, int type);
+	void addCapture(int second, string player, int team);
+	void addAward(int second, string player, int award);
 private:
-    int simpleQuery(const char *);
-    string sqlescape(string sql);
-    PGconn *conn;
-    PGresult   *res;
-    int gamenumber;
-    char query_string[4096];
+	int simpleQuery(const char *);
+	string sqlescape(string sql);
+	PGconn *conn;
+	PGresult   *res;
+	int gamenumber;
+	char query_string[4096];
 };
 
 #endif	/* _DB2POSTGRESQL_H */

@@ -35,44 +35,45 @@ using namespace std;
  * This is the most important class in oastat. This takes a line and stores all
  * information from that line in easy to process parts.
  */
-class OaStatStruct {
+class OaStatStruct
+{
 public:
-    OaStatStruct();
-    OaStatStruct(const OaStatStruct& orig);
-    virtual ~OaStatStruct();
+	OaStatStruct();
+	OaStatStruct(const OaStatStruct& orig);
+	virtual ~OaStatStruct();
 
-    //There are no reason to make any variables private.
-    int second; //number of seconds
-    string command; //Like 'ClientConnect', 'Award' and 'Kill'
-    vector<int> parameters; //The parameters for the command.
-    string restOfLine;
-    tm getDateTime();
+	//There are no reason to make any variables private.
+	int second; //number of seconds
+	string command; //Like 'ClientConnect', 'Award' and 'Kill'
+	vector<int> parameters; //The parameters for the command.
+	string restOfLine;
+	tm getDateTime();
 
-    void parseLine(string line);
-    void clear();
+	void parseLine(string line);
+	void clear();
 
-    /*
-     *Parses the rest of the line to an info string
-     */
-    map<string,string> GetInfostring(string restOfLine);
+	/*
+	 *Parses the rest of the line to an info string
+	 */
+	map<string,string> GetInfostring(string restOfLine);
 
-    /*
-     *Same but uses this.restOfLine
-     */
-    map<string,string> GetInfostring();
+	/*
+	 *Same but uses this.restOfLine
+	 */
+	map<string,string> GetInfostring();
 
-    /*
-     Returns a string with the time in the format:
-     * TIMESTAMP 'YYYY-MM-
-     */
-    string getTimeStamp();
+	/*
+	 Returns a string with the time in the format:
+	 * TIMESTAMP 'YYYY-MM-
+	 */
+	string getTimeStamp();
 
-    /*
-     Sets _datetime. Requires input in the format: "YYYY-MM-DD HH:MM:SS"
-     */
-    void setTimeStamp(string timestring);
+	/*
+	 Sets _datetime. Requires input in the format: "YYYY-MM-DD HH:MM:SS"
+	 */
+	void setTimeStamp(string timestring);
 private:
-    static tm _datetime;
+	static tm _datetime;
 };
 
 #endif	/* _OASTATSTRUCT_H */

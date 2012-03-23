@@ -23,25 +23,28 @@ http://code.google.com/p/oastat/
 
 #include "Challenge2Db.hpp"
 
-string Challenge2Db::getCommand() {
-    return "Challenge";
+string Challenge2Db::getCommand()
+{
+	return "Challenge";
 }
 
 
-bool Challenge2Db::canProcess(OaStatStruct oss) {
-    if(oss.command != getCommand() || oss.parameters.size()<3)
-        return false;
-    return true;
+bool Challenge2Db::canProcess(OaStatStruct oss)
+{
+	if(oss.command != getCommand() || oss.parameters.size()<3)
+		return false;
+	return true;
 }
 
-void Challenge2Db::process(OaStatStruct oss) {
-    if(!canProcess(oss))
-        return; //Invalid oss
-    
-    if(oss.parameters.at(0)==-1)
-        return; //Not valid player
+void Challenge2Db::process(OaStatStruct oss)
+{
+	if(!canProcess(oss))
+		return; //Invalid oss
 
-    string player = clientIdMap.at(oss.parameters.at(0));
+	if(oss.parameters.at(0)==-1)
+		return; //Not valid player
 
-    dp->addChallenge(oss.second,player,oss.parameters.at(1),oss.parameters.at(2));
+	string player = clientIdMap.at(oss.parameters.at(0));
+
+	dp->addChallenge(oss.second,player,oss.parameters.at(1),oss.parameters.at(2));
 }
