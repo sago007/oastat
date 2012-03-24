@@ -25,7 +25,7 @@ http://code.google.com/p/oastat/
 
 #include <iostream>
 #include <fstream>
-#include <pstreams/pstream.h>
+#include "pstream.h" //<pstreams/pstream.h>
 #include <vector>
 #include <gcrypt.h>
 #include <stdio.h>
