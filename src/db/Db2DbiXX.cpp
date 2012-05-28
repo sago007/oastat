@@ -70,6 +70,8 @@ static string S_ELIMINATION = ELIMINATION;
 static string S_CTF_ELIM = CTF_ELIM;
 static string S_HARVESTER = HARVESTER;
 static string S_CHALLENGES = CHALLENGES;
+static string S_ACCURACYINSERT = "INSERT INTO oastat_accuracy(gamenumber,player,shotsfired,shotshit,modtype) VALUES (?,(SELECT playerid FROM oastat_players WHERE guid = ?),?,?,?)";
+static string S_ACCURACYUPDATE = "UPDATE oastat_accuracy SET shotsfired = ?, shotshit = ?, modtype = ? WHERE player = (SELECT playerid FROM oastat_players WHERE guid = ?) AND gamenumber = ?";
 
 static string booltext[2] = {"n","y"};
 
@@ -339,6 +341,23 @@ void Db2DbiXX::addChallenge(int second, string player, int challenge, int amount
 		return;
 	*sql << S_CHALLENGES,gamenumber,player,challenge,amount,exec();
 	DebugMessage("addChallenge");
+}
+
+void Db2DbiXX::addAccuracy(int second, string player, int type, int shotsFired, int shotsHit)
+{
+	if(!isok)
+		return;
+	try
+	{
+		*sql << "SAVEPOINT SETACCURACY",exec();
+		*sql << S_ACCURACYINSERT,gamenumber,player,shotsFired,shotsHit,type,exec();
+		*sql << "RELEASE SAVEPOINT SETACCURACY",exec(); //Needed by postgresql
+	}
+	catch (dbixx_error &e)
+	{
+		*sql << "ROLLBACK TO SAVEPOINT SETACCURACY",exec();
+		*sql << S_ACCURACYUPDATE,shotsFired,shotsHit,type,player,gamenumber,exec();
+	}
 }
 
 int Db2DbiXX::getNextGameNumber()

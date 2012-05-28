@@ -228,3 +228,23 @@ UPDATE oastat_players SET playerid = 0 WHERE guid = 'WORLD';
 COMMIT;
 
 -- STANDARD VALUES END
+
+-- VERSION 2
+
+CREATE TABLE oastat_accuracy (
+    gamenumber bigint unsigned NOT NULL,
+    player bigint unsigned NOT NULL,
+    shotsfired integer NOT NULL,
+	shotshit integer NOT NULL,
+    modtype integer NOT NULL
+);
+
+ALTER TABLE oastat_accuracy
+    ADD CONSTRAINT oastat_accuracy_pk pRIMARY KEY (gamenumber,player);
+
+ALTER TABLE oastat_accuracy 
+    ADD CONSTRAINT oastat_accuracy_gn_fk FOREIGN KEY (gamenumber) REFERENCES oastat_games(gamenumber) ON UPDATE CASCADE ON DELETE CASCADE; 
+
+ALTER TABLE oastat_accuracy 
+    ADD CONSTRAINT oastat_accuracy_pi_fk FOREIGN KEY (player) REFERENCES oastat_players(playerid) ON UPDATE CASCADE ON DELETE RESTRICT; 
+

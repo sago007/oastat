@@ -193,6 +193,16 @@ public:
 	 * @param amount normally 1
 	 */
 	virtual void addChallenge(int second, string player, int challenge, int amount) = 0;
+	
+	/**
+	 * adds accuracy information.
+     * @param secind Time the information was given. Usually not logged as the information is for the whole match
+     * @param player Player that the information is recorded for
+     * @param type The weapon type
+     * @param shotsFired Number of shots fired in the match
+     * @param shotsHit Number of hits
+     */
+	virtual void addAccuracy(int secind, string player, int type, int shotsFired, int shotsHit) = 0;
 };
 
 #endif //_DATABASE_H

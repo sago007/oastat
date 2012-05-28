@@ -55,6 +55,7 @@ using namespace std;
 #include "oss2db/shutdown2db.h"
 #include "oss2db/userinfo2db.h"
 #include "oss2db/Disconnect2Db.h"
+#include "oss2db/Accuracy2Db.hpp"
 #include "oss2db/Award2Db.h"
 #include "oss2db/Ctf2Db.hpp"
 #include "oss2db/Ctf1f2Db.hpp"
@@ -95,6 +96,7 @@ void addCommands()
 	commands.push_back(new Harvester2Db());
 	commands.push_back(new Challenge2Db());
 	commands.push_back(new Warmup2Db());
+	commands.push_back(new Accuracy2Db());
 	//Add more commands just above here
 
 	for(int i=0; i<commands.size(); i++)

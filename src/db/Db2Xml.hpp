@@ -59,6 +59,7 @@ public:
 	void addCtfElimination(int second, int roundnumber, string player, int team, int event);
 	void addHarvester(int second, string player1, string player2, int team, int event, int score);
 	void addChallenge(int second, string player, int challenge, int amount);
+	void addAccuracy(int secind, string player, int type, int shotsFired, int shotsHit);
 	void doNotCommit();
 private:
 	string p_output_dir;

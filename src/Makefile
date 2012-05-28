@@ -6,7 +6,7 @@ USESTDOUT=0
 BASE_LIBS=-lgcrypt
 BASE_CFLAGS=-c -g -O0
 
-O_FILES=build/oastat.o build/oastatstruct.o build/kill2db.o build/init2db.o build/shutdown2db.o build/userinfo2db.o build/disconnect2db.o build/award2db.o build/ctf2db.o build/point2db.o build/ctf1f2db.o build/elimination2db.o build/ctfelim2db.o build/harvester2db.o build/challenge2db.o build/warmup2db.o
+O_FILES=build/oastat.o build/oastatstruct.o build/kill2db.o build/init2db.o build/shutdown2db.o build/userinfo2db.o build/disconnect2db.o build/award2db.o build/ctf2db.o build/point2db.o build/ctf1f2db.o build/elimination2db.o build/ctfelim2db.o build/harvester2db.o build/challenge2db.o build/warmup2db.o build/accuracy2db.o
 
 H_FILES=local.h oastatstruct.h oss2db/struct2db.h
 
@@ -104,3 +104,5 @@ build/challenge2db.o: oss2db/Challenge2Db.cpp oss2db/Challenge2Db.hpp $(H_FILES)
 build/warmup2db.o: oss2db/Warmup2Db.cpp oss2db/Warmup2Db.hpp $(H_FILES)
 	g++ $(BASE_CFLAGS) oss2db/Warmup2Db.cpp -o build/warmup2db.o
 
+build/accuracy2db.o: oss2db/Accuracy2Db.cpp oss2db/Accuracy2Db.hpp $(H_FILES)
+	g++ $(BASE_CFLAGS) oss2db/Accuracy2Db.cpp -o build/accuracy2db.o

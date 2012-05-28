@@ -237,6 +237,20 @@ void Db2Xml::addChallenge(int second, string player, int challenge, int amount)
 	p_xmlcontent += (boost::format("        <amount>%1%</amount>\n") % amount).str();
 	p_xmlcontent += "    </challenge>\n";
 }
+
+void Db2Xml::addAccuracy(int second, string player, int type, int shotsFired, int shotsHit) 
+{
+	if(!isOk)
+		return;
+	p_xmlcontent += "    <accuracy>\n";
+	p_xmlcontent += (boost::format("        <second>%1%</second>\n") % second).str();
+	p_xmlcontent += (boost::format("        <player>%1%</player>\n") % player).str();
+	p_xmlcontent += (boost::format("        <mod_type>%1%</mod_type>\n") % type).str();
+	p_xmlcontent += (boost::format("        <shots_fired>%1%</shots_fired>\n") % shotsFired).str();
+	p_xmlcontent += (boost::format("        <shots_hit>%1%</shots_hit>\n") % shotsHit).str();
+	p_xmlcontent += "    </accuracy>\n";
+}
+
 void Db2Xml::doNotCommit()
 {
 	isOk = false;
