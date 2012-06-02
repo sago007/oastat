@@ -22,9 +22,13 @@ ifeq ($(USEPOSTGRESQL),1)
 endif
 
 ifeq ($(USEDBIXX),1)
-        BASE_LIBS+= -ldbixx
-        O_FILES+= build/db2dbixx.o
-        BASE_CFLAGS+= -DUSEDBIXX=1
+ifeq ($(wildcard /usr/local/lib/libdbixx.so),)
+	BASE_LIBS+= -ldbixx
+else 
+	BASE_LIBS+= /usr/local/lib/libdbixx.so # -ldbixx
+endif
+	O_FILES+= build/db2dbixx.o
+	BASE_CFLAGS+= -DUSEDBIXX=1
 endif
 
 O_FILES+= build/db2xml.o
@@ -106,3 +110,4 @@ build/warmup2db.o: oss2db/Warmup2Db.cpp oss2db/Warmup2Db.hpp $(H_FILES)
 
 build/accuracy2db.o: oss2db/Accuracy2Db.cpp oss2db/Accuracy2Db.hpp $(H_FILES)
 	g++ $(BASE_CFLAGS) oss2db/Accuracy2Db.cpp -o build/accuracy2db.o
+
