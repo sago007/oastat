@@ -1,7 +1,5 @@
 #This is the makefile
-USEPOSTGRESQL=0
 USEDBIXX=1
-USESTDOUT=0
 
 BASE_LIBS=-lgcrypt
 BASE_CFLAGS=-c -g -O0
@@ -10,16 +8,6 @@ O_FILES=build/oastat.o build/oastatstruct.o build/kill2db.o build/init2db.o buil
 
 H_FILES=local.h oastatstruct.h oss2db/struct2db.h
 
-ifeq ($(USESTDOUT),1)
-	O_FILES+= build/db2stdout.o
-	BASE_CFLAGS+= -DUSESTDOUT=1
-endif
-
-ifeq ($(USEPOSTGRESQL),1)
-	BASE_LIBS+= -lpq
-	O_FILES+= build/db2postgresql.o
-	BASE_CFLAGS+= -DUSEPOSTGRESQL=1
-endif
 
 ifeq ($(USEDBIXX),1)
 ifeq ($(wildcard /usr/local/lib/libdbixx.so),)
@@ -44,16 +32,6 @@ build/oastat: $(O_FILES)
 
 build/oastat.o:	oastat.cpp
 	g++ $(BASE_CFLAGS) oastat.cpp -o build/oastat.o
-
-ifeq ($(USESTDOUT),1)
-build/db2stdout.o: db/db2stdout.cpp db/db2stdout.h db/database.hpp
-	g++ $(BASE_CFLAGS) db/db2stdout.cpp  -o build/db2stdout.o
-endif
-
-ifeq ($(USEPOSTGRESQL),1)
-build/db2postgresql.o: db/Db2PostgreSQL.cpp db/Db2PostgreSQL.h db/database.hpp
-	g++ $(BASE_CFLAGS) db/Db2PostgreSQL.cpp  -o build/db2postgresql.o
-endif
 
 ifeq ($(USEDBIXX),1)
 build/db2dbixx.o: db/Db2DbiXX.cpp db/Db2DbiXX.hpp db/database.hpp

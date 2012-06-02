@@ -35,12 +35,6 @@ http://code.google.com/p/oastat/
 using namespace std;
 
 #include "db/database.hpp"
-#ifdef USESTDOUT
-#include "db/db2stdout.h"
-#endif
-#ifdef USEPOSTGRESQL
-#include "db/Db2PostgreSQL.h"
-#endif
 #ifdef USEDBIXX
 #include "db/Db2DbiXX.hpp"
 #endif
@@ -143,18 +137,7 @@ int main (int argc, const char* argv[])
 	try
 	{
 		db = NULL;
-#if USESTDOUT
-		cout << "INFO: oastat " << VERSION << " ready to process data" << endl;
-		db = new DB2stdout();
-#endif
 
-		/*#if USEPOSTGRESQL
-		cout << "Using postgreSQL" << endl;
-		if(dbargs.length()<1)
-		    db = new Db2PostgreSQL();
-		else
-		    db = new Db2PostgreSQL(dbargs);
-		#endif*/
 
 #if USEDBIXX
 		if(backend == "DbiXX")
