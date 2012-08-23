@@ -6,7 +6,7 @@
 -- Note: Lines containing RESTRICT2POSTGRESQL are PostgreSQL specific
 
 -- Warning. InnoDb is the only MySQL backend supporting transactions RESTRICT2MYSQL
-SET table_type=INNODB; -- RESTRICT2MYSQL
+SET storage_engine=INNODB; -- RESTRICT2MYSQL
 
 CREATE TABLE oastat_awards (
     eventNumber SERIAL PRIMARY KEY,
