@@ -99,99 +99,7 @@ void addCommands()
 	}
 }
 
-int main (int argc, const char* argv[])
-{
-	string dbargs = "";
-	string filename = "";
-	string backend = "Xml";
-	bool useTail = false;
-	/////////////
-	//dbargs = "mysql dbname oastat";
-	boost::format f("%1%/.openarena/baseoa/games.log");
-	f % getenv("HOME");
-	filename = f.str();
-	////////////
-	for(int i=1; i<argc; i++)
-	{
-		bool onemore = i+1<argc;
-		if(string(argv[i]) == "-dbarg" && onemore )
-		{
-			i++;
-			dbargs = string(argv[i]);
-		}
-		if(string(argv[i]) == "-f" && onemore)
-		{
-			i++;
-			filename = string(argv[i]);
-		}
-		if(string(argv[i]) == "-tail")
-		{
-			useTail = true;
-		}
-		if(string(argv[i]) == "-backend" && onemore)
-		{
-			i++;
-			backend = string(argv[i]);
-		}
-	}
-	try
-	{
-		db = NULL;
 
-
-#if USEDBIXX
-		if(backend == "DbiXX")
-		{
-			cout << "Using DBI" << endl;
-			if(dbargs.length()<1)
-				db = new Db2DbiXX();
-			else
-				db = new Db2DbiXX(dbargs);
-		}
-#endif
-		if(backend == "Xml")
-		{
-			cout << "Using XML" << endl;
-			if(dbargs.length()<1)
-				db = new Db2Xml();
-			else
-				db = new Db2Xml(dbargs);
-		}
-
-		if(!db)
-		{
-			string error("Failed to find backend: ");
-			error += backend;
-			throw error.c_str();
-		}
-
-		addCommands();
-
-		if(filename.length()>0)
-		{
-			if(useTail)
-			{
-				redi::ipstream in("tail -s 1 -f "+filename);
-				processStdIn(&in);
-			}
-			else
-			{
-				ifstream in(filename.c_str(),ifstream::in);
-				processStdIn(&in);
-			}
-		}
-		else
-			processStdIn(&cin);
-
-	}
-	catch (const char *s)
-	{
-		cout << "Crashed: " << s << endl;
-		return -1;
-	}
-
-	return 0;
-}
 
 static int processStdIn(istream* in_p)
 {
@@ -285,4 +193,98 @@ string getHashedId(string unhashedID)
 
 	//free(out);
 	return  unhashedID; //Replace with md5 at some point
+}
+
+int main (int argc, const char* argv[])
+{
+	string dbargs = "";
+	string filename = "";
+	string backend = "Xml";
+	bool useTail = false;
+	/////////////
+	//dbargs = "mysql dbname oastat";
+	boost::format f("%1%/.openarena/baseoa/games.log");
+	f % getenv("HOME");
+	filename = f.str();
+	////////////
+	for(int i=1; i<argc; i++)
+	{
+		bool onemore = i+1<argc;
+		if(string(argv[i]) == "-dbarg" && onemore )
+		{
+			i++;
+			dbargs = string(argv[i]);
+		}
+		if(string(argv[i]) == "-f" && onemore)
+		{
+			i++;
+			filename = string(argv[i]);
+		}
+		if(string(argv[i]) == "-tail")
+		{
+			useTail = true;
+		}
+		if(string(argv[i]) == "-backend" && onemore)
+		{
+			i++;
+			backend = string(argv[i]);
+		}
+	}
+	try
+	{
+		db = NULL;
+
+
+#if USEDBIXX
+		if(backend == "DbiXX")
+		{
+			cout << "Using DBI" << endl;
+			if(dbargs.length()<1)
+				db = new Db2DbiXX();
+			else
+				db = new Db2DbiXX(dbargs);
+		}
+#endif
+		if(backend == "Xml")
+		{
+			cout << "Using XML" << endl;
+			if(dbargs.length()<1)
+				db = new Db2Xml();
+			else
+				db = new Db2Xml(dbargs);
+		}
+
+		if(!db)
+		{
+			string error("Failed to find backend: ");
+			error += backend;
+			throw error.c_str();
+		}
+
+		addCommands();
+
+		if(filename.length()>0)
+		{
+			if(useTail)
+			{
+				redi::ipstream in("tail -s 1 -f "+filename);
+				processStdIn(&in);
+			}
+			else
+			{
+				ifstream in(filename.c_str(),ifstream::in);
+				processStdIn(&in);
+			}
+		}
+		else
+			processStdIn(&cin);
+
+	}
+	catch (const char *s)
+	{
+		cout << "Crashed: " << s << endl;
+		return -1;
+	}
+
+	return 0;
 }

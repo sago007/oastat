@@ -171,7 +171,7 @@ void Db2DbiXX::createTables()
 
 }
 
-void Db2DbiXX::startGame(int gametype, string mapname, string basegame, string servername, OaStatStruct *oss)
+void Db2DbiXX::startGame(int gametype, string mapname, string basegame, string servername, const OaStatStruct *oss)
 {
 	sql->reconnect();
 	Rollback(); //in case there was some garbage that could be comitted (like warmup or an unfinished game)
@@ -233,7 +233,7 @@ int Db2DbiXX::getGameNumber()
 	return gamenumber;
 }
 
-void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, OaStatStruct *oss)
+void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, const OaStatStruct *oss)
 {
 	if(!isok)
 		return;

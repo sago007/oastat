@@ -29,14 +29,14 @@ string Point2Db::getCommand()
 	return "PlayerScore";
 }
 
-bool Point2Db::canProcess(OaStatStruct oss)
+bool Point2Db::canProcess(const OaStatStruct &oss)
 {
 	if(oss.command != getCommand() || oss.parameters.size()<2 || oss.parameters.at(0)<0)
 		return false;
 	return true;
 }
 
-void Point2Db::process(OaStatStruct oss)
+void Point2Db::process(const OaStatStruct &oss)
 {
 	if(!canProcess(oss))
 		return; //Invalid oss

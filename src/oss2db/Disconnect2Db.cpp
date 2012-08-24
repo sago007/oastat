@@ -29,14 +29,14 @@ string Disconnect2Db::getCommand()
 	return "ClientDisconnect";
 }
 
-bool Disconnect2Db::canProcess(OaStatStruct oss)
+bool Disconnect2Db::canProcess(const OaStatStruct &oss)
 {
 	if(oss.command != getCommand() || oss.parameters.size()<1)
 		return false;
 	return true;
 }
 
-void Disconnect2Db::process(OaStatStruct oss)
+void Disconnect2Db::process(const OaStatStruct &oss)
 {
 	if(!canProcess(oss))
 		return; //Invalid oss

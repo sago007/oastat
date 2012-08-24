@@ -30,14 +30,14 @@ string Shutdown2Db::getCommand()
 	return "ShutdownGame";
 }
 
-bool Shutdown2Db::canProcess(OaStatStruct oss)
+bool Shutdown2Db::canProcess(const OaStatStruct &oss)
 {
 	if(oss.command != getCommand())
 		return false;
 	return true;
 }
 
-void Shutdown2Db::process(OaStatStruct oss)
+void Shutdown2Db::process(const OaStatStruct &oss)
 {
 	if(!canProcess(oss))
 		return;

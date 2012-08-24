@@ -32,9 +32,9 @@ class Ctf1f2Db : public Struct2Db
 public:
 
 	string getCommand();
-	bool canProcess(OaStatStruct oss);
+	bool canProcess(const OaStatStruct &oss);
 
-	void process(OaStatStruct oss);
+	void process(const OaStatStruct &oss);
 private:
 
 };

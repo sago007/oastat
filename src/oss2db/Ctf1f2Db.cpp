@@ -29,14 +29,14 @@ string Ctf1f2Db::getCommand()
 	return "1FCTF";
 }
 
-bool Ctf1f2Db::canProcess(OaStatStruct oss)
+bool Ctf1f2Db::canProcess(const OaStatStruct &oss)
 {
 	if(oss.command != getCommand() || oss.parameters.size()<3)
 		return false;
 	return true;
 }
 
-void Ctf1f2Db::process(OaStatStruct oss)
+void Ctf1f2Db::process(const OaStatStruct &oss)
 {
 	if(!canProcess(oss))
 		return; //Invalid oss

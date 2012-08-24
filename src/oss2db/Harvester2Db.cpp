@@ -28,14 +28,14 @@ string Harvester2Db::getCommand()
 	return "HARVESTER";
 }
 
-bool Harvester2Db::canProcess(OaStatStruct oss)
+bool Harvester2Db::canProcess(const OaStatStruct &oss)
 {
 	if(oss.command != getCommand() || oss.parameters.size()<5 )
 		return false;
 	return true;
 }
 
-void Harvester2Db::process(OaStatStruct oss)
+void Harvester2Db::process(const OaStatStruct &oss)
 {
 	if(!canProcess(oss))
 		return; //Invalid oss

@@ -31,9 +31,9 @@ class Kill2Db : public Struct2Db
 {
 
 	string getCommand();
-	bool canProcess(OaStatStruct oss);
+	bool canProcess(const OaStatStruct &oss);
 
-	void process(OaStatStruct oss);
+	void process(const OaStatStruct &oss);
 
 };
 

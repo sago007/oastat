@@ -28,14 +28,14 @@ string Warmup2Db::getCommand()
 	return "Warmup";
 }
 
-bool Warmup2Db::canProcess(OaStatStruct oss)
+bool Warmup2Db::canProcess(const OaStatStruct &oss)
 {
 	if(oss.command != getCommand())
 		return false;
 	return true;
 }
 
-void Warmup2Db::process(OaStatStruct oss)
+void Warmup2Db::process(const OaStatStruct &oss)
 {
 	if(!canProcess(oss))
 		return; //Invalid oss

@@ -29,14 +29,14 @@ string Kill2Db::getCommand()
 	return "Kill";
 }
 
-bool Kill2Db::canProcess(OaStatStruct oss)
+bool Kill2Db::canProcess(const OaStatStruct &oss)
 {
 	if(oss.command != getCommand() || oss.parameters.size()<=3)
 		return false;
 	return true;
 }
 
-void Kill2Db::process(OaStatStruct oss)
+void Kill2Db::process(const OaStatStruct &oss)
 {
 	if(!canProcess(oss))
 		return; //Invalid oss

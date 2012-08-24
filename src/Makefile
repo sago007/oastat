@@ -2,7 +2,7 @@
 USEDBIXX=1
 
 BASE_LIBS=-lgcrypt
-BASE_CFLAGS=-c -g -O0
+BASE_CFLAGS=-c -g -O2 -Wall
 
 O_FILES=build/oastat.o build/oastatstruct.o build/kill2db.o build/init2db.o build/shutdown2db.o build/userinfo2db.o build/disconnect2db.o build/award2db.o build/ctf2db.o build/point2db.o build/ctf1f2db.o build/elimination2db.o build/ctfelim2db.o build/harvester2db.o build/challenge2db.o build/warmup2db.o build/accuracy2db.o
 
@@ -30,11 +30,19 @@ clean:
 build/oastat: $(O_FILES)
 	g++ -O -o build/oastat $(O_FILES) $(BASE_LIBS)
 
-build/oastat.o:	oastat.cpp
+build/oastat.o: oastat.cpp pstream.h db/database.hpp db/../oastatstruct.h \
+ db/Db2Xml.hpp db/database.hpp oastatstruct.h oss2db/struct2db.h \
+ oss2db/../oastatstruct.h oss2db/../db/database.hpp local.h \
+ oss2db/kill2db.h oss2db/struct2db.h oss2db/../local.h oss2db/init2db.h \
+ oss2db/shutdown2db.h oss2db/userinfo2db.h oss2db/Disconnect2Db.h \
+ oss2db/Accuracy2Db.hpp oss2db/Award2Db.h oss2db/Ctf2Db.hpp \
+ oss2db/Ctf1f2Db.hpp oss2db/Point2Db.hpp oss2db/Elimination2Db.hpp \
+ oss2db/CtfElimination2Db.hpp oss2db/Harvester2Db.hpp \
+ oss2db/Challenge2Db.hpp oss2db/Warmup2Db.hpp
 	g++ $(BASE_CFLAGS) oastat.cpp -o build/oastat.o
 
 ifeq ($(USEDBIXX),1)
-build/db2dbixx.o: db/Db2DbiXX.cpp db/Db2DbiXX.hpp db/database.hpp
+build/db2dbixx.o: db/Db2DbiXX.cpp db/Db2DbiXX.hpp db/database.hpp db/../oastatstruct.h
 	g++ $(BASE_CFLAGS) db/Db2DbiXX.cpp -o build/db2dbixx.o
 endif
 

@@ -57,12 +57,12 @@ public:
 	 * This is better than the last getCommand, because it can check for multiple commands at once, and can
 	 * discard subevents for supported commands.
 	 */
-	virtual bool canProcess(OaStatStruct oss) = 0;
+	virtual bool canProcess(const OaStatStruct &oss) = 0;
 
 	/*
 	 * Parses s OaStatStruct to the object to process
 	 */
-	virtual void process(OaStatStruct oss) = 0;
+	virtual void process(const OaStatStruct &oss) = 0;
 
 	virtual bool shouldCommit()
 	{

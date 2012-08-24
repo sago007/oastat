@@ -29,7 +29,6 @@ http://code.google.com/p/oastat/
 #include <map>
 #include <time.h>
 
-using namespace std;
 
 /*
  * This is the most important class in oastat. This takes a line and stores all
@@ -44,36 +43,36 @@ public:
 
 	//There are no reason to make any variables private.
 	int second; //number of seconds
-	string command; //Like 'ClientConnect', 'Award' and 'Kill'
-	vector<int> parameters; //The parameters for the command.
-	string restOfLine;
-	tm getDateTime();
+	std::string command; //Like 'ClientConnect', 'Award' and 'Kill'
+	std::vector<int> parameters; //The parameters for the command.
+	std::string restOfLine;
+	const tm getDateTime() const;
 
-	void parseLine(string line);
+	void parseLine(std::string line);
 	void clear();
 
 	/*
 	 *Parses the rest of the line to an info string
 	 */
-	map<string,string> GetInfostring(string restOfLine);
+	std::map<std::string,std::string> GetInfostring(std::string restOfLine) const;
 
 	/*
 	 *Same but uses this.restOfLine
 	 */
-	map<string,string> GetInfostring();
+	std::map<std::string,std::string> GetInfostring() const;
 
 	/*
 	 Returns a string with the time in the format:
 	 * TIMESTAMP 'YYYY-MM-
 	 */
-	string getTimeStamp();
+	std::string getTimeStamp() const;
 
 	/*
 	 Sets _datetime. Requires input in the format: "YYYY-MM-DD HH:MM:SS"
 	 */
-	void setTimeStamp(string timestring);
+	void setTimeStamp(const std::string &timestring);
 private:
-	static tm _datetime;
+	tm _datetime;
 };
 
 #endif	/* _OASTATSTRUCT_H */

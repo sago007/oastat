@@ -29,10 +29,10 @@ http://code.google.com/p/oastat/
 #include "oastatstruct.h"
 
 /* This array contains all the guid hashes of the players in a game */
-extern vector<string> clientIdMap;
+extern std::vector<std::string> clientIdMap;
 
 /* returns the SHA-1 code of the parameter */
-extern string getHashedId(string unhashedID);
+extern std::string getHashedId(std::string unhashedID);
 
 #endif	/* _LOCAL_H */
 

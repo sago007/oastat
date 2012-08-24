@@ -29,14 +29,14 @@ string Challenge2Db::getCommand()
 }
 
 
-bool Challenge2Db::canProcess(OaStatStruct oss)
+bool Challenge2Db::canProcess(const OaStatStruct &oss)
 {
 	if(oss.command != getCommand() || oss.parameters.size()<3)
 		return false;
 	return true;
 }
 
-void Challenge2Db::process(OaStatStruct oss)
+void Challenge2Db::process(const OaStatStruct &oss)
 {
 	if(!canProcess(oss))
 		return; //Invalid oss

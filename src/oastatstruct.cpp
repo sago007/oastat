@@ -29,7 +29,22 @@ using namespace std;
 #include <iostream>
 #include <iomanip>
 
-tm OaStatStruct::_datetime;
+using namespace std;
+
+namespace {
+
+void makeLower(string &x)
+{
+	for(int i=0; i<x.length(); i++)
+	{
+		if(x[i] >= 'A' && x[i] <= 'X')
+			x[i] = x[i]-'A'+'a';
+	}
+}
+
+}
+
+//tm OaStatStruct::_datetime;
 
 OaStatStruct::OaStatStruct()
 {
@@ -112,16 +127,8 @@ void OaStatStruct::parseLine(string line)
 	restOfLine = line;
 }
 
-void makeLower(string &x)
-{
-	for(int i=0; i<x.length(); i++)
-	{
-		if(x[i] >= 'A' && x[i] <= 'X')
-			x[i] = x[i]-'A'+'a';
-	}
-}
 
-map<string,string> OaStatStruct::GetInfostring(string restOfLine)
+map<string,string> OaStatStruct::GetInfostring(string restOfLine) const
 {
 	map<string,string> list;
 	int curPos = 0, lastPos = 0;
@@ -153,12 +160,12 @@ map<string,string> OaStatStruct::GetInfostring(string restOfLine)
 	return list;
 }
 
-map<string,string> OaStatStruct::GetInfostring()
+map<string,string> OaStatStruct::GetInfostring() const
 {
 	return GetInfostring(restOfLine);
 }
 
-tm OaStatStruct::getDateTime()
+const tm OaStatStruct::getDateTime() const
 {
 	return _datetime;
 }
@@ -171,7 +178,7 @@ string ZeroPadNumber(int num, int size = 2)
 	return ss.str();
 }
 
-string OaStatStruct::getTimeStamp()
+string OaStatStruct::getTimeStamp() const
 {
 	string s;
 	s = "TIMESTAMP \'" + ZeroPadNumber(_datetime.tm_year+1900,4) + "-" + ZeroPadNumber(_datetime.tm_mon+1) + "-"
@@ -180,7 +187,7 @@ string OaStatStruct::getTimeStamp()
 	return s;
 }
 
-void OaStatStruct::setTimeStamp(string timestring)
+void OaStatStruct::setTimeStamp(const string &timestring)
 {
 	std::stringstream ss(timestring);
 	string tmp;

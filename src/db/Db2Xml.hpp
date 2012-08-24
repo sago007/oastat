@@ -44,11 +44,11 @@ public:
 	Db2Xml(const Db2Xml& orig);
 	virtual ~Db2Xml();
 	void createTables();
-	void startGame(int gametype, string mapname, string basegame, string servername, OaStatStruct *oss);
+	void startGame(int gametype, string mapname, string basegame, string servername, const OaStatStruct *oss);
 	void addGameCvar(string cvar, string value);
 	void endGame(int second);
 	int getGameNumber();
-	void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, OaStatStruct *oss);
+	void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, const OaStatStruct *oss);
 	void addKill(int second, string attackerID, string targetID, int type);
 	//void addCapture(int second, string player, int team);
 	void addAward(int second, string player, int award);

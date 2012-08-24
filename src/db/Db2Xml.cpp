@@ -33,7 +33,9 @@ Db2Xml::Db2Xml()
 	p_output_dir = path.str();
 	boost::format fmkdir("mkdir -p %1%");
 	fmkdir % p_output_dir;
-	system(fmkdir.str().c_str());
+	int fmkdir_ret = system(fmkdir.str().c_str());
+	if(fmkdir_ret)
+		cout << "Attemting to create \"" << path << "\" with \"" << fmkdir.str() << "\", but return code was: " << fmkdir_ret << endl;
 }
 Db2Xml::Db2Xml(string dbargs)
 {
@@ -64,7 +66,9 @@ Db2Xml::Db2Xml(string dbargs)
 	}
 	boost::format fmkdir("mkdir -p %1%");
 	fmkdir % p_output_dir;
-	system(fmkdir.str().c_str());
+	int fmkdir_ret = system(fmkdir.str().c_str());
+	if(fmkdir_ret)
+		cout << "Attemting to create \"" << path << "\" with \"" << fmkdir.str() << "\", but return code was: " << fmkdir_ret << endl;
 }
 Db2Xml::Db2Xml(const Db2Xml& orig)
 {
@@ -74,7 +78,7 @@ Db2Xml::~Db2Xml()
 {
 
 }
-void Db2Xml::startGame(int gametype, string mapname, string basegame, string servername, OaStatStruct *oss)
+void Db2Xml::startGame(int gametype, string mapname, string basegame, string servername, const OaStatStruct *oss)
 {
 	isOk = true;
 	p_xmlcontent = "";
@@ -120,7 +124,7 @@ int Db2Xml::getGameNumber()
 {
 	return 1;
 }
-void Db2Xml::setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, OaStatStruct *oss)
+void Db2Xml::setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, const OaStatStruct *oss)
 {
 	if(!isOk)
 		return;

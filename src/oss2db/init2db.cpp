@@ -30,25 +30,26 @@ string Init2Db::getCommand()
 	return "InitGame";
 }
 
-bool Init2Db::canProcess(OaStatStruct oss)
+bool Init2Db::canProcess(const OaStatStruct &oss)
 {
 	if(oss.command != getCommand())
 		return false;
 	return true;
 }
 
-void Init2Db::process(OaStatStruct oss)
+void Init2Db::process(const OaStatStruct &oss)
 {
 	if(!canProcess(oss))
 		return; //Invalid oss
-	map<string,string> arguments = oss.GetInfostring();
+	OaStatStruct oss_copy(oss); 
+	map<string,string> arguments = oss_copy.GetInfostring();
 	int gametype = atoi(arguments["g_gametype"].c_str());
 	string basegame = arguments["gamename"];
 	string mapname = arguments["mapname"];
 	string servername = arguments["sv_hostname"];
-	oss.setTimeStamp(arguments["g_timestamp"]);
+	oss_copy.setTimeStamp(arguments["g_timestamp"]);
 
-	dp->startGame(gametype,mapname,basegame,servername,&oss);
+	dp->startGame(gametype,mapname,basegame,servername,&oss_copy);
 	map<string,string>::iterator it;
 	for(it = arguments.begin(); it != arguments.end(); it++)
 	{

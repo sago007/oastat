@@ -29,14 +29,14 @@ string Elimination2Db::getCommand()
 	return "ELIMINATION";
 }
 
-bool Elimination2Db::canProcess(OaStatStruct oss)
+bool Elimination2Db::canProcess(const OaStatStruct &oss)
 {
 	if(oss.command != getCommand() || oss.parameters.size()<3 )
 		return false;
 	return true;
 }
 
-void Elimination2Db::process(OaStatStruct oss)
+void Elimination2Db::process(const OaStatStruct &oss)
 {
 	if(!canProcess(oss))
 		return; //Invalid oss
