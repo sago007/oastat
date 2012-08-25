@@ -47,7 +47,7 @@ void Userinfo2Db::process(const OaStatStruct &oss)
 	map<string,string> arguments = oss.GetInfostring();
 
 	//grow clientIdMap until oss.parameters.at(0)+1
-	while(clientIdMap.size() < oss.parameters.at(0)+2)
+	while((int)clientIdMap.size() < oss.parameters.at(0)+2)
 		clientIdMap.push_back("");
 
 	if(arguments["id"].length()>0 || arguments["hashedid"].length() > 0)   //Not bot

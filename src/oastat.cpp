@@ -93,7 +93,7 @@ void addCommands()
 	commands.push_back(new Accuracy2Db());
 	//Add more commands just above here
 
-	for(int i=0; i<commands.size(); i++)
+	for(unsigned int i=0; i<commands.size(); i++)
 	{
 		commands.at(i)->setDb(db);
 	}
@@ -131,7 +131,7 @@ static int processStdIn(istream* in_p)
 						//cout << "gotten, now popping" << endl;
 						osslist.pop_front();
 						//cout << "popping complete" << endl;
-						for(int i=0; i<commands.size(); i++)
+						for(unsigned int i=0; i<commands.size(); i++)
 						{
 							//try {
 							//cout << "checking " << commands.at(i)->getCommand() << endl;

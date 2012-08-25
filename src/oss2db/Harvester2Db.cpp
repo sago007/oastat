@@ -43,7 +43,7 @@ void Harvester2Db::process(const OaStatStruct &oss)
 	string player1 = ""; //Parameter 0
 	string player2 = ""; //Parameter 3
 
-	if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<clientIdMap.size() && oss.parameters.at(0)!=1022)
+	if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<(int)clientIdMap.size() && oss.parameters.at(0)!=1022)
 	{
 		player1 = clientIdMap.at(oss.parameters.at(0));
 	}
@@ -52,7 +52,7 @@ void Harvester2Db::process(const OaStatStruct &oss)
 		player1 = "WORLD";
 	}
 
-	if(oss.parameters.at(3)>-1 && oss.parameters.at(3)<clientIdMap.size() && oss.parameters.at(3)!=1022)
+	if(oss.parameters.at(3)>-1 && oss.parameters.at(3)<(int)clientIdMap.size() && oss.parameters.at(3)!=1022)
 	{
 		player2 = clientIdMap.at(oss.parameters.at(3));
 	}

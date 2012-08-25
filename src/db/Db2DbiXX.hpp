@@ -71,10 +71,12 @@ private:
 	void Rollback();
 	bool Ok();
 	void SetOk(bool ok);
-	void DebugMessage(string msg);
+	void DebugMessage(const string &msg);
 	void InitStrings(string backend);
 	void ReadConfigFromDb();
 	bool IsDuplicate(string servername, tm thetime);
+	int getPlayerId(const string &guid);
+	std::map<std::string,int> playerids;
 	string sql_backend;
 	bool last_value;
 	set<string> cvars2save;

@@ -23,57 +23,7 @@ http://code.google.com/p/oastat/
 
 #include "Db2DbiXX.hpp"
 
-//PostgreSQL:
-#define GETNEXTGAMENUMBER "SELECT nextval('oastat_games_gamenumber_seq')"
-#define GETLASTGAMENUMBER "SELECT currval('oastat_games_gamenumber_seq')"
-//MySQL:
-#define GETLASTGAMENUMBER_MYSQL "SELECT LAST_INSERT_ID() FROM DUAL"
-
-#define STARTGAME "INSERT INTO oastat_games(gamenumber,gametype, mapname, basegame,servername,time) VALUES (?,?,LOWER(?),?,?,?)"
-#define ADDCVAR "INSERT INTO oastat_gamecvars(gamenumber,cvar,value,numericvalue) VALUES (?,LOWER(?),?,?)"
-#define STARTGAME_LASTVALUE "INSERT INTO oastat_games(gametype, mapname, basegame,servername,time) VALUES (?,LOWER(?),?,?,?)"
-#define PLAYERSINSERT "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,?,?,?,?)"
-#define PLAYERSUPDATE "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ? AND lastseen < ?"
-#define USERINFOINSERT "INSERT INTO oastat_userinfo(gamenumber,second,player,team,model,skill) VALUES (?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?,?)"
-#define USERINFOUPDATE "UPDATE oastat_userinfo SET team = ?, model = ?, skill = ? WHERE gamenumber = ? AND second = ? AND player = COALESCE((SELECT playerid FROM oastat_players WHERE GUID = ?),0)"
-#define ENDGAME "UPDATE oastat_games SET second=? WHERE gamenumber = ?"
-#define KILL "INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES(?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?)"
-#define AWARD "INSERT INTO oastat_awards(gamenumber,second,player,award) VALUES (?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?)"
-#define POINT "INSERT INTO oastat_points(gamenumber,second,player,score) VALUES (?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?)"
-#define CTF "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),'ctf',?)"
-#define CTF1F "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),'1fctf',?)"
-#define ELIMINATION "INSERT INTO oastat_team_events(gamenumber,second,team,eventtype,generic1,gametype) VALUES (?,?,?,?,?,'elimination')"
-#define CTF_ELIM "INSERT INTO oastat_team_events(gamenumber,second,team,player,eventtype,generic1,gametype) VALUES (?,?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?,'ctfelim')"
-#define HARVESTER "INSERT INTO oastat_team_events(gamenumber,second,team,player,player2,eventtype,amount,gametype) VALUES (?,?,?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?,'harvester')"
-#define CHALLENGES "INSERT INTO oastat_challenges(gamenumber,player,challenge,amount) VALUES (?,COALESCE((SELECT playerid FROM oastat_players WHERE guid = ?),0),?,?)"
-
-#define SELECT_USERVARS2SAVE "SELECT thekey FROM oastat_config_uservars2save"
-#define SELECT_CVARS2SAVE "SELECT cvar FROM oastat_config_gamevars2save"
-
-#define SELECT_DUPLICATE "SELECT 'X' FROM oastat_games WHERE servername = ? AND time = ?"
-
-static string S_GETLASTGAMENUMBER = GETLASTGAMENUMBER;
-static string S_STARTGAME = STARTGAME;
-static string S_ADDCVAR = ADDCVAR;
-static string S_STARTGAME_LASTVALUE = STARTGAME_LASTVALUE;
-static string S_PLAYERSINSERT = PLAYERSINSERT;
-static string S_PLAYERSUPDATE = PLAYERSUPDATE;
-static string S_USERINFOINSERT = USERINFOINSERT;
-static string S_USERINFOUPDATE = USERINFOUPDATE;
-static string S_ENDGAME = ENDGAME;
-static string S_KILL = KILL;
-static string S_AWARD = AWARD;
-static string S_POINT = POINT;
-static string S_CTF = CTF;
-static string S_CTF1F = CTF1F;
-static string S_ELIMINATION = ELIMINATION;
-static string S_CTF_ELIM = CTF_ELIM;
-static string S_HARVESTER = HARVESTER;
-static string S_CHALLENGES = CHALLENGES;
-static string S_ACCURACYINSERT = "INSERT INTO oastat_accuracy(gamenumber,player,shotsfired,shotshit,modtype) VALUES (?,(SELECT playerid FROM oastat_players WHERE guid = ?),?,?,?)";
-static string S_ACCURACYUPDATE = "UPDATE oastat_accuracy SET shotsfired = ?, shotshit = ?, modtype = ? WHERE player = (SELECT playerid FROM oastat_players WHERE guid = ?) AND gamenumber = ?";
-
-static string booltext[2] = {"n","y"};
+static const string booltext[2] = {"n","y"};
 
 void Db2DbiXX::InitStrings(string backend)
 {
@@ -85,7 +35,6 @@ void Db2DbiXX::InitStrings(string backend)
 	if(backend == "mysql")
 	{
 		last_value = true;
-		S_GETLASTGAMENUMBER = GETLASTGAMENUMBER_MYSQL;
 	}
 	sql_backend = backend;
 }
@@ -95,13 +44,13 @@ void Db2DbiXX::ReadConfigFromDb()
 	result res;
 	row r;
 	string value;
-	*sql<<SELECT_USERVARS2SAVE,res;
+	*sql<<"SELECT thekey FROM oastat_config_uservars2save",res;
 	while(res.next(r))
 	{
 		r >> value;
 		uservars2save.insert(value);
 	}
-	*sql<< SELECT_CVARS2SAVE,res;
+	*sql<< "SELECT cvar FROM oastat_config_gamevars2save",res;
 	while(res.next(r))
 	{
 		r >> value;
@@ -112,7 +61,7 @@ void Db2DbiXX::ReadConfigFromDb()
 bool Db2DbiXX::IsDuplicate(string servername, tm thetime)
 {
 	result res;
-	*sql << SELECT_DUPLICATE,servername,thetime,res;
+	*sql << "SELECT 'X' FROM oastat_games WHERE servername = ? AND time = ?",servername,thetime,res;
 	if(res.rows())
 		return true;
 	else
@@ -151,7 +100,7 @@ Db2DbiXX::Db2DbiXX(string dbargs)
 	sql->connect();
 	ReadConfigFromDb();
 	commitlock = new transaction(*sql);
-	debug = false;
+	debug = true;
 	//sql(dbargs);
 }
 
@@ -190,7 +139,7 @@ void Db2DbiXX::startGame(int gametype, string mapname, string basegame, string s
 	}
 	if(last_value)
 	{
-		*sql << S_STARTGAME_LASTVALUE,gametype,mapname,basegame,servername,oss->getDateTime(),exec();
+		*sql << "INSERT INTO oastat_games(gametype, mapname, basegame,servername,time) VALUES (?,LOWER(?),?,?,?)",gametype,mapname,basegame,servername,oss->getDateTime(),exec();
 		gamenumber = getLastGameNumber();
 		if(gamenumber < 1)
 		{
@@ -201,7 +150,8 @@ void Db2DbiXX::startGame(int gametype, string mapname, string basegame, string s
 	else
 	{
 		gamenumber = getNextGameNumber();
-		*sql << S_STARTGAME,gamenumber,gametype,mapname,basegame,servername,oss->getDateTime(),exec();
+		*sql << "INSERT INTO oastat_games(gamenumber,gametype, mapname, basegame,servername,time) VALUES (?,?,LOWER(?),?,?,?)",
+				gamenumber,gametype,mapname,basegame,servername,oss->getDateTime(),exec();
 	}
 	DebugMessage("startGame");
 }
@@ -212,7 +162,7 @@ void Db2DbiXX::addGameCvar(string cvar, string value)
 		return;
 	if(cvars2save.find(cvar) == cvars2save.end())
 		return; //not to be saved
-	*sql << S_ADDCVAR,gamenumber,cvar,value,0,exec();
+	*sql << "INSERT INTO oastat_gamecvars(gamenumber,cvar,value,numericvalue) VALUES (?,LOWER(?),?,?)",gamenumber,cvar,value,0,exec();
 	DebugMessage("addCvar");
 }
 
@@ -223,7 +173,7 @@ void Db2DbiXX::endGame(int second)
 {
 	if(!isok)
 		return;
-	*sql << S_ENDGAME,second,gamenumber,exec();
+	*sql << "UPDATE oastat_games SET second=? WHERE gamenumber = ?",second,gamenumber,exec();
 	Commit(); //Game have ended, transaction is in a stable state
 	DebugMessage("endgame");
 }
@@ -242,7 +192,7 @@ void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int secon
 		try
 		{
 			*sql << "SAVEPOINT SETPLAYER",exec();
-			*sql << S_PLAYERSINSERT,guid,nickname,oss->getDateTime(),booltext[isBot],model,headmodel,exec();
+			*sql << "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,?,?,?,?)",guid,nickname,oss->getDateTime(),booltext[isBot],model,headmodel,exec();
 			*sql << "RELEASE SAVEPOINT SETPLAYER",exec(); //Needed by postgresql
 		}
 		catch (dbixx_error &e)
@@ -250,18 +200,18 @@ void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int secon
 			DebugMessage("Already inserted? "+(string)e.what());
 			*sql << "ROLLBACK TO SAVEPOINT SETPLAYER",exec();
 		}
-		*sql << S_PLAYERSUPDATE,nickname,oss->getDateTime(),booltext[isBot],model,headmodel,guid,oss->getDateTime(),exec();
+		*sql << "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ? AND lastseen < ?",nickname,oss->getDateTime(),booltext[isBot],model,headmodel,guid,oss->getDateTime(),exec();
 	}
 	try
 	{
 		*sql << "SAVEPOINT SETUSERINFO",exec();
-		*sql << S_USERINFOINSERT,gamenumber,second,guid,team,model,skill,exec();
+		*sql << "INSERT INTO oastat_userinfo(gamenumber,second,player,team,model,skill) VALUES (?,?,?,?,?,?)",gamenumber,second,getPlayerId(guid),team,model,skill,exec();
 		*sql << "RELEASE SAVEPOINT SETUSERINFO",exec(); //Needed by postgresql
 	}
 	catch (dbixx_error &e)
 	{
 		*sql << "ROLLBACK TO SAVEPOINT SETUSERINFO",exec();
-		*sql << S_USERINFOUPDATE,team,model,skill,gamenumber,second,guid,exec();
+		*sql << "UPDATE oastat_userinfo SET team = ?, model = ?, skill = ? WHERE gamenumber = ? AND second = ? AND player = ?",team,model,skill,gamenumber,second,getPlayerId(guid),exec();
 	}
 	DebugMessage("setPlayerInfo for "+nickname+" with GUID: "+guid);
 }
@@ -270,20 +220,15 @@ void Db2DbiXX::addKill(int second, string attackerID, string targetID, int type)
 {
 	if(!isok)
 		return;
-	*sql<< S_KILL,gamenumber,second,attackerID,targetID,type,exec();
+	*sql<< "INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES(?,?,?,?,?)",gamenumber,second,getPlayerId(attackerID),getPlayerId(targetID),type,exec();
 	DebugMessage("addKill");
 }
-
-/*void Db2DbiXX::addCapture(int second, string player, int team) {
-    *sql<< CAPTURE,gamenumber,second,player,team,exec();
-    DebugMessage("addCapture");
-}*/
 
 void Db2DbiXX::addAward(int second, string player, int award)
 {
 	if(!isok)
 		return;
-	*sql << S_AWARD,gamenumber,second,player,award,exec();
+	*sql << "INSERT INTO oastat_awards(gamenumber,second,player,award) VALUES (?,?,?,?)",gamenumber,second,getPlayerId(player),award,exec();
 	DebugMessage("addAward");
 }
 
@@ -291,7 +236,7 @@ void Db2DbiXX::addScoreInfo(int second, string player, int score)
 {
 	if(!isok)
 		return;
-	*sql << S_POINT,gamenumber,second,player,score,exec();
+	*sql << "INSERT INTO oastat_points(gamenumber,second,player,score) VALUES (?,?,?,?)",gamenumber,second,getPlayerId(player),score,exec();
 	DebugMessage("addScoreInfo");
 }
 
@@ -299,7 +244,7 @@ void Db2DbiXX::addCtf(int second, string player, int team, int event)
 {
 	if(!isok)
 		return;
-	*sql << S_CTF,gamenumber,second,team,player,event,exec();
+	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,?,'ctf',?)",gamenumber,second,team,getPlayerId(player),event,exec();
 	DebugMessage("addCtf");
 }
 
@@ -307,7 +252,7 @@ void Db2DbiXX::addCtf1f(int second, string player, int team, int event)
 {
 	if(!isok)
 		return;
-	*sql << S_CTF1F,gamenumber,second,team,player,event,exec();
+	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,?,'1fctf',?)",gamenumber,second,team,getPlayerId(player),event,exec();
 	DebugMessage("addCtf1f");
 }
 
@@ -315,7 +260,8 @@ void Db2DbiXX::addElimination(int second, int roundnumber, int team, int event)
 {
 	if(!isok)
 		return;
-	*sql << S_ELIMINATION,gamenumber,second,team,event,roundnumber,exec();
+	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,eventtype,generic1,gametype) VALUES (?,?,?,?,?,'elimination')",
+			gamenumber,second,team,event,roundnumber,exec();
 	DebugMessage("addElimination");
 }
 
@@ -323,7 +269,7 @@ void Db2DbiXX::addCtfElimination(int second, int roundnumber, string player, int
 {
 	if(!isok)
 		return;
-	*sql << S_CTF_ELIM,gamenumber,second,team,player,event,roundnumber,exec();
+	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,player,eventtype,generic1,gametype) VALUES (?,?,?,?,?,?,'ctfelim')",gamenumber,second,team,getPlayerId(player),event,roundnumber,exec();
 	DebugMessage("addCtfElimination");
 }
 
@@ -331,7 +277,8 @@ void Db2DbiXX::addHarvester(int second, string player1, string player2, int team
 {
 	if(!isok)
 		return;
-	*sql << S_HARVESTER,gamenumber,second,team,player1,player2,event,score,exec();
+	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,player,player2,eventtype,amount,gametype) VALUES (?,?,?,?,?,?,?,'harvester')",
+			gamenumber,second,team,getPlayerId(player1),getPlayerId(player2),event,score,exec();
 	DebugMessage("addHarvester");
 }
 
@@ -339,7 +286,7 @@ void Db2DbiXX::addChallenge(int second, string player, int challenge, int amount
 {
 	if(!isok)
 		return;
-	*sql << S_CHALLENGES,gamenumber,player,challenge,amount,exec();
+	*sql << "INSERT INTO oastat_challenges(gamenumber,player,challenge,amount) VALUES (?,?,?,?)",gamenumber,getPlayerId(player),challenge,amount,exec();
 	DebugMessage("addChallenge");
 }
 
@@ -350,13 +297,13 @@ void Db2DbiXX::addAccuracy(int second, string player, int type, int shotsFired, 
 	try
 	{
 		*sql << "SAVEPOINT SETACCURACY",exec();
-		*sql << S_ACCURACYINSERT,gamenumber,player,shotsFired,shotsHit,type,exec();
+		*sql << "INSERT INTO oastat_accuracy(gamenumber,player,shotsfired,shotshit,modtype) VALUES (?,?,?,?,?)",gamenumber,getPlayerId(player),shotsFired,shotsHit,type,exec();
 		*sql << "RELEASE SAVEPOINT SETACCURACY",exec(); //Needed by postgresql
 	}
 	catch (dbixx_error &e)
 	{
 		*sql << "ROLLBACK TO SAVEPOINT SETACCURACY",exec();
-		*sql << S_ACCURACYUPDATE,shotsFired,shotsHit,type,player,gamenumber,exec();
+		*sql << "UPDATE oastat_accuracy SET shotsfired = ?, shotshit = ?, modtype = ? WHERE player = ? AND gamenumber = ?",shotsFired,shotsHit,type,getPlayerId(player),gamenumber,exec();
 	}
 }
 
@@ -364,7 +311,7 @@ int Db2DbiXX::getNextGameNumber()
 {
 	int result = -1;
 	row r;
-	*sql<< GETNEXTGAMENUMBER;
+	*sql<< "SELECT nextval('oastat_games_gamenumber_seq')";
 	DebugMessage("Gettings next game number");
 	if(sql->single(r))
 	{
@@ -381,7 +328,10 @@ int Db2DbiXX::getLastGameNumber()
 {
 	int result = -1;
 	row r;
-	*sql<< S_GETLASTGAMENUMBER;
+	if(sql_backend == "mysql")
+		*sql << "SELECT LAST_INSERT_ID() FROM DUAL";
+	else
+		*sql<< "SELECT currval('oastat_games_gamenumber_seq')";
 	DebugMessage("Gettings last game number");
 	if(sql->single(r))
 	{
@@ -435,10 +385,30 @@ void Db2DbiXX::doNotCommit()
 	SetOk(false);
 }
 
-void Db2DbiXX::DebugMessage(string msg)
+void Db2DbiXX::DebugMessage(const string &msg)
 {
 	if(debug)
 	{
 		cout << "oastat: " << msg << endl;
 	}
+}
+
+int Db2DbiXX::getPlayerId(const string& guid)
+{
+	int ret = 0;
+	if(playerids.count(guid))
+	{
+		ret = playerids[guid];
+	}
+	else
+	{
+		row r;
+		*sql << "SELECT playerid FROM oastat_players WHERE guid = ?",guid;
+		if(sql->single(r))
+		{
+			r >> ret;
+			playerids[guid] = ret;
+		}
+	}
+	return ret;
 }

@@ -35,7 +35,7 @@ namespace {
 
 void makeLower(string &x)
 {
-	for(int i=0; i<x.length(); i++)
+	for(unsigned int i=0; i<x.length(); i++)
 	{
 		if(x[i] >= 'A' && x[i] <= 'X')
 			x[i] = x[i]-'A'+'a';
@@ -131,7 +131,8 @@ void OaStatStruct::parseLine(string line)
 map<string,string> OaStatStruct::GetInfostring(string restOfLine) const
 {
 	map<string,string> list;
-	int curPos = 0, lastPos = 0;
+	int curPos = 0;
+	unsigned int lastPos = 0;
 	bool iskey = true;
 	string key, value;
 	if(restOfLine[0] == '\\')
