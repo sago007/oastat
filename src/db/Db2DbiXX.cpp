@@ -23,8 +23,6 @@ http://code.google.com/p/oastat/
 
 #include "Db2DbiXX.hpp"
 
-static const string booltext[2] = {"n","y"};
-
 void Db2DbiXX::InitStrings(string backend)
 {
 	last_value = false;
@@ -58,7 +56,7 @@ void Db2DbiXX::ReadConfigFromDb()
 	}
 }
 
-bool Db2DbiXX::IsDuplicate(string servername, tm thetime)
+bool Db2DbiXX::IsDuplicate(const string &servername,const tm &thetime)
 {
 	result res;
 	*sql << "SELECT 'X' FROM oastat_games WHERE servername = ? AND time = ?",servername,thetime,res;
@@ -100,7 +98,7 @@ Db2DbiXX::Db2DbiXX(string dbargs)
 	sql->connect();
 	ReadConfigFromDb();
 	commitlock = new transaction(*sql);
-	debug = true;
+	debug = false;
 	//sql(dbargs);
 }
 
@@ -183,7 +181,7 @@ int Db2DbiXX::getGameNumber()
 	return gamenumber;
 }
 
-void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, const OaStatStruct *oss)
+void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, const OaStatStruct &oss)
 {
 	if(!isok)
 		return;
@@ -192,7 +190,7 @@ void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int secon
 		try
 		{
 			*sql << "SAVEPOINT SETPLAYER",exec();
-			*sql << "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,?,?,?,?)",guid,nickname,oss->getDateTime(),booltext[isBot],model,headmodel,exec();
+			*sql << "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,?,?,?,?)",guid,nickname,oss.getDateTime(),(isBot? "y":"n"),model,headmodel,exec();
 			*sql << "RELEASE SAVEPOINT SETPLAYER",exec(); //Needed by postgresql
 		}
 		catch (dbixx_error &e)
@@ -200,7 +198,7 @@ void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int secon
 			DebugMessage("Already inserted? "+(string)e.what());
 			*sql << "ROLLBACK TO SAVEPOINT SETPLAYER",exec();
 		}
-		*sql << "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ? AND lastseen < ?",nickname,oss->getDateTime(),booltext[isBot],model,headmodel,guid,oss->getDateTime(),exec();
+		*sql << "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ? AND lastseen < ?",nickname,oss.getDateTime(),(isBot? "y":"n"),model,headmodel,guid,oss.getDateTime(),exec();
 	}
 	try
 	{

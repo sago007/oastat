@@ -86,7 +86,7 @@ public:
 	 * @param headmodel - headmodel used
 	 * @param skill - bot skill, bots only
 	 */
-	virtual void setPlayerInfo(std::string guid, std::string nickname, bool isBot, int second, int team, std::string model, std::string headmodel, int skill, const OaStatStruct *oss) = 0;
+	virtual void setPlayerInfo(std::string guid, std::string nickname, bool isBot, int second, int team, std::string model, std::string headmodel, int skill, const OaStatStruct &oss) = 0;
 
 	/**
 	 * Represents a kill

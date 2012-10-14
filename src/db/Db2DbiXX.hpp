@@ -46,7 +46,7 @@ public:
 	void addGameCvar(string cvar, string value);
 	void endGame(int second);
 	int getGameNumber();
-	void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, const OaStatStruct *oss);
+	void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, const OaStatStruct &oss);
 	void addKill(int second, string attackerID, string targetID, int type);
 	//void addCapture(int second, string player, int team);
 	void addAward(int second, string player, int award);
@@ -74,7 +74,7 @@ private:
 	void DebugMessage(const string &msg);
 	void InitStrings(string backend);
 	void ReadConfigFromDb();
-	bool IsDuplicate(string servername, tm thetime);
+	bool IsDuplicate(const string &servername, const tm &thetime);
 	int getPlayerId(const string &guid);
 	std::map<std::string,int> playerids;
 	string sql_backend;

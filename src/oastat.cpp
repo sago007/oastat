@@ -30,9 +30,11 @@ http://code.google.com/p/oastat/
 #include <gcrypt.h>
 #include <stdio.h>
 #include <list>
+#include <boost/shared_ptr.hpp>
 
 
 using namespace std;
+using namespace boost;
 
 #include "db/database.hpp"
 #ifdef USEDBIXX
@@ -66,7 +68,7 @@ static int processStdIn(istream* in_p);
 
 Database *db;
 
-vector<Struct2Db*> commands;
+vector<shared_ptr<Struct2Db> > commands;
 
 
 /**
@@ -76,21 +78,21 @@ vector<Struct2Db*> commands;
 void addCommands()
 {
 	//Add new commands here
-	commands.push_back(new Kill2Db());
-	commands.push_back(new Init2Db());
-	commands.push_back(new Shutdown2Db());
-	commands.push_back(new Userinfo2Db());
-	commands.push_back(new Disconnect2Db());
-	commands.push_back(new Award2Db());
-	commands.push_back(new Ctf2Db());
-	commands.push_back(new Point2Db());
-	commands.push_back(new Ctf1f2Db());
-	commands.push_back(new Elimination2Db());
-	commands.push_back(new CtfElimination2Db());
-	commands.push_back(new Harvester2Db());
-	commands.push_back(new Challenge2Db());
-	commands.push_back(new Warmup2Db());
-	commands.push_back(new Accuracy2Db());
+	commands.push_back(shared_ptr<Struct2Db>(new Kill2Db() ) );
+	commands.push_back(shared_ptr<Struct2Db>(new Init2Db() ) );
+	commands.push_back(shared_ptr<Struct2Db>(new Shutdown2Db() ) );
+	commands.push_back(shared_ptr<Struct2Db>(new Userinfo2Db()) );
+	commands.push_back(shared_ptr<Struct2Db>(new Disconnect2Db()) );
+	commands.push_back(shared_ptr<Struct2Db>(new Award2Db()) );
+	commands.push_back(shared_ptr<Struct2Db>(new Ctf2Db()) );
+	commands.push_back(shared_ptr<Struct2Db>(new Point2Db()) );
+	commands.push_back(shared_ptr<Struct2Db>(new Ctf1f2Db()) );
+	commands.push_back(shared_ptr<Struct2Db>(new Elimination2Db()) );
+	commands.push_back(shared_ptr<Struct2Db>(new CtfElimination2Db()) );
+	commands.push_back(shared_ptr<Struct2Db>(new Harvester2Db()) );
+	commands.push_back(shared_ptr<Struct2Db>(new Challenge2Db()) );
+	commands.push_back(shared_ptr<Struct2Db>(new Warmup2Db()) );
+	commands.push_back(shared_ptr<Struct2Db>(new Accuracy2Db()) );
 	//Add more commands just above here
 
 	for(unsigned int i=0; i<commands.size(); i++)
@@ -153,7 +155,7 @@ static int processStdIn(istream* in_p)
 				}
 			}
 		}
-		catch (exception &e2)
+		catch (std::exception &e2)
 		{
 			/*
 			 If there is an error write it in the log and try again continue
