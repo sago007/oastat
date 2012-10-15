@@ -66,9 +66,9 @@ vector<string> clientIdMap;
 
 static int processStdIn(istream* in_p);
 
-Database *db;
+static Database *db;
 
-vector<shared_ptr<Struct2Db> > commands;
+static vector<shared_ptr<Struct2Db> > commands;
 
 
 /**
@@ -103,7 +103,7 @@ void addCommands()
 
 
 
-static int processStdIn(istream* in_p)
+int processStdIn(istream* in_p)
 {
 	bool done = true;
 	OaStatStruct *startstruct;

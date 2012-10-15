@@ -23,7 +23,7 @@ http://code.google.com/p/oastat/
 
 #include "Db2DbiXX.hpp"
 
-void Db2DbiXX::InitStrings(string backend)
+void Db2DbiXX::InitStrings(const string &backend)
 {
 	last_value = false;
 	if(backend == "pgsql")
@@ -77,7 +77,7 @@ Db2DbiXX::Db2DbiXX()
 	debug = false;
 }
 
-Db2DbiXX::Db2DbiXX(string dbargs)
+Db2DbiXX::Db2DbiXX(const string &dbargs)
 {
 	stringstream stream(stringstream::in | stringstream::out);
 	stream << dbargs;
@@ -118,26 +118,26 @@ void Db2DbiXX::createTables()
 
 }
 
-void Db2DbiXX::startGame(int gametype, string mapname, string basegame, string servername, const OaStatStruct *oss)
+void Db2DbiXX::startGame(int gametype, const string &mapname, const string &basegame, const string &servername, const OaStatStruct &oss)
 {
 	sql->reconnect();
 	Rollback(); //in case there was some garbage that could be comitted (like warmup or an unfinished game)
 	SetOk(true);
-	if(oss->restOfLine.find("\\isWarmup\\1") != string::npos)
+	if(oss.restOfLine.find("\\isWarmup\\1") != string::npos)
 	{
 		SetOk(false);
-		cout << "Warmup: " << servername << ", " << oss->getTimeStamp() << endl;
+		cout << "Warmup: " << servername << ", " << oss.getTimeStamp() << endl;
 		return;
 	}
-	if(IsDuplicate(servername,oss->getDateTime()))
+	if(IsDuplicate(servername,oss.getDateTime()))
 	{
 		SetOk(false);
-		cout << "Duplicate:" << servername << ", " << oss->getTimeStamp() << endl;
+		cout << "Duplicate:" << servername << ", " << oss.getTimeStamp() << endl;
 		return;
 	}
 	if(last_value)
 	{
-		*sql << "INSERT INTO oastat_games(gametype, mapname, basegame,servername,time) VALUES (?,LOWER(?),?,?,?)",gametype,mapname,basegame,servername,oss->getDateTime(),exec();
+		*sql << "INSERT INTO oastat_games(gametype, mapname, basegame,servername,time) VALUES (?,LOWER(?),?,?,?)",gametype,mapname,basegame,servername,oss.getDateTime(),exec();
 		gamenumber = getLastGameNumber();
 		if(gamenumber < 1)
 		{
@@ -149,12 +149,12 @@ void Db2DbiXX::startGame(int gametype, string mapname, string basegame, string s
 	{
 		gamenumber = getNextGameNumber();
 		*sql << "INSERT INTO oastat_games(gamenumber,gametype, mapname, basegame,servername,time) VALUES (?,?,LOWER(?),?,?,?)",
-				gamenumber,gametype,mapname,basegame,servername,oss->getDateTime(),exec();
+				gamenumber,gametype,mapname,basegame,servername,oss.getDateTime(),exec();
 	}
 	DebugMessage("startGame");
 }
 
-void Db2DbiXX::addGameCvar(string cvar, string value)
+void Db2DbiXX::addGameCvar(const std::string &cvar, const std::string &value)
 {
 	if(!isok)
 		return;
@@ -181,7 +181,7 @@ int Db2DbiXX::getGameNumber()
 	return gamenumber;
 }
 
-void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, const OaStatStruct &oss)
+void Db2DbiXX::setPlayerInfo(const std::string &guid, const std::string &nickname, bool isBot, int second, int team, const std::string &model, const std::string &headmodel, int skill, const OaStatStruct &oss)
 {
 	if(!isok)
 		return;
@@ -214,7 +214,7 @@ void Db2DbiXX::setPlayerInfo(string guid, string nickname, bool isBot, int secon
 	DebugMessage("setPlayerInfo for "+nickname+" with GUID: "+guid);
 }
 
-void Db2DbiXX::addKill(int second, string attackerID, string targetID, int type)
+void Db2DbiXX::addKill(int second, const std::string &attackerID, const std::string &targetID, int type)
 {
 	if(!isok)
 		return;
@@ -222,7 +222,7 @@ void Db2DbiXX::addKill(int second, string attackerID, string targetID, int type)
 	DebugMessage("addKill");
 }
 
-void Db2DbiXX::addAward(int second, string player, int award)
+void Db2DbiXX::addAward(int second, const std::string &player, int award)
 {
 	if(!isok)
 		return;
@@ -230,7 +230,7 @@ void Db2DbiXX::addAward(int second, string player, int award)
 	DebugMessage("addAward");
 }
 
-void Db2DbiXX::addScoreInfo(int second, string player, int score)
+void Db2DbiXX::addScoreInfo(int second, const std::string &player, int score)
 {
 	if(!isok)
 		return;
@@ -238,7 +238,7 @@ void Db2DbiXX::addScoreInfo(int second, string player, int score)
 	DebugMessage("addScoreInfo");
 }
 
-void Db2DbiXX::addCtf(int second, string player, int team, int event)
+void Db2DbiXX::addCtf(int second, const std::string &player, int team, int event)
 {
 	if(!isok)
 		return;
@@ -246,7 +246,7 @@ void Db2DbiXX::addCtf(int second, string player, int team, int event)
 	DebugMessage("addCtf");
 }
 
-void Db2DbiXX::addCtf1f(int second, string player, int team, int event)
+void Db2DbiXX::addCtf1f(int second, const std::string &player, int team, int event)
 {
 	if(!isok)
 		return;
@@ -263,7 +263,7 @@ void Db2DbiXX::addElimination(int second, int roundnumber, int team, int event)
 	DebugMessage("addElimination");
 }
 
-void Db2DbiXX::addCtfElimination(int second, int roundnumber, string player, int team, int event)
+void Db2DbiXX::addCtfElimination(int second, int roundnumber, const std::string &player, int team, int event)
 {
 	if(!isok)
 		return;
@@ -271,7 +271,7 @@ void Db2DbiXX::addCtfElimination(int second, int roundnumber, string player, int
 	DebugMessage("addCtfElimination");
 }
 
-void Db2DbiXX::addHarvester(int second, string player1, string player2, int team, int event, int score)
+void Db2DbiXX::addHarvester(int second, const std::string &player1, const std::string &player2, int team, int event, int score)
 {
 	if(!isok)
 		return;
@@ -280,7 +280,7 @@ void Db2DbiXX::addHarvester(int second, string player1, string player2, int team
 	DebugMessage("addHarvester");
 }
 
-void Db2DbiXX::addChallenge(int second, string player, int challenge, int amount)
+void Db2DbiXX::addChallenge(int second, const std::string &player, int challenge, int amount)
 {
 	if(!isok)
 		return;
@@ -288,7 +288,7 @@ void Db2DbiXX::addChallenge(int second, string player, int challenge, int amount
 	DebugMessage("addChallenge");
 }
 
-void Db2DbiXX::addAccuracy(int second, string player, int type, int shotsFired, int shotsHit)
+void Db2DbiXX::addAccuracy(int second, const std::string &player, int type, int shotsFired, int shotsHit)
 {
 	if(!isok)
 		return;

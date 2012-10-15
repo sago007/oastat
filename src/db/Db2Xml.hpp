@@ -44,22 +44,23 @@ public:
 	Db2Xml(const Db2Xml& orig);
 	virtual ~Db2Xml();
 	void createTables();
-	void startGame(int gametype, string mapname, string basegame, string servername, const OaStatStruct *oss);
-	void addGameCvar(string cvar, string value);
+	void startGame(int gametype, const string &mapname, const string &basegame, const string &servername, const OaStatStruct &oss);
+	void addGameCvar(const std::string &cvar, const std::string &value);
 	void endGame(int second);
 	int getGameNumber();
-	void setPlayerInfo(string guid, string nickname, bool isBot, int second, int team, string model, string headmodel, int skill, const OaStatStruct &oss);
-	void addKill(int second, string attackerID, string targetID, int type);
+	void setPlayerInfo(const std::string &guid, const std::string &nickname, bool isBot, 
+		int second, int team, const std::string &model, const std::string &headmodel, int skill, const OaStatStruct &oss);
+	void addKill(int second, const std::string &attackerID, const std::string &targetID, int type);
 	//void addCapture(int second, string player, int team);
-	void addAward(int second, string player, int award);
-	void addScoreInfo(int second, string player, int score);
-	void addCtf(int second, string player, int team, int event);
-	void addCtf1f(int second, string player, int team, int event);
+	void addAward(int second, const std::string &player, int award);
+	void addScoreInfo(int second, const std::string &player, int score);
+	void addCtf(int second, const std::string &player, int team, int event);
+	void addCtf1f(int second, const std::string &player, int team, int event);
 	void addElimination(int second, int roundnumber, int team, int event);
-	void addCtfElimination(int second, int roundnumber, string player, int team, int event);
-	void addHarvester(int second, string player1, string player2, int team, int event, int score);
-	void addChallenge(int second, string player, int challenge, int amount);
-	void addAccuracy(int secind, string player, int type, int shotsFired, int shotsHit);
+	void addCtfElimination(int second, int roundnumber, const std::string &player, int team, int event);
+	void addHarvester(int second, const std::string &player1, const std::string &player2, int team, int event, int score);
+	void addChallenge(int second, const std::string &player, int challenge, int amount);
+	void addAccuracy(int second, const std::string &player, int type, int shotsFired, int shotsHit);
 	void doNotCommit();
 private:
 	string p_output_dir;
@@ -76,8 +77,8 @@ private:
 	map<string,int> psoudo_playerids;
 	int nextId;
 
-	int getPsoudoId(string guid);
-	string getXmlEscaped(string org);
+	int getPsoudoId(const string &guid);
+	string getXmlEscaped(const string &org);
 };
 
 #endif	/* DB2XML_HPP */

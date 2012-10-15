@@ -44,8 +44,10 @@ public:
 	 * @param gametype - integer of the gametype DM=0,CTF=4, Elim=8 and so on
 	 * @param mapname - the mapname used for this game
 	 * @param basegame - the mod... normally baseoa
+	 * @param servername - name of the server
+	 * @param oss - the original OaStatStruct. Used to retrieve time
 	 */
-	virtual void startGame(int gametype, std::string mapname, std::string basegame, std::string servername, const OaStatStruct *oss) = 0;
+	virtual void startGame(int gametype, const std::string &mapname, const std::string &basegame, const std::string &servername, const OaStatStruct &oss) = 0;
 
 	/**
 	 * Adds information about a cvar to the last started game
@@ -53,7 +55,7 @@ public:
 	 * @param cvar - The name of the cvar (limited to 100 chars)
 	 * @param value - The value of the cvar as a string
 	 */
-	virtual void addGameCvar(std::string cvar, std::string value) = 0;
+	virtual void addGameCvar(const std::string &cvar, const std::string &value) = 0;
 
 	/**
 	 * Called then a game ends.
@@ -86,7 +88,7 @@ public:
 	 * @param headmodel - headmodel used
 	 * @param skill - bot skill, bots only
 	 */
-	virtual void setPlayerInfo(std::string guid, std::string nickname, bool isBot, int second, int team, std::string model, std::string headmodel, int skill, const OaStatStruct &oss) = 0;
+	virtual void setPlayerInfo(const std::string &guid, const std::string &nickname, bool isBot, int second, int team, const std::string &model, const std::string &headmodel, int skill, const OaStatStruct &oss) = 0;
 
 	/**
 	 * Represents a kill
@@ -96,7 +98,7 @@ public:
 	 * @param targetID hashed guid of the victim
 	 * @param type weapon number
 	 */
-	virtual void addKill(int second, std::string attackerID, std::string targetID, int type) = 0;
+	virtual void addKill(int second, const std::string &attackerID, const std::string &targetID, int type) = 0;
 
 	/**
 	 * A flag/skull capture or obelisk destruction
@@ -114,7 +116,7 @@ public:
 	 * @param player hashed guid of the player
 	 * @param award the award, numbers must be found in code
 	 */
-	virtual void addAward(int second, std::string player, int award) = 0;
+	virtual void addAward(int second, const std::string &player, int award) = 0;
 
 	/**
 	 * Adds information about a players score that is changing.
@@ -125,7 +127,7 @@ public:
 	 * @param player hashed guid of the player
 	 * @param score the Total
 	 */
-	virtual void addScoreInfo(int second, std::string player, int score) = 0;
+	virtual void addScoreInfo(int second, const std::string &player, int score) = 0;
 
 	/**
 	 * Adds an event from a CTF-game.
@@ -141,7 +143,7 @@ public:
 	 * @param team
 	 * @param event
 	 */
-	virtual void addCtf(int second, std::string player, int team, int event) = 0;
+	virtual void addCtf(int second, const std::string &player, int team, int event) = 0;
 
 	/**
 	 * Adds an event from a 1FCTF-game.
@@ -157,8 +159,16 @@ public:
 	 * @param team
 	 * @param event
 	 */
-	virtual void addCtf1f(int second, std::string player, int team, int event) = 0;
+	virtual void addCtf1f(int second, const std::string &player, int team, int event) = 0;
 
+	/**
+	 * Adds an event from an Elimination game.
+	 * 
+     * @param second
+     * @param roundnumber
+     * @param team
+     * @param event
+     */
 	virtual void addElimination(int second, int roundnumber, int team, int event) = 0;
 
 	/**
@@ -170,7 +180,7 @@ public:
 	 * @param team the team the event is about
 	 * @param event the event type
 	 */
-	virtual void addCtfElimination(int second, int roundnumber, std::string player, int team, int event) = 0;
+	virtual void addCtfElimination(int second, int roundnumber, const std::string &player, int team, int event) = 0;
 
 	/**
 	 * Document addHarvester(int,string,string,int,int,int) here...
@@ -182,7 +192,7 @@ public:
 	 * @param event the event number
 	 * @param score number of skulls brought in in one capture
 	 */
-	virtual void addHarvester(int second, std::string player1, std::string player2, int team, int event, int score) = 0;
+	virtual void addHarvester(int second, const std::string &player1, const std::string &player2, int team, int event, int score) = 0;
 
 	/**
 	 * Add information about a scored challenge
@@ -192,17 +202,17 @@ public:
 	 * @param challenge the challenge gotten (see challenges.h)
 	 * @param amount normally 1
 	 */
-	virtual void addChallenge(int second, std::string player, int challenge, int amount) = 0;
+	virtual void addChallenge(int second, const std::string &player, int challenge, int amount) = 0;
 	
 	/**
 	 * adds accuracy information.
-     * @param secind Time the information was given. Usually not logged as the information is for the whole match
+     * @param second Time the information was given. Usually not logged as the information is for the whole match
      * @param player Player that the information is recorded for
      * @param type The weapon type
      * @param shotsFired Number of shots fired in the match
      * @param shotsHit Number of hits
      */
-	virtual void addAccuracy(int secind, std::string player, int type, int shotsFired, int shotsHit) = 0;
+	virtual void addAccuracy(int second, const std::string &player, int type, int shotsFired, int shotsHit) = 0;
 };
 
 #endif //_DATABASE_H
