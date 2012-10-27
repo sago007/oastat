@@ -64,5 +64,5 @@ void Userinfo2Db::process(const OaStatStruct &oss)
 	}
 	string player = clientIdMap[oss.parameters.at(0)];
 
-	dp->setPlayerInfo(player,arguments["n"],isBot,oss.second,atoi(arguments["t"].c_str()), arguments["model"],arguments["hmodel"],-1,oss);
+	dp->setPlayerInfo(player,arguments["n"],isBot,oss.second,atoi(arguments["t"].c_str()), arguments["model"],arguments["hmodel"],-1);
 }

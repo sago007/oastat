@@ -49,7 +49,7 @@ public:
 	void endGame(int second);
 	int getGameNumber();
 	void setPlayerInfo(const std::string &guid, const std::string &nickname, bool isBot, 
-		int second, int team, const std::string &model, const std::string &headmodel, int skill, const OaStatStruct &oss);
+		int second, int team, const std::string &model, const std::string &headmodel, int skill);
 	void addKill(int second, const std::string &attackerID, const std::string &targetID, int type);
 	//void addCapture(int second, string player, int team);
 	void addAward(int second, const std::string &player, int award);

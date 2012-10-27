@@ -31,8 +31,6 @@ using namespace std;
 
 using namespace std;
 
-tm OaStatStruct::_datetime;
-
 namespace {
 
 void makeLower(string &x)

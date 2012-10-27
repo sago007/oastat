@@ -72,12 +72,7 @@ public:
 	 */
 	void setTimeStamp(const std::string &timestring);
 private:
-	/** 
-	 * This is static because it must be shared between all oastatstructs to ensure that they all know the same time...
-	 * As a side effect we cannot process more than one game at once
-	 * TODO: find a better way to do this! 
-	 */
-	static tm _datetime; 
+	tm _datetime; 
 };
 
 #endif	/* _OASTATSTRUCT_H */

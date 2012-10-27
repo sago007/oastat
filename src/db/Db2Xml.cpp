@@ -124,7 +124,7 @@ int Db2Xml::getGameNumber()
 {
 	return 1;
 }
-void Db2Xml::setPlayerInfo(const std::string &guid, const std::string &nickname, bool isBot, int second, int team, const std::string &model, const std::string &headmodel, int skill, const OaStatStruct &oss)
+void Db2Xml::setPlayerInfo(const std::string &guid, const std::string &nickname, bool isBot, int second, int team, const std::string &model, const std::string &headmodel, int skill)
 {
 	if(!isOk)
 		return;

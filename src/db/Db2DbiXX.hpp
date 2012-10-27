@@ -46,7 +46,7 @@ public:
 	void addGameCvar(const std::string &cvar, const std::string &value);
 	void endGame(int second);
 	int getGameNumber();
-	void setPlayerInfo(const std::string &guid, const std::string &nickname, bool isBot, int second, int team, const std::string &model, const std::string &headmodel, int skill, const OaStatStruct &oss);
+	void setPlayerInfo(const std::string &guid, const std::string &nickname, bool isBot, int second, int team, const std::string &model, const std::string &headmodel, int skill);
 	void addKill(int second, const std::string &attackerID, const std::string &targetID, int type);
 	//void addCapture(int second, string player, int team);
 	void addAward(int second, const std::string &player, int award);
@@ -64,7 +64,8 @@ private:
 	transaction *commitlock;
 	bool isok;
 	bool debug;
-	int gamenumber;
+	int gamenumber; /** Gamenumber we are currently working on */
+	tm timestamp; /** Start time of the game we are currently working on */
 	int getNextGameNumber();
 	int getLastGameNumber();
 	void Commit();

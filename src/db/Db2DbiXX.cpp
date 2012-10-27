@@ -123,13 +123,14 @@ void Db2DbiXX::startGame(int gametype, const string &mapname, const string &base
 	sql->reconnect();
 	Rollback(); //in case there was some garbage that could be comitted (like warmup or an unfinished game)
 	SetOk(true);
+	timestamp = oss.getDateTime();
 	if(oss.restOfLine.find("\\isWarmup\\1") != string::npos)
 	{
 		SetOk(false);
 		cout << "Warmup: " << servername << ", " << oss.getTimeStamp() << endl;
 		return;
 	}
-	if(IsDuplicate(servername,oss.getDateTime()))
+	if(IsDuplicate(servername,timestamp))
 	{
 		SetOk(false);
 		cout << "Duplicate:" << servername << ", " << oss.getTimeStamp() << endl;
@@ -137,7 +138,7 @@ void Db2DbiXX::startGame(int gametype, const string &mapname, const string &base
 	}
 	if(last_value)
 	{
-		*sql << "INSERT INTO oastat_games(gametype, mapname, basegame,servername,time) VALUES (?,LOWER(?),?,?,?)",gametype,mapname,basegame,servername,oss.getDateTime(),exec();
+		*sql << "INSERT INTO oastat_games(gametype, mapname, basegame,servername,time) VALUES (?,LOWER(?),?,?,?)",gametype,mapname,basegame,servername,timestamp,exec();
 		gamenumber = getLastGameNumber();
 		if(gamenumber < 1)
 		{
@@ -149,7 +150,7 @@ void Db2DbiXX::startGame(int gametype, const string &mapname, const string &base
 	{
 		gamenumber = getNextGameNumber();
 		*sql << "INSERT INTO oastat_games(gamenumber,gametype, mapname, basegame,servername,time) VALUES (?,?,LOWER(?),?,?,?)",
-				gamenumber,gametype,mapname,basegame,servername,oss.getDateTime(),exec();
+				gamenumber,gametype,mapname,basegame,servername,timestamp,exec();
 	}
 	DebugMessage("startGame");
 }
@@ -181,7 +182,7 @@ int Db2DbiXX::getGameNumber()
 	return gamenumber;
 }
 
-void Db2DbiXX::setPlayerInfo(const std::string &guid, const std::string &nickname, bool isBot, int second, int team, const std::string &model, const std::string &headmodel, int skill, const OaStatStruct &oss)
+void Db2DbiXX::setPlayerInfo(const std::string &guid, const std::string &nickname, bool isBot, int second, int team, const std::string &model, const std::string &headmodel, int skill)
 {
 	if(!isok)
 		return;
@@ -190,7 +191,7 @@ void Db2DbiXX::setPlayerInfo(const std::string &guid, const std::string &nicknam
 		try
 		{
 			*sql << "SAVEPOINT SETPLAYER",exec();
-			*sql << "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,?,?,?,?)",guid,nickname,oss.getDateTime(),(isBot? "y":"n"),model,headmodel,exec();
+			*sql << "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,?,?,?,?)",guid,nickname,timestamp,(isBot? "y":"n"),model,headmodel,exec();
 			*sql << "RELEASE SAVEPOINT SETPLAYER",exec(); //Needed by postgresql
 		}
 		catch (dbixx_error &e)
@@ -198,7 +199,7 @@ void Db2DbiXX::setPlayerInfo(const std::string &guid, const std::string &nicknam
 			DebugMessage("Already inserted? "+(string)e.what());
 			*sql << "ROLLBACK TO SAVEPOINT SETPLAYER",exec();
 		}
-		*sql << "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ? AND lastseen < ?",nickname,oss.getDateTime(),(isBot? "y":"n"),model,headmodel,guid,oss.getDateTime(),exec();
+		*sql << "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ? AND lastseen < ?",nickname,timestamp,(isBot? "y":"n"),model,headmodel,guid,timestamp,exec();
 	}
 	try
 	{

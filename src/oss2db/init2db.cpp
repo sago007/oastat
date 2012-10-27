@@ -49,7 +49,7 @@ void Init2Db::process(const OaStatStruct &oss)
 	string servername = arguments["sv_hostname"];
 	oss_copy.setTimeStamp(arguments["g_timestamp"]);
 
-	dp->startGame(gametype,mapname,basegame,servername,&oss_copy);
+	dp->startGame(gametype,mapname,basegame,servername,oss_copy);
 	map<string,string>::iterator it;
 	for(it = arguments.begin(); it != arguments.end(); it++)
 	{
