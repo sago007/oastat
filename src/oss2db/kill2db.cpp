@@ -24,12 +24,12 @@ http://code.google.com/p/oastat/
 
 #include "kill2db.h"
 
-string Kill2Db::getCommand()
+string Kill2Db::getCommand() const
 {
 	return "Kill";
 }
 
-bool Kill2Db::canProcess(const OaStatStruct &oss)
+bool Kill2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand() || oss.parameters.size()<=3)
 		return false;

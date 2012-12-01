@@ -23,12 +23,12 @@ http://code.google.com/p/oastat/
 
 #include "Harvester2Db.hpp"
 
-string Harvester2Db::getCommand()
+string Harvester2Db::getCommand() const
 {
 	return "HARVESTER";
 }
 
-bool Harvester2Db::canProcess(const OaStatStruct &oss)
+bool Harvester2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand() || oss.parameters.size()<5 )
 		return false;

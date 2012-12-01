@@ -23,13 +23,13 @@ http://code.google.com/p/oastat/
 
 #include "Challenge2Db.hpp"
 
-string Challenge2Db::getCommand()
+string Challenge2Db::getCommand() const
 {
 	return "Challenge";
 }
 
 
-bool Challenge2Db::canProcess(const OaStatStruct &oss)
+bool Challenge2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand() || oss.parameters.size()<3)
 		return false;

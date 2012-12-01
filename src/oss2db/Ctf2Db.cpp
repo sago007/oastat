@@ -24,12 +24,12 @@ http://code.google.com/p/oastat/
 #include "Ctf2Db.hpp"
 
 
-string Ctf2Db::getCommand()
+string Ctf2Db::getCommand() const
 {
 	return "CTF";
 }
 
-bool Ctf2Db::canProcess(const OaStatStruct &oss)
+bool Ctf2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand() || oss.parameters.size()<3)
 		return false;

@@ -25,12 +25,12 @@ http://code.google.com/p/oastat/
 
 
 
-string Shutdown2Db::getCommand()
+string Shutdown2Db::getCommand() const
 {
 	return "ShutdownGame";
 }
 
-bool Shutdown2Db::canProcess(const OaStatStruct &oss)
+bool Shutdown2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand())
 		return false;

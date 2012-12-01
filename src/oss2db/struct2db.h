@@ -27,6 +27,7 @@ http://code.google.com/p/oastat/
 #include "../oastatstruct.h"
 #include "../db/database.hpp"
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 using namespace std;
 
@@ -39,7 +40,7 @@ public:
 	/*
 	 * The object will need a database interface to cummunicate to. This is given here
 	 */
-	void setDb(Database *d)
+	void setDb(boost::shared_ptr<Database> &d)
 	{
 		dp = d;
 	}
@@ -49,7 +50,7 @@ public:
 	 *
 	 * @returns The command the object can process
 	 */
-	virtual string getCommand() = 0;
+	virtual std::string getCommand() const = 0;
 
 	/*
 	 *  The object needs a way to tell if it can process a command.
@@ -57,7 +58,7 @@ public:
 	 * This is better than the last getCommand, because it can check for multiple commands at once, and can
 	 * discard subevents for supported commands.
 	 */
-	virtual bool canProcess(const OaStatStruct &oss) = 0;
+	virtual bool canProcess(const OaStatStruct &oss) const = 0;
 
 	/*
 	 * Parses s OaStatStruct to the object to process
@@ -70,7 +71,7 @@ public:
 	};
 
 protected:
-	Database *dp; //Pointer to the used db
+	boost::shared_ptr<Database> dp; //Pointer to the used db
 };
 
 

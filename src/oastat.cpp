@@ -64,19 +64,23 @@ using namespace boost;
 
 vector<string> clientIdMap;
 
-static int processStdIn(istream* in_p);
+static int processStdIn(istream &in_p,vector<shared_ptr<Struct2Db> > &commands);
 
-static Database *db;
-
-static vector<shared_ptr<Struct2Db> > commands;
 
 
 /**
  * This function adds objects that are inherited from the Struct2Db class
  * to the vector commands.
+ * 
+ * @param[in] db The database object. May not be freed once given as an argument to this function
  */
-void addCommands()
+static void addCommands(shared_ptr<Database> &db,vector<shared_ptr<Struct2Db> > &commands)
 {
+	if(!db)
+	{
+		throw runtime_error("db was uninizialized in addCommands");
+	}
+	
 	//Add new commands here
 	commands.push_back(shared_ptr<Struct2Db>(new Kill2Db() ) );
 	commands.push_back(shared_ptr<Struct2Db>(new Init2Db() ) );
@@ -103,7 +107,7 @@ void addCommands()
 
 
 
-int processStdIn(istream* in_p)
+static int processStdIn(istream &in_p,vector<shared_ptr<Struct2Db> > &commands)
 {
 	bool done = true;
 	OaStatStruct *startstruct;
@@ -115,24 +119,26 @@ int processStdIn(istream* in_p)
 		list<OaStatStruct> osslist;
 		try
 		{
-			while( getline(*in_p,line) )
+			while( getline(in_p,line) )
 			{
 				oss.clear();
 				oss.parseLine(line);
 				osslist.push_back(oss);
 				if(oss.command=="InitGame")
 					startstruct = &osslist.back();
-				if(oss.command=="Warmup" && startstruct)
-					startstruct->restOfLine += "\\isWarmup\\1"; //Workaround to stop warmup
+				if(oss.command=="Warmup" && startstruct) 
+				{
+					//Workaround to stop warmup
+					//If we spot a warmup command we add a cvar to the start struct
+					//Warmup is a attribute that affect he whole game
+					startstruct->restOfLine += "\\isWarmup\\1"; 
+				}
 				if(oss.command=="ShutdownGame")
 				{
 					while(!osslist.empty())
 					{
-						//cout << "next: " << oss.command << endl;
 						oss = osslist.front();
-						//cout << "gotten, now popping" << endl;
 						osslist.pop_front();
-						//cout << "popping complete" << endl;
 						for(unsigned int i=0; i<commands.size(); i++)
 						{
 							//try {
@@ -203,6 +209,7 @@ int main (int argc, const char* argv[])
 	string filename = "";
 	string backend = "Xml";
 	bool useTail = false;
+	vector<shared_ptr<Struct2Db> > commands;
 	/////////////
 	//dbargs = "mysql dbname oastat";
 	boost::format f("%1%/.openarena/baseoa/games.log");
@@ -234,58 +241,67 @@ int main (int argc, const char* argv[])
 	}
 	try
 	{
-		db = NULL;
-
+		shared_ptr<Database> db;
 
 #if USEDBIXX
 		if(backend == "DbiXX")
 		{
 			cout << "Using DBI" << endl;
 			if(dbargs.length()<1)
-				db = new Db2DbiXX();
+			{
+				db = shared_ptr<Database>(new Db2DbiXX() );
+			}
 			else
-				db = new Db2DbiXX(dbargs);
+			{
+				db = shared_ptr<Database>(new Db2DbiXX(dbargs) );
+			}
 		}
 #endif
 		if(backend == "Xml")
 		{
 			cout << "Using XML" << endl;
 			if(dbargs.length()<1)
-				db = new Db2Xml();
+			{
+				db = shared_ptr<Database>(new Db2Xml() );
+			}
 			else
-				db = new Db2Xml(dbargs);
+			{
+				db = shared_ptr<Database>(new Db2Xml(dbargs) );
+			}
 		}
 
 		if(!db)
 		{
 			string error("Failed to find backend: ");
 			error += backend;
-			throw error.c_str();
+			throw runtime_error(error);
 		}
 
-		addCommands();
+		addCommands(db,commands);
 
 		if(filename.length()>0)
 		{
 			if(useTail)
 			{
 				redi::ipstream in("tail -s 1 -f "+filename);
-				processStdIn(&in);
+				processStdIn(in,commands);
 			}
 			else
 			{
 				ifstream in(filename.c_str(),ifstream::in);
-				processStdIn(&in);
+				processStdIn(in,commands);
 			}
 		}
 		else
-			processStdIn(&cin);
+		{
+			processStdIn(cin,commands);
+		}
 
 	}
-	catch (const char *s)
+	catch (std::exception &e)
 	{
-		cout << "Crashed: " << s << endl;
-		return -1;
+		cout << "Crashed: " << e.what() << endl;
+		return 2;
 	}
 
 	return 0;

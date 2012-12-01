@@ -24,12 +24,12 @@ http://code.google.com/p/oastat/
 #include "Ctf1f2Db.hpp"
 
 
-string Ctf1f2Db::getCommand()
+string Ctf1f2Db::getCommand() const
 {
 	return "1FCTF";
 }
 
-bool Ctf1f2Db::canProcess(const OaStatStruct &oss)
+bool Ctf1f2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand() || oss.parameters.size()<3)
 		return false;

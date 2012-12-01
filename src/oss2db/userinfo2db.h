@@ -31,9 +31,9 @@ class Userinfo2Db : public Struct2Db
 {
 public:
 
-	string getCommand();
+	string getCommand() const;
 
-	bool canProcess(const OaStatStruct &oss);
+	bool canProcess(const OaStatStruct &oss) const;
 
 	void process(const OaStatStruct &oss);
 private:

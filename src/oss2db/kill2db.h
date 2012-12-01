@@ -30,8 +30,8 @@ http://code.google.com/p/oastat/
 class Kill2Db : public Struct2Db
 {
 
-	string getCommand();
-	bool canProcess(const OaStatStruct &oss);
+	string getCommand() const;
+	bool canProcess(const OaStatStruct &oss) const;
 
 	void process(const OaStatStruct &oss);
 

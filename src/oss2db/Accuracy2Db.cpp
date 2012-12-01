@@ -25,12 +25,12 @@ http://code.google.com/p/oastat/
 #include <boost/format.hpp>
 
 
-string Accuracy2Db::getCommand()
+string Accuracy2Db::getCommand() const
 {
 	return "Accuracy";
 }
 
-bool Accuracy2Db::canProcess(const OaStatStruct &oss)
+bool Accuracy2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand())
 		return false;

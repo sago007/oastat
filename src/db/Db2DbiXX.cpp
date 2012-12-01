@@ -21,6 +21,8 @@ http://code.google.com/p/oastat/
 ===========================================================================
 */
 
+#include <c++/4.6/stdexcept>
+
 #include "Db2DbiXX.hpp"
 
 void Db2DbiXX::InitStrings(const string &backend)
@@ -104,7 +106,7 @@ Db2DbiXX::Db2DbiXX(const string &dbargs)
 
 Db2DbiXX::Db2DbiXX(const Db2DbiXX& orig)
 {
-	throw "May not make copy of Db2DbiXX";
+	throw runtime_error("May not make copy of Db2DbiXX");
 }
 
 Db2DbiXX::~Db2DbiXX()
@@ -319,7 +321,7 @@ int Db2DbiXX::getNextGameNumber()
 	}
 	else
 	{
-		throw "Could not get next gamenumber";
+		throw runtime_error("Could not get next gamenumber");
 	}
 }
 
@@ -340,7 +342,7 @@ int Db2DbiXX::getLastGameNumber()
 	}
 	else
 	{
-		throw "Could not get last gamenumber";
+		throw runtime_error("Could not get last gamenumber");
 	}
 }
 

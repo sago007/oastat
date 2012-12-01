@@ -24,12 +24,12 @@ http://code.google.com/p/oastat/
 #include "Elimination2Db.hpp"
 
 
-string Elimination2Db::getCommand()
+string Elimination2Db::getCommand() const
 {
 	return "ELIMINATION";
 }
 
-bool Elimination2Db::canProcess(const OaStatStruct &oss)
+bool Elimination2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand() || oss.parameters.size()<3 )
 		return false;

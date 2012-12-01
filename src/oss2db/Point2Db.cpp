@@ -24,12 +24,12 @@ http://code.google.com/p/oastat/
 #include "Point2Db.hpp"
 
 
-string Point2Db::getCommand()
+string Point2Db::getCommand() const
 {
 	return "PlayerScore";
 }
 
-bool Point2Db::canProcess(const OaStatStruct &oss)
+bool Point2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand() || oss.parameters.size()<2 || oss.parameters.at(0)<0)
 		return false;

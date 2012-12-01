@@ -24,12 +24,12 @@ http://code.google.com/p/oastat/
 #include "Disconnect2Db.h"
 
 
-string Disconnect2Db::getCommand()
+string Disconnect2Db::getCommand() const
 {
 	return "ClientDisconnect";
 }
 
-bool Disconnect2Db::canProcess(const OaStatStruct &oss)
+bool Disconnect2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand() || oss.parameters.size()<1)
 		return false;

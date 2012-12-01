@@ -27,12 +27,12 @@ http://code.google.com/p/oastat/
 #include <boost/format.hpp>
 
 
-string Userinfo2Db::getCommand()
+string Userinfo2Db::getCommand() const
 {
 	return "ClientUserinfoChanged";
 }
 
-bool Userinfo2Db::canProcess(const OaStatStruct &oss)
+bool Userinfo2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand() || oss.parameters.size()<1)
 		return false;

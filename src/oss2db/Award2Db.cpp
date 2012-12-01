@@ -25,12 +25,12 @@ http://code.google.com/p/oastat/
 
 
 
-string Award2Db::getCommand()
+string Award2Db::getCommand() const
 {
 	return "Award";
 }
 
-bool Award2Db::canProcess(const OaStatStruct &oss)
+bool Award2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand() || oss.parameters.size()<2 || oss.parameters.at(0)<0)
 		return false;

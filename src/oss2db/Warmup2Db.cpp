@@ -23,12 +23,12 @@ http://code.google.com/p/oastat/
 
 #include "Warmup2Db.hpp"
 
-string Warmup2Db::getCommand()
+string Warmup2Db::getCommand() const
 {
 	return "Warmup";
 }
 
-bool Warmup2Db::canProcess(const OaStatStruct &oss)
+bool Warmup2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand())
 		return false;

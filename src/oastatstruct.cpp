@@ -116,7 +116,7 @@ void OaStatStruct::parseLine(string line)
 		}
 		line = line.substr(posColon,line.length());
 	}
-	catch(...)
+	catch(exception &e)
 	{
 		//The last part does not always exist... ignore it
 		restOfLine = "";

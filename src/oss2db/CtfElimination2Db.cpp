@@ -23,12 +23,12 @@ http://code.google.com/p/oastat/
 
 #include "CtfElimination2Db.hpp"
 
-string CtfElimination2Db::getCommand()
+string CtfElimination2Db::getCommand() const
 {
 	return "ELIMINATION";
 }
 
-bool CtfElimination2Db::canProcess(const OaStatStruct &oss)
+bool CtfElimination2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand() || oss.parameters.size()<3 )
 		return false;

@@ -25,12 +25,12 @@ http://code.google.com/p/oastat/
 #include <stdlib.h>
 
 
-string Init2Db::getCommand()
+string Init2Db::getCommand() const
 {
 	return "InitGame";
 }
 
-bool Init2Db::canProcess(const OaStatStruct &oss)
+bool Init2Db::canProcess(const OaStatStruct &oss) const
 {
 	if(oss.command != getCommand())
 		return false;
