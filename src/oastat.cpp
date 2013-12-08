@@ -209,6 +209,7 @@ int main (int argc, const char* argv[])
 	string filename = "";
 	string backend = "Xml";
 	bool useTail = false;
+	bool doIntegrationTest = false;
 	vector<shared_ptr<Struct2Db> > commands;
 	/////////////
 	//dbargs = "mysql dbname oastat";
@@ -219,24 +220,28 @@ int main (int argc, const char* argv[])
 	for(int i=1; i<argc; i++)
 	{
 		bool onemore = i+1<argc;
-		if(string(argv[i]) == "-dbarg" && onemore )
+		if (string(argv[i]) == "-dbarg" && onemore )
 		{
 			i++;
 			dbargs = string(argv[i]);
 		}
-		if(string(argv[i]) == "-f" && onemore)
+		if (string(argv[i]) == "-f" && onemore)
 		{
 			i++;
 			filename = string(argv[i]);
 		}
-		if(string(argv[i]) == "-tail")
+		if (string(argv[i]) == "-tail")
 		{
 			useTail = true;
 		}
-		if(string(argv[i]) == "-backend" && onemore)
+		if (string(argv[i]) == "-backend" && onemore)
 		{
 			i++;
 			backend = string(argv[i]);
+		}
+		if (string(argv[i]) == "--integration-test") 
+		{
+			doIntegrationTest = true;
 		}
 	}
 	try
@@ -279,6 +284,16 @@ int main (int argc, const char* argv[])
 
 		addCommands(db,commands);
 
+		if (doIntegrationTest) 
+		{
+			OaStatStruct oss_test;
+			oss_test.setTimeStamp("2013-12-08 20:42:30");
+			db->startGame(1,"oasago2","baseoa-mod","testserver",oss_test);
+			db->addGenericTeamEvent(5,2,0,"sometype","","",3,4);
+			cerr << "Test called" << endl;
+			return 1;
+		}
+		
 		if(filename.length()>0)
 		{
 			if(useTail)

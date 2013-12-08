@@ -61,6 +61,7 @@ public:
 	void addHarvester(int second, const std::string &player1, const std::string &player2, int team, int event, int score);
 	void addChallenge(int second, const std::string &player, int challenge, int amount);
 	void addAccuracy(int second, const std::string &player, int type, int shotsFired, int shotsHit);
+	void addGenericTeamEvent(int second, int team, int amount, const std::string &gametype, const std::string &player1, const std::string &player2, int event, int generic1);
 	void doNotCommit();
 private:
 	string p_output_dir;

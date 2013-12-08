@@ -230,6 +230,22 @@ void Db2Xml::addHarvester(int second, const std::string &player1, const std::str
 	p_xmlcontent += (boost::format("        <score>%1%</score>\n") % score).str();
 	p_xmlcontent += "    </harvester>\n";
 }
+
+void Db2Xml::addGenericTeamEvent(int second, int team, int amount, const std::string &gametype, const std::string &player1, const std::string &player2, int event, int generic1) {
+	if(!isOk)
+		return;
+	p_xmlcontent += "    <generic_team_event>\n";
+	p_xmlcontent += (boost::format("        <second>%1%</second>\n") % second).str();
+	p_xmlcontent += (boost::format("        <team>%1%</team>\n") % team).str();
+	p_xmlcontent += (boost::format("        <amount>%1%</amount>\n") % amount).str();
+	p_xmlcontent += (boost::format("        <gametype>%1%</gametype>\n") % gametype).str();
+	p_xmlcontent += (boost::format("        <player1>%1%</player1>\n") % player1).str();
+	p_xmlcontent += (boost::format("        <player2>%1%</player2>\n") % player2).str();
+	p_xmlcontent += (boost::format("        <event>%1%</event>\n") % event).str();
+	p_xmlcontent += (boost::format("        <generic1>%1%</generic1>\n") % generic1).str();
+	p_xmlcontent += "    </generic_team_event>\n";
+}
+
 void Db2Xml::addChallenge(int second, const std::string &player, int challenge, int amount)
 {
 	if(!isOk)

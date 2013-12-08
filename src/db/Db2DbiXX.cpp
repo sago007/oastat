@@ -283,6 +283,14 @@ void Db2DbiXX::addHarvester(int second, const std::string &player1, const std::s
 	DebugMessage("addHarvester");
 }
 
+void Db2DbiXX::addGenericTeamEvent(int second, int team, int amount, const std::string &gametype, const std::string &player1, const std::string &player2, int event, int generic1) {
+	if(!isok)
+		return;
+	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,player,player2,eventtype,amount,generic1,gametype) VALUES (?,?,?,?,?,?,?,?,?)",
+			gamenumber,second,team,getPlayerId(player1),getPlayerId(player2),event,amount,generic1, gametype,exec();
+	DebugMessage("addGenericTeamEvent");
+}
+
 void Db2DbiXX::addChallenge(int second, const std::string &player, int challenge, int amount)
 {
 	if(!isok)

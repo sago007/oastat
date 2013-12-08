@@ -213,6 +213,19 @@ public:
      * @param shotsHit Number of hits
      */
 	virtual void addAccuracy(int second, const std::string &player, int type, int shotsFired, int shotsHit) = 0;
+	
+	/**
+	 * adds a generic team event. Can be used then extending for mods.
+     * @param second Time the information was given. Usually not logged as the information is for the whole match
+     * @param team the team from the logging event
+     * @param amount Event dependent
+     * @param gametype Name of the gametype that this log message is for
+     * @param player1 Player guid of the first player in the event. Blank string if none
+     * @param player2 Player guid of the second player in the event. Blank if none
+     * @param event The event type. Should be unique for each gametype.
+     * @param generic1 A generic value. Can be used for different values needed for some events.
+     */
+	virtual void addGenericTeamEvent(int second, int team, int amount, const std::string &gametype, const std::string &player1, const std::string &player2, int event, int generic1) = 0;
 };
 
 #endif //_DATABASE_H
