@@ -32,7 +32,7 @@ string Shutdown2Db::getCommand() const
 
 bool Shutdown2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand()) {
+	if (oss.command != getCommand()) {
 		return false;
 	}
 	return true;
@@ -40,7 +40,7 @@ bool Shutdown2Db::canProcess(const OaStatStruct &oss) const
 
 void Shutdown2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss)) {
+	if (!canProcess(oss)) {
 		return;
 	}
 	dp->endGame(oss.second);

@@ -76,7 +76,7 @@ static int processStdIn(istream &in_p,vector<shared_ptr<Struct2Db> > &commands);
  */
 static void addCommands(shared_ptr<Database> &db,vector<shared_ptr<Struct2Db> > &commands)
 {
-	if(!db) {
+	if (!db) {
 		throw runtime_error("db was uninizialized in addCommands");
 	}
 
@@ -98,7 +98,7 @@ static void addCommands(shared_ptr<Database> &db,vector<shared_ptr<Struct2Db> > 
 	commands.push_back(shared_ptr<Struct2Db>(new Accuracy2Db()) );
 	//Add more commands just above here
 
-	for(unsigned int i=0; i<commands.size(); i++) {
+	for (unsigned int i=0; i<commands.size(); i++) {
 		commands.at(i)->setDb(db);
 	}
 }
@@ -115,20 +115,20 @@ static int processStdIn(istream &in_p,vector<shared_ptr<Struct2Db> > &commands)
 		OaStatStruct oss;
 		list<OaStatStruct> osslist;
 		try {
-			while( getline(in_p,line) ) {
+			while ( getline(in_p,line) ) {
 				oss.clear();
 				oss.parseLine(line);
 				osslist.push_back(oss);
-				if(oss.command=="InitGame") {
+				if (oss.command=="InitGame") {
 					startstruct = &osslist.back();
 				}
-				if(oss.command=="Warmup" && startstruct) {
+				if (oss.command=="Warmup" && startstruct) {
 					//Workaround to stop warmup
 					//If we spot a warmup command we add a cvar to the start struct
 					//Warmup is a attribute that affect he whole game
 					startstruct->restOfLine += "\\isWarmup\\1";
 				}
-				if(oss.command=="ShutdownGame") {
+				if (oss.command=="ShutdownGame") {
 					while(!osslist.empty()) {
 						oss = osslist.front();
 						osslist.pop_front();
@@ -204,7 +204,7 @@ int main (int argc, const char* argv[])
 	f % getenv("HOME");
 	filename = f.str();
 	////////////
-	for(int i=1; i<argc; i++) {
+	for (int i=1; i<argc; i++) {
 		bool onemore = i+1<argc;
 		if (string(argv[i]) == "-dbarg" && onemore ) {
 			i++;
@@ -229,25 +229,25 @@ int main (int argc, const char* argv[])
 		shared_ptr<Database> db;
 
 #if USEDBIXX
-		if(backend == "DbiXX") {
+		if (backend == "DbiXX") {
 			cout << "Using DBI" << endl;
-			if(dbargs.length()<1) {
+			if (dbargs.length()<1) {
 				db = shared_ptr<Database>(new Db2DbiXX() );
 			} else {
 				db = shared_ptr<Database>(new Db2DbiXX(dbargs) );
 			}
 		}
 #endif
-		if(backend == "Xml") {
+		if (backend == "Xml") {
 			cout << "Using XML" << endl;
-			if(dbargs.length()<1) {
+			if (dbargs.length()<1) {
 				db = shared_ptr<Database>(new Db2Xml() );
 			} else {
 				db = shared_ptr<Database>(new Db2Xml(dbargs) );
 			}
 		}
 
-		if(!db) {
+		if (!db) {
 			string error("Failed to find backend: ");
 			error += backend;
 			throw runtime_error(error);
@@ -264,8 +264,8 @@ int main (int argc, const char* argv[])
 			return 1;
 		}
 
-		if(filename.length()>0) {
-			if(useTail) {
+		if (filename.length()>0) {
+			if (useTail) {
 				redi::ipstream in("tail -s 1 -f "+filename);
 				processStdIn(in,commands);
 			} else {

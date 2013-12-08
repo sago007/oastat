@@ -31,7 +31,7 @@ string Kill2Db::getCommand() const
 
 bool Kill2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand() || oss.parameters.size()<=3) {
+	if (oss.command != getCommand() || oss.parameters.size()<=3) {
 		return false;
 	}
 	return true;
@@ -39,19 +39,19 @@ bool Kill2Db::canProcess(const OaStatStruct &oss) const
 
 void Kill2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss)) {
+	if (!canProcess(oss)) {
 		return;    //Invalid oss
 	}
 	string target = ""; //Parameter 1
 	string killer = ""; //Parameter 0
 	//mod is parameter 2
-	if(oss.parameters.at(1)>-1 && oss.parameters.at(1)<(int)clientIdMap.size() && oss.parameters.at(1)!=1022 ) {
+	if (oss.parameters.at(1)>-1 && oss.parameters.at(1)<(int)clientIdMap.size() && oss.parameters.at(1)!=1022 ) {
 		target = clientIdMap.at(oss.parameters.at(1));
 	} else {
 		target ="WORLD";    //Should not be possible... except maybe for NPC-creatures
 	}
 
-	if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<(int)clientIdMap.size() && oss.parameters.at(0)!=1022) {
+	if (oss.parameters.at(0)>-1 && oss.parameters.at(0)<(int)clientIdMap.size() && oss.parameters.at(0)!=1022) {
 		killer = clientIdMap.at(oss.parameters.at(0));
 	} else {
 		killer ="WORLD";

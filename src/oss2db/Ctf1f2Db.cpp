@@ -31,7 +31,7 @@ string Ctf1f2Db::getCommand() const
 
 bool Ctf1f2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand() || oss.parameters.size()<3) {
+	if (oss.command != getCommand() || oss.parameters.size()<3) {
 		return false;
 	}
 	return true;
@@ -39,12 +39,12 @@ bool Ctf1f2Db::canProcess(const OaStatStruct &oss) const
 
 void Ctf1f2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss)) {
+	if (!canProcess(oss)) {
 		return;    //Invalid oss
 	}
 
 	string player = "";
-	if(oss.parameters.at(0)!=-1) {
+	if (oss.parameters.at(0)!=-1) {
 		player= clientIdMap.at(oss.parameters.at(0));
 	}
 

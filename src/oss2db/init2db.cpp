@@ -32,7 +32,7 @@ string Init2Db::getCommand() const
 
 bool Init2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand()) {
+	if (oss.command != getCommand()) {
 		return false;
 	}
 	return true;
@@ -40,7 +40,7 @@ bool Init2Db::canProcess(const OaStatStruct &oss) const
 
 void Init2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss)) {
+	if (!canProcess(oss)) {
 		return;    //Invalid oss
 	}
 	OaStatStruct oss_copy(oss);
@@ -53,7 +53,7 @@ void Init2Db::process(const OaStatStruct &oss)
 
 	dp->startGame(gametype,mapname,basegame,servername,oss_copy);
 	map<string,string>::iterator it;
-	for(it = arguments.begin(); it != arguments.end(); it++) {
+	for (it = arguments.begin(); it != arguments.end(); it++) {
 		if(
 			it->first == "g_gametype" ||
 			it->first == "gamename" ||

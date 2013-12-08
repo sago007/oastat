@@ -30,7 +30,7 @@ string CtfElimination2Db::getCommand() const
 
 bool CtfElimination2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand() || oss.parameters.size()<3 ) {
+	if (oss.command != getCommand() || oss.parameters.size()<3 ) {
 		return false;
 	}
 	return true;
@@ -38,12 +38,12 @@ bool CtfElimination2Db::canProcess(const OaStatStruct &oss) const
 
 void CtfElimination2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss)) {
+	if (!canProcess(oss)) {
 		return;    //Invalid oss
 	}
 
 	string player = "";
-	if(oss.parameters.at(1)!=-1) {
+	if (oss.parameters.at(1)!=-1) {
 		player= clientIdMap.at(oss.parameters.at(1));
 	}
 

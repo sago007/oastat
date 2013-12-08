@@ -31,7 +31,7 @@ string Disconnect2Db::getCommand() const
 
 bool Disconnect2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand() || oss.parameters.size()<1) {
+	if (oss.command != getCommand() || oss.parameters.size()<1) {
 		return false;
 	}
 	return true;
@@ -39,7 +39,7 @@ bool Disconnect2Db::canProcess(const OaStatStruct &oss) const
 
 void Disconnect2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss)) {
+	if (!canProcess(oss)) {
 		return;    //Invalid oss
 	}
 

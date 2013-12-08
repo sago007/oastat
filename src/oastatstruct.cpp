@@ -36,8 +36,8 @@ namespace
 
 void makeLower(string &x)
 {
-	for(unsigned int i=0; i<x.length(); i++) {
-		if(x[i] >= 'A' && x[i] <= 'X') {
+	for (unsigned int i=0; i<x.length(); i++) {
+		if (x[i] >= 'A' && x[i] <= 'X') {
 			x[i] = x[i]-'A'+'a';
 		}
 	}
@@ -100,21 +100,21 @@ void OaStatStruct::parseLine(string line)
 		stringstream ss;
 		ss << line.substr(0,posColon);
 		int counter = 0; //to ensure that we don't go on forever
-		while(ss && counter++<10) {
+		while (ss && counter++<10) {
 			int value;
 			ss >> value;
 			parameters.push_back(value);
 		}
 
 
-		if(line.at(posColon) == ':') {
+		if (line.at(posColon) == ':') {
 			posColon++; //There is some inconsistensy about then there is a colon here
 			if(line.at(posColon) == ' ') {
 				posColon++;    //If there is a colon there is likely a space
 			}
 		}
 		line = line.substr(posColon,line.length());
-	} catch(exception &e) {
+	} catch (exception &e) {
 		//The last part does not always exist... ignore it
 		restOfLine = "";
 		return;
@@ -132,21 +132,21 @@ map<string,string> OaStatStruct::GetInfostring(string restOfLine) const
 	unsigned int lastPos = 0;
 	bool iskey = true;
 	string key, value;
-	if(restOfLine[0] == '\\') {
+	if (restOfLine[0] == '\\') {
 		lastPos++;
 	}
-	while(lastPos<restOfLine.length()) {
+	while (lastPos<restOfLine.length()) {
 		curPos = restOfLine.find_first_of("\\", lastPos);
-		if(curPos<0) {
+		if (curPos<0) {
 			curPos = restOfLine.length();
 		}
-		if(iskey) {
+		if (iskey) {
 			key = restOfLine.substr(lastPos,curPos-lastPos);
 		} else {
 			value = restOfLine.substr(lastPos,curPos-lastPos);
 			//list.insert(pair<string,string>(key,value));
 			makeLower(key);
-			if(key.length()>0) {
+			if (key.length()>0) {
 				list[key] = value;
 			}
 			//cout << key << ":" << value << endl;

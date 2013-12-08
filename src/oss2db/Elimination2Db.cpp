@@ -31,7 +31,7 @@ string Elimination2Db::getCommand() const
 
 bool Elimination2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand() || oss.parameters.size()<3 ) {
+	if (oss.command != getCommand() || oss.parameters.size()<3 ) {
 		return false;
 	}
 	return true;
@@ -39,7 +39,7 @@ bool Elimination2Db::canProcess(const OaStatStruct &oss) const
 
 void Elimination2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss)) {
+	if (!canProcess(oss)) {
 		return;    //Invalid oss
 	}
 

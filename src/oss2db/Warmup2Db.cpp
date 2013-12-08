@@ -30,7 +30,7 @@ string Warmup2Db::getCommand() const
 
 bool Warmup2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand()) {
+	if (oss.command != getCommand()) {
 		return false;
 	}
 	return true;
@@ -38,7 +38,7 @@ bool Warmup2Db::canProcess(const OaStatStruct &oss) const
 
 void Warmup2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss)) {
+	if (!canProcess(oss)) {
 		return;    //Invalid oss
 	}
 
