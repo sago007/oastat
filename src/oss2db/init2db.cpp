@@ -32,16 +32,18 @@ string Init2Db::getCommand() const
 
 bool Init2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand())
+	if(oss.command != getCommand()) {
 		return false;
+	}
 	return true;
 }
 
 void Init2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss))
-		return; //Invalid oss
-	OaStatStruct oss_copy(oss); 
+	if(!canProcess(oss)) {
+		return;    //Invalid oss
+	}
+	OaStatStruct oss_copy(oss);
 	map<string,string> arguments = oss_copy.GetInfostring();
 	int gametype = atoi(arguments["g_gametype"].c_str());
 	string basegame = arguments["gamename"];
@@ -51,16 +53,16 @@ void Init2Db::process(const OaStatStruct &oss)
 
 	dp->startGame(gametype,mapname,basegame,servername,oss_copy);
 	map<string,string>::iterator it;
-	for(it = arguments.begin(); it != arguments.end(); it++)
-	{
+	for(it = arguments.begin(); it != arguments.end(); it++) {
 		if(
 			it->first == "g_gametype" ||
 			it->first == "gamename" ||
 			it->first == "mapname" ||
 			it->first == "sv_hostname" /*||
                 it->first == "g_timestamp" do not skip this one*/
-		)
-			continue; //Skip the ones on the games-table
+		) {
+			continue;    //Skip the ones on the games-table
+		}
 		dp->addGameCvar(it->first,it->second);
 	}
 }

@@ -30,19 +30,22 @@ string CtfElimination2Db::getCommand() const
 
 bool CtfElimination2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand() || oss.parameters.size()<3 )
+	if(oss.command != getCommand() || oss.parameters.size()<3 ) {
 		return false;
+	}
 	return true;
 }
 
 void CtfElimination2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss))
-		return; //Invalid oss
+	if(!canProcess(oss)) {
+		return;    //Invalid oss
+	}
 
 	string player = "";
-	if(oss.parameters.at(1)!=-1)
+	if(oss.parameters.at(1)!=-1) {
 		player= clientIdMap.at(oss.parameters.at(1));
+	}
 
 	dp->addCtfElimination(oss.second,oss.parameters.at(0) /*roundnumber*/,
 						  player,oss.parameters.at(2) /*team*/, oss.parameters.at(3) /*event*/);

@@ -31,18 +31,21 @@ string Challenge2Db::getCommand() const
 
 bool Challenge2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand() || oss.parameters.size()<3)
+	if(oss.command != getCommand() || oss.parameters.size()<3) {
 		return false;
+	}
 	return true;
 }
 
 void Challenge2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss))
-		return; //Invalid oss
+	if(!canProcess(oss)) {
+		return;    //Invalid oss
+	}
 
-	if(oss.parameters.at(0)==-1)
-		return; //Not valid player
+	if(oss.parameters.at(0)==-1) {
+		return;    //Not valid player
+	}
 
 	string player = clientIdMap.at(oss.parameters.at(0));
 

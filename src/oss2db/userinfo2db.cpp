@@ -34,31 +34,34 @@ string Userinfo2Db::getCommand() const
 
 bool Userinfo2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand() || oss.parameters.size()<1)
+	if (oss.command != getCommand() || oss.parameters.size()<1) {
 		return false;
+	}
 	return true;
 }
 
 void Userinfo2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss))
+	if (!canProcess(oss)) {
 		return; //Invalid oss
+	}
 	bool isBot = false;
 	map<string,string> arguments = oss.GetInfostring();
 
 	//grow clientIdMap until oss.parameters.at(0)+1
-	while((int)clientIdMap.size() < oss.parameters.at(0)+2)
+	while ((int)clientIdMap.size() < oss.parameters.at(0)+2) {
 		clientIdMap.push_back("");
-
-	if(arguments["id"].length()>0 || arguments["hashedid"].length() > 0)   //Not bot
-	{
-		if(arguments["id"].length()>0)
-			clientIdMap[oss.parameters.at(0)] = getHashedId(arguments["id"]);
-		else
-			clientIdMap[oss.parameters.at(0)] = arguments["hashedid"];
 	}
-	else //bot
-	{
+
+	if (arguments["id"].length()>0 || arguments["hashedid"].length() > 0) {
+		//Not bot
+		if(arguments["id"].length()>0) {
+			clientIdMap[oss.parameters.at(0)] = getHashedId(arguments["id"]);
+		} else {
+			clientIdMap[oss.parameters.at(0)] = arguments["hashedid"];
+		}
+	} else {
+		//bot
 		clientIdMap[oss.parameters.at(0)] = (boost::format("%1%_client%2%") % arguments["n"] % oss.parameters.at(0) ).str();
 		isBot = true;
 	}

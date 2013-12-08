@@ -31,15 +31,17 @@ string Point2Db::getCommand() const
 
 bool Point2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand() || oss.parameters.size()<2 || oss.parameters.at(0)<0)
+	if(oss.command != getCommand() || oss.parameters.size()<2 || oss.parameters.at(0)<0) {
 		return false;
+	}
 	return true;
 }
 
 void Point2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss))
-		return; //Invalid oss
+	if(!canProcess(oss)) {
+		return;    //Invalid oss
+	}
 
 	string player = clientIdMap.at(oss.parameters.at(0));
 

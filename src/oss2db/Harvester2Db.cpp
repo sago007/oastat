@@ -30,34 +30,30 @@ string Harvester2Db::getCommand() const
 
 bool Harvester2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand() || oss.parameters.size()<5 )
+	if(oss.command != getCommand() || oss.parameters.size()<5 ) {
 		return false;
+	}
 	return true;
 }
 
 void Harvester2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss))
-		return; //Invalid oss
+	if(!canProcess(oss)) {
+		return;    //Invalid oss
+	}
 
 	string player1 = ""; //Parameter 0
 	string player2 = ""; //Parameter 3
 
-	if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<(int)clientIdMap.size() && oss.parameters.at(0)!=1022)
-	{
+	if(oss.parameters.at(0)>-1 && oss.parameters.at(0)<(int)clientIdMap.size() && oss.parameters.at(0)!=1022) {
 		player1 = clientIdMap.at(oss.parameters.at(0));
-	}
-	else
-	{
+	} else {
 		player1 = "WORLD";
 	}
 
-	if(oss.parameters.at(3)>-1 && oss.parameters.at(3)<(int)clientIdMap.size() && oss.parameters.at(3)!=1022)
-	{
+	if(oss.parameters.at(3)>-1 && oss.parameters.at(3)<(int)clientIdMap.size() && oss.parameters.at(3)!=1022) {
 		player2 = clientIdMap.at(oss.parameters.at(3));
-	}
-	else
-	{
+	} else {
 		player2 = "WORLD";
 	}
 

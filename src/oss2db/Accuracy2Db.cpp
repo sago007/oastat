@@ -32,27 +32,30 @@ string Accuracy2Db::getCommand() const
 
 bool Accuracy2Db::canProcess(const OaStatStruct &oss) const
 {
-	if(oss.command != getCommand())
+	if(oss.command != getCommand()) {
 		return false;
+	}
 	return true;
 }
 
 void Accuracy2Db::process(const OaStatStruct &oss)
 {
-	if(!canProcess(oss))
-		return; //Invalid oss
+	if(!canProcess(oss)) {
+		return;    //Invalid oss
+	}
 
-	if(oss.parameters.at(0)==-1)
-		return; //Not valid player
+	if(oss.parameters.at(0)==-1) {
+		return;    //Not valid player
+	}
 
 	string player = clientIdMap.at(oss.parameters.at(0));
-	
+
 	map<string,string> arguments = oss.GetInfostring();
-	
+
 	boost::format hformat("h%1%");
 	boost::format fformat("f%1%");
-	
-	for(int i=0;i<100;++i) {
+
+	for(int i=0; i<100; ++i) {
 		unsigned int hits = atoi(arguments[boost::str(hformat % i)].c_str());
 		unsigned int fired = atoi(arguments[boost::str(fformat % i)].c_str());
 		if(hits || fired) {

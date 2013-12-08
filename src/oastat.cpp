@@ -71,16 +71,15 @@ static int processStdIn(istream &in_p,vector<shared_ptr<Struct2Db> > &commands);
 /**
  * This function adds objects that are inherited from the Struct2Db class
  * to the vector commands.
- * 
+ *
  * @param[in] db The database object. May not be freed once given as an argument to this function
  */
 static void addCommands(shared_ptr<Database> &db,vector<shared_ptr<Struct2Db> > &commands)
 {
-	if(!db)
-	{
+	if(!db) {
 		throw runtime_error("db was uninizialized in addCommands");
 	}
-	
+
 	//Add new commands here
 	commands.push_back(shared_ptr<Struct2Db>(new Kill2Db() ) );
 	commands.push_back(shared_ptr<Struct2Db>(new Init2Db() ) );
@@ -99,8 +98,7 @@ static void addCommands(shared_ptr<Database> &db,vector<shared_ptr<Struct2Db> > 
 	commands.push_back(shared_ptr<Struct2Db>(new Accuracy2Db()) );
 	//Add more commands just above here
 
-	for(unsigned int i=0; i<commands.size(); i++)
-	{
+	for(unsigned int i=0; i<commands.size(); i++) {
 		commands.at(i)->setDb(db);
 	}
 }
@@ -112,39 +110,32 @@ static int processStdIn(istream &in_p,vector<shared_ptr<Struct2Db> > &commands)
 	bool done = true;
 	OaStatStruct *startstruct;
 	startstruct = NULL;
-	do
-	{
+	do {
 		string line = "";
 		OaStatStruct oss;
 		list<OaStatStruct> osslist;
-		try
-		{
-			while( getline(in_p,line) )
-			{
+		try {
+			while( getline(in_p,line) ) {
 				oss.clear();
 				oss.parseLine(line);
 				osslist.push_back(oss);
-				if(oss.command=="InitGame")
+				if(oss.command=="InitGame") {
 					startstruct = &osslist.back();
-				if(oss.command=="Warmup" && startstruct) 
-				{
+				}
+				if(oss.command=="Warmup" && startstruct) {
 					//Workaround to stop warmup
 					//If we spot a warmup command we add a cvar to the start struct
 					//Warmup is a attribute that affect he whole game
-					startstruct->restOfLine += "\\isWarmup\\1"; 
+					startstruct->restOfLine += "\\isWarmup\\1";
 				}
-				if(oss.command=="ShutdownGame")
-				{
-					while(!osslist.empty())
-					{
+				if(oss.command=="ShutdownGame") {
+					while(!osslist.empty()) {
 						oss = osslist.front();
 						osslist.pop_front();
-						for(unsigned int i=0; i<commands.size(); i++)
-						{
+						for(unsigned int i=0; i<commands.size(); i++) {
 							//try {
 							//cout << "checking " << commands.at(i)->getCommand() << endl;
-							if(commands.at(i)->canProcess(oss))
-							{
+							if(commands.at(i)->canProcess(oss)) {
 								//cout << "Execturedg by " << commands.at(i)->getCommand();
 								commands.at(i)->process(oss);
 							}
@@ -160,9 +151,7 @@ static int processStdIn(istream &in_p,vector<shared_ptr<Struct2Db> > &commands)
 					startstruct = NULL;
 				}
 			}
-		}
-		catch (std::exception &e2)
-		{
+		} catch (std::exception &e2) {
 			/*
 			 If there is an error write it in the log and try again continue
 			 */
@@ -171,8 +160,7 @@ static int processStdIn(istream &in_p,vector<shared_ptr<Struct2Db> > &commands)
 				 "oastat:   Error is: " << e2.what() << endl;
 			done = false;
 		}
-	}
-	while (!done);
+	} while (!done);
 	return 0;
 }
 
@@ -192,8 +180,7 @@ string getHashedId(string unhashedID)
 	char *p = out;
 
 	gcry_md_hash_buffer( GCRY_MD_SHA1, hash_binary, unhashedID.c_str(), msg_len );
-	for ( int i = 0; i < hash_len; i++, p += 2 )
-	{
+	for ( int i = 0; i < hash_len; i++, p += 2 ) {
 		snprintf ( p, 3, "%02x", hash_binary[i] );
 	}
 
@@ -217,66 +204,50 @@ int main (int argc, const char* argv[])
 	f % getenv("HOME");
 	filename = f.str();
 	////////////
-	for(int i=1; i<argc; i++)
-	{
+	for(int i=1; i<argc; i++) {
 		bool onemore = i+1<argc;
-		if (string(argv[i]) == "-dbarg" && onemore )
-		{
+		if (string(argv[i]) == "-dbarg" && onemore ) {
 			i++;
 			dbargs = string(argv[i]);
 		}
-		if (string(argv[i]) == "-f" && onemore)
-		{
+		if (string(argv[i]) == "-f" && onemore) {
 			i++;
 			filename = string(argv[i]);
 		}
-		if (string(argv[i]) == "-tail")
-		{
+		if (string(argv[i]) == "-tail") {
 			useTail = true;
 		}
-		if (string(argv[i]) == "-backend" && onemore)
-		{
+		if (string(argv[i]) == "-backend" && onemore) {
 			i++;
 			backend = string(argv[i]);
 		}
-		if (string(argv[i]) == "--integration-test") 
-		{
+		if (string(argv[i]) == "--integration-test") {
 			doIntegrationTest = true;
 		}
 	}
-	try
-	{
+	try {
 		shared_ptr<Database> db;
 
 #if USEDBIXX
-		if(backend == "DbiXX")
-		{
+		if(backend == "DbiXX") {
 			cout << "Using DBI" << endl;
-			if(dbargs.length()<1)
-			{
+			if(dbargs.length()<1) {
 				db = shared_ptr<Database>(new Db2DbiXX() );
-			}
-			else
-			{
+			} else {
 				db = shared_ptr<Database>(new Db2DbiXX(dbargs) );
 			}
 		}
 #endif
-		if(backend == "Xml")
-		{
+		if(backend == "Xml") {
 			cout << "Using XML" << endl;
-			if(dbargs.length()<1)
-			{
+			if(dbargs.length()<1) {
 				db = shared_ptr<Database>(new Db2Xml() );
-			}
-			else
-			{
+			} else {
 				db = shared_ptr<Database>(new Db2Xml(dbargs) );
 			}
 		}
 
-		if(!db)
-		{
+		if(!db) {
 			string error("Failed to find backend: ");
 			error += backend;
 			throw runtime_error(error);
@@ -284,8 +255,7 @@ int main (int argc, const char* argv[])
 
 		addCommands(db,commands);
 
-		if (doIntegrationTest) 
-		{
+		if (doIntegrationTest) {
 			OaStatStruct oss_test;
 			oss_test.setTimeStamp("2013-12-08 20:42:30");
 			db->startGame(1,"oasago2","baseoa-mod","testserver",oss_test);
@@ -293,28 +263,20 @@ int main (int argc, const char* argv[])
 			cerr << "Test called" << endl;
 			return 1;
 		}
-		
-		if(filename.length()>0)
-		{
-			if(useTail)
-			{
+
+		if(filename.length()>0) {
+			if(useTail) {
 				redi::ipstream in("tail -s 1 -f "+filename);
 				processStdIn(in,commands);
-			}
-			else
-			{
+			} else {
 				ifstream in(filename.c_str(),ifstream::in);
 				processStdIn(in,commands);
 			}
-		}
-		else
-		{
+		} else {
 			processStdIn(cin,commands);
 		}
 
-	}
-	catch (std::exception &e)
-	{
+	} catch (std::exception &e) {
 		cout << "Crashed: " << e.what() << endl;
 		return 2;
 	}
