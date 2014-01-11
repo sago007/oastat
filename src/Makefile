@@ -1,7 +1,7 @@
 #This is the makefile
 USEDBIXX=1
 
-BASE_LIBS=-lgcrypt
+BASE_LIBS=-lgcrypt -lboost_program_options
 BASE_CFLAGS=-c -g -O2 -Wall
 
 O_FILES=build/oastat.o build/oastatstruct.o build/kill2db.o build/init2db.o build/shutdown2db.o build/userinfo2db.o build/disconnect2db.o build/award2db.o build/ctf2db.o build/point2db.o build/ctf1f2db.o build/elimination2db.o build/ctfelim2db.o build/harvester2db.o build/challenge2db.o build/warmup2db.o build/accuracy2db.o
