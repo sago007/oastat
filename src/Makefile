@@ -1,13 +1,9 @@
-#This is the makefile
 USEDBIXX=1
 
 BASE_LIBS=-lgcrypt -lboost_program_options
 BASE_CFLAGS=-c -g -O2 -Wall
 
-O_FILES=build/oastat.o build/oastatstruct.o build/kill2db.o build/init2db.o build/shutdown2db.o build/userinfo2db.o build/disconnect2db.o build/award2db.o build/ctf2db.o build/point2db.o build/ctf1f2db.o build/elimination2db.o build/ctfelim2db.o build/harvester2db.o build/challenge2db.o build/warmup2db.o build/accuracy2db.o
-
-H_FILES=local.h oastatstruct.h oss2db/struct2db.h
-
+O_FILES=oastat.o oastatstruct.o oss2db/kill2db.o oss2db/init2db.o oss2db/shutdown2db.o oss2db/userinfo2db.o oss2db/Disconnect2Db.o oss2db/Award2Db.o oss2db/Ctf2Db.o oss2db/Point2Db.o oss2db/Ctf1f2Db.o oss2db/Elimination2Db.o oss2db/CtfElimination2Db.o oss2db/Harvester2Db.o oss2db/Challenge2Db.o oss2db/Warmup2Db.o oss2db/Accuracy2Db.o
 
 ifeq ($(USEDBIXX),1)
 ifeq ($(wildcard /usr/local/lib/libdbixx.so),)
@@ -15,85 +11,26 @@ ifeq ($(wildcard /usr/local/lib/libdbixx.so),)
 else 
 	BASE_LIBS+= /usr/local/lib/libdbixx.so # -ldbixx
 endif
-	O_FILES+= build/db2dbixx.o
+	O_FILES+= db/Db2DbiXX.o
 	BASE_CFLAGS+= -DUSEDBIXX=1
 endif
 
-O_FILES+= build/db2xml.o
+O_FILES+= db/Db2Xml.o
 BASE_CFLAGS+= -DUSEXML=1
 
-total: build/oastat
+total: oastat
 
 clean: 
-	rm -f build/*.o
+	rm -f */*.o *.o *.P */*.P oastat
 
-build/oastat: $(O_FILES)
-	g++ -O -o build/oastat $(O_FILES) $(BASE_LIBS)
+oastat: $(O_FILES)
+	g++ -O -o oastat $(O_FILES) $(BASE_LIBS)
 
-build/oastat.o: oastat.cpp pstream.h db/database.hpp db/../oastatstruct.h \
- db/Db2Xml.hpp db/database.hpp oastatstruct.h oss2db/struct2db.h \
- oss2db/../oastatstruct.h oss2db/../db/database.hpp local.h \
- oss2db/kill2db.h oss2db/struct2db.h oss2db/../local.h oss2db/init2db.h \
- oss2db/shutdown2db.h oss2db/userinfo2db.h oss2db/Disconnect2Db.h \
- oss2db/Accuracy2Db.hpp oss2db/Award2Db.h oss2db/Ctf2Db.hpp \
- oss2db/Ctf1f2Db.hpp oss2db/Point2Db.hpp oss2db/Elimination2Db.hpp \
- oss2db/CtfElimination2Db.hpp oss2db/Harvester2Db.hpp \
- oss2db/Challenge2Db.hpp oss2db/Warmup2Db.hpp
-	g++ $(BASE_CFLAGS) oastat.cpp -o build/oastat.o
+%.o : %.cpp
+	g++ -MD -c -o $@ $<
+	@cp $*.d $*.P; \
+             sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+                 -e '/^$$/ d' -e 's/$$/ :/' < $*.d >> $*.P; \
+             rm -f $*.d
 
-ifeq ($(USEDBIXX),1)
-build/db2dbixx.o: db/Db2DbiXX.cpp db/Db2DbiXX.hpp db/database.hpp db/../oastatstruct.h
-	g++ $(BASE_CFLAGS) db/Db2DbiXX.cpp -o build/db2dbixx.o
-endif
-
-build/db2xml.o: db/Db2Xml.cpp db/Db2Xml.hpp db/database.hpp $(H_FILES)
-	g++ $(BASE_CFLAGS) db/Db2Xml.cpp -o build/db2xml.o
-
-build/oastatstruct.o: oastatstruct.cpp oastatstruct.h $(H_FILES)
-	g++ $(BASE_CFLAGS) oastatstruct.cpp -o build/oastatstruct.o
-
-build/kill2db.o: oss2db/kill2db.cpp oss2db/kill2db.h $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/kill2db.cpp -o build/kill2db.o
-
-build/init2db.o: oss2db/init2db.cpp oss2db/init2db.h $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/init2db.cpp -o build/init2db.o
-
-build/shutdown2db.o: oss2db/shutdown2db.cpp oss2db/shutdown2db.h $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/shutdown2db.cpp -o build/shutdown2db.o
-
-build/userinfo2db.o: oss2db/userinfo2db.cpp oss2db/userinfo2db.h $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/userinfo2db.cpp -o build/userinfo2db.o
-
-build/disconnect2db.o: oss2db/Disconnect2Db.cpp oss2db/Disconnect2Db.h $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/Disconnect2Db.cpp -o build/disconnect2db.o
-
-build/award2db.o: oss2db/Award2Db.cpp oss2db/Award2Db.h $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/Award2Db.cpp -o build/award2db.o
-
-build/ctf2db.o: oss2db/Ctf2Db.cpp  $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/Ctf2Db.cpp -o build/ctf2db.o
-
-build/ctf1f2db.o: oss2db/Ctf1f2Db.cpp $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/Ctf1f2Db.cpp -o build/ctf1f2db.o
-
-build/elimination2db.o: oss2db/Elimination2Db.cpp $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/Elimination2Db.cpp -o build/elimination2db.o
-
-build/ctfelim2db.o: oss2db/CtfElimination2Db.cpp $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/CtfElimination2Db.cpp -o build/ctfelim2db.o
-
-build/point2db.o: oss2db/Point2Db.cpp oss2db/Point2Db.hpp $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/Point2Db.cpp -o build/point2db.o
-
-build/harvester2db.o: oss2db/Harvester2Db.cpp oss2db/Harvester2Db.hpp $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/Harvester2Db.cpp -o build/harvester2db.o
-
-build/challenge2db.o: oss2db/Challenge2Db.cpp oss2db/Challenge2Db.hpp $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/Challenge2Db.cpp -o build/challenge2db.o
-
-build/warmup2db.o: oss2db/Warmup2Db.cpp oss2db/Warmup2Db.hpp $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/Warmup2Db.cpp -o build/warmup2db.o
-
-build/accuracy2db.o: oss2db/Accuracy2Db.cpp oss2db/Accuracy2Db.hpp $(H_FILES)
-	g++ $(BASE_CFLAGS) oss2db/Accuracy2Db.cpp -o build/accuracy2db.o
-
+-include *.P
