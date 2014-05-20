@@ -27,7 +27,7 @@ oastat: $(O_FILES)
 	g++ -O -o oastat $(O_FILES) $(BASE_LIBS)
 
 %.o : %.cpp
-	g++ -MD -c -o $@ $<
+	g++ -MD $(BASE_CFLAGS) -o $@ $<
 	@cp $*.d $*.P; \
              sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
                  -e '/^$$/ d' -e 's/$$/ :/' < $*.d >> $*.P; \
