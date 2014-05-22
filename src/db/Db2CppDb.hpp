@@ -1,7 +1,7 @@
 /*
 ===========================================================================
 oastat - a program for parsing log files and write the result to a database
-Copyright (C) 2012 Poul Sander
+Copyright (C) 2014 Poul Sander
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,28 +21,22 @@ http://code.google.com/p/oastat/
 ===========================================================================
 */
 
-#ifndef DB2DBIXX_HPP
-#define	DB2DBIXX_HPP
+#ifndef DB2CPPDB_HPP
+#define	DB2CPPDB_HPP
 
 #include "database.hpp"
-
-#include <dbixx/dbixx.h>
-#include <iostream>
-#include <sstream>
+#include <memory>
 #include <set>
+#include <cppdb/frontend.h>
 
-using namespace std;
-using namespace dbixx;
-
-class Db2DbiXX  : public Database
-{
+class Db2CppDb : public Database {
 public:
-	Db2DbiXX();
-	Db2DbiXX(const string &dbargs);
-	Db2DbiXX(const Db2DbiXX& orig);
-	virtual ~Db2DbiXX();
+	Db2CppDb();
+	Db2CppDb(const std::string &dbargs);
+	Db2CppDb(const Db2CppDb& orig);
+	virtual ~Db2CppDb();
 	void createTables();
-	void startGame(int gametype, const string &mapname, const string &basegame, const string &servername, const OaStatStruct &oss);
+	void startGame(int gametype, const std::string &mapname, const std::string &basegame, const std::string &servername, const OaStatStruct &oss);
 	void addGameCvar(const std::string &cvar, const std::string &value);
 	void endGame(int second);
 	int getGameNumber();
@@ -61,8 +55,9 @@ public:
 	void addGenericTeamEvent(int second, int team, int amount, const std::string &gametype, const std::string &player1, const std::string &player2, int event, int generic1);
 	void doNotCommit();
 private:
-	session *sql;
-	transaction *commitlock;
+	std::shared_ptr<cppdb::session> sql;
+	std::shared_ptr<cppdb::transaction> commitlock;
+	std::string connectstring;
 	bool isok;
 	bool debug;
 	int gamenumber; /** Gamenumber we are currently working on */
@@ -73,17 +68,17 @@ private:
 	void Rollback();
 	bool Ok();
 	void SetOk(bool ok);
-	void DebugMessage(const string &msg);
-	void InitStrings(const string &backend);
+	void DebugMessage(const std::string &msg);
+	void InitStrings(const std::string &backend);
 	void ReadConfigFromDb();
-	bool IsDuplicate(const string &servername, const tm &thetime);
-	int getPlayerId(const string &guid);
+	bool IsDuplicate(const std::string &servername, const tm &thetime);
+	int getPlayerId(const std::string &guid);
 	std::map<std::string,int> playerids;
-	string sql_backend;
+	std::string sql_backend;
 	bool last_value;
-	set<string> cvars2save;
-	set<string> uservars2save;
+	std::set<std::string> cvars2save;
+	std::set<std::string> uservars2save;
 };
 
-#endif	/* DB2DBIXX_HPP */
+#endif	/* DB2CPPDB_HPP */
 

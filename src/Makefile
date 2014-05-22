@@ -1,7 +1,8 @@
 USEDBIXX=1
+USECPPDB=1
 
 BASE_LIBS=-lgcrypt -lboost_program_options
-BASE_CFLAGS=-c -g -O2 -Wall
+BASE_CFLAGS=-c -g -O2 -Wall -std=c++0x
 
 O_FILES=oastat.o oastatstruct.o oss2db/kill2db.o oss2db/init2db.o oss2db/shutdown2db.o oss2db/userinfo2db.o oss2db/Disconnect2Db.o oss2db/Award2Db.o oss2db/Ctf2Db.o oss2db/Point2Db.o oss2db/Ctf1f2Db.o oss2db/Elimination2Db.o oss2db/CtfElimination2Db.o oss2db/Harvester2Db.o oss2db/Challenge2Db.o oss2db/Warmup2Db.o oss2db/Accuracy2Db.o
 
@@ -13,6 +14,12 @@ else
 endif
 	O_FILES+= db/Db2DbiXX.o
 	BASE_CFLAGS+= -DUSEDBIXX=1
+endif
+
+ifeq ($(USECPPDB),1)
+	BASE_LIBS+= -lcppdb
+	O_FILES+= db/Db2CppDb.o
+	BASE_CFLAGS+= -DUSECPPDB=1
 endif
 
 O_FILES+= db/Db2Xml.o
