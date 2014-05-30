@@ -206,6 +206,8 @@ set foreign_key_checks = 1 ; -- RESTRICT2MYSQL
 
 -- STANDARD VALUES
 
+BEGIN;
+
 -- default uservars to save:
 INSERT INTO oastat_config_uservars2save (thekey) VALUES ('hc');
 
