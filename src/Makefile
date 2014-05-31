@@ -33,10 +33,10 @@ clean:
 	rm -f */*.o *.o *.P */*.P oastat
 
 oastat: $(O_FILES)
-	g++ -O -o oastat $(O_FILES) $(BASE_LIBS)
+	$(CXX) -O -o oastat $(O_FILES) $(BASE_LIBS)
 
 %.o : %.cpp
-	g++ -MD $(BASE_CFLAGS) -o $@ $<
+	$(CXX) -MD $(BASE_CFLAGS) -o $@ $<
 	@cp $*.d $*.P; \
              sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
                  -e '/^$$/ d' -e 's/$$/ :/' < $*.d >> $*.P; \
