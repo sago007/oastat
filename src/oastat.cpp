@@ -25,7 +25,9 @@ http://code.google.com/p/oastat/
 
 #include <iostream>
 #include <fstream>
+#ifndef _WIN32
 #include "pstream.h" //<pstreams/pstream.h>
+#endif
 #include <vector>
 #include <gcrypt.h>
 #include <stdio.h>
@@ -295,10 +297,14 @@ int main (int argc, const char* argv[])
 		}
 
 		if (filename.length()>0) {
+#ifndef _WIN32
 			if (useTail) {
 				redi::ipstream in("tail -s 1 -f "+filename);
 				processStdIn(in,commands);
-			} else {
+			} 
+			else
+#endif 
+			{
 				ifstream in(filename.c_str(),ifstream::in);
 				processStdIn(in,commands);
 			}

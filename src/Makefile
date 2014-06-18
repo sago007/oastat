@@ -1,7 +1,7 @@
 USEDBIXX=1
 USECPPDB=1
 
-BASE_LIBS=-lgcrypt -lboost_program_options
+BASE_LIBS=-lgcrypt -lboost_program_options -lgpg-error
 BASE_CFLAGS=-c -g -O2 -Wall -std=c++0x
 
 -include Makefile.local
