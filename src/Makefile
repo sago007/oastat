@@ -1,5 +1,9 @@
+#ifndef USEDBIXX
 USEDBIXX=1
+#endif
+#ifndef USECPPDB
 USECPPDB=1
+#endif
 
 BASE_LIBS=-lgcrypt -lboost_program_options -lgpg-error
 BASE_CFLAGS=-c -g -O2 -Wall -std=c++0x
