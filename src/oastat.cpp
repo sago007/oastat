@@ -197,57 +197,57 @@ string getHashedId(string unhashedID)
 
 int main (int argc, const char* argv[])
 {
-	string dbargs = "";
-	string filename = "";
-	string backend = "Xml";
-	bool useTail = false;
-	bool doIntegrationTest = false;
-	vector<boost::shared_ptr<Struct2Db> > commands;
-	/////////////
-	//dbargs = "mysql dbname oastat";
-	boost::format f("%1%/.openarena/baseoa/games.log");
-	f % getenv("HOME");
-	filename = f.str();
-	////////////
-	boost::program_options::options_description desc("Allowed options");
-	desc.add_options()
-	("help,h", "Print basic usage information to stdout and quits")
-	("backend", boost::program_options::value<string>(), "The DB backend to use")
-	("dbargs", boost::program_options::value<string>(), "Arguments passed to the DB backend")
-	("filename,f", boost::program_options::value<string>(), "Filename to read. Providing a blank string will read from stdin")
-	("tail", "Use tail on the filename given to read the file")
-	("integration-test", "Perform integration test")
-	;
-	boost::program_options::variables_map vm;
-	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
-	boost::program_options::notify(vm);
-	if (vm.count("help")) {
-		cout << desc << endl;
-		cout << "Examples: " << endl;
-		cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"DbiXX\" --dbarg \"mysql dbname oastat username openarena\"" << endl;
-		cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"DbiXX\" --dbarg \"pgsql dbname oastat username openarena\"" << endl;
-		cout << "tail -f \"~/.openarena/baseoa/games.log\" | "<< argv[0] << " -f \"\" --backend \"Xml\" --dbarg \"outputdir ~/oastat\"" << endl;
-		cout << endl;
-		cout << "Look at http://code.google.com/p/oastat for more help and more details" << endl;
-		return 1;
-	}
-	if (vm.count("backend")) {
-		backend = vm["backend"].as<string>();
-	}
-	if (vm.count("dbargs")) {
-		dbargs = vm["dbargs"].as<string>();
-	}
-	if (vm.count("filename")) {
-		filename = vm["filename"].as<string>();
-	}
-	if (vm.count("tail")) {
-		useTail = true;
-	}
-	if (vm.count("integration-test")) {
-		doIntegrationTest = true;
-	}
-
 	try {
+		string dbargs = "";
+		string filename = "";
+		string backend = "Xml";
+		bool useTail = false;
+		bool doIntegrationTest = false;
+		vector<boost::shared_ptr<Struct2Db> > commands;
+		/////////////
+		//dbargs = "mysql dbname oastat";
+		boost::format f("%1%/.openarena/baseoa/games.log");
+		f % getenv("HOME");
+		filename = f.str();
+		////////////
+		boost::program_options::options_description desc("Allowed options");
+		desc.add_options()
+		("help,h", "Print basic usage information to stdout and quits")
+		("backend", boost::program_options::value<string>(), "The DB backend to use")
+		("dbargs", boost::program_options::value<string>(), "Arguments passed to the DB backend")
+		("filename,f", boost::program_options::value<string>(), "Filename to read. Providing a blank string will read from stdin")
+		("tail", "Use tail on the filename given to read the file")
+		("integration-test", "Perform integration test")
+		;
+		boost::program_options::variables_map vm;
+		boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
+		boost::program_options::notify(vm);
+		if (vm.count("help")) {
+			cout << desc << endl;
+			cout << "Examples: " << endl;
+			cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"DbiXX\" --dbarg \"mysql dbname oastat username openarena\"" << endl;
+			cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"DbiXX\" --dbarg \"pgsql dbname oastat username openarena\"" << endl;
+			cout << argv[0] << " -f %APPDATA%/OpenArena/baseoa/games.log --backend \"CppDb\" --dbarg \"sqlite3:db=defoastat.db3\"" << endl;
+			cout << "tail -f \"~/.openarena/baseoa/games.log\" | "<< argv[0] << " -f \"\" --backend \"Xml\" --dbarg \"outputdir ~/oastat\"" << endl;
+			cout << endl;
+			cout << "Look at http://code.google.com/p/oastat for more help and more details" << endl;
+			return 1;
+		}
+		if (vm.count("backend")) {
+			backend = vm["backend"].as<string>();
+		}
+		if (vm.count("dbargs")) {
+			dbargs = vm["dbargs"].as<string>();
+		}
+		if (vm.count("filename")) {
+			filename = vm["filename"].as<string>();
+		}
+		if (vm.count("tail")) {
+			useTail = true;
+		}
+		if (vm.count("integration-test")) {
+			doIntegrationTest = true;
+		}
 		boost::shared_ptr<Database> db;
 
 #if USEDBIXX
@@ -313,7 +313,7 @@ int main (int argc, const char* argv[])
 		}
 
 	} catch (std::exception &e) {
-		cout << "Crashed: " << e.what() << endl;
+		cerr << "Crashed: " << e.what() << endl;
 		return 2;
 	}
 
