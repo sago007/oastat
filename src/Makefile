@@ -4,6 +4,9 @@ USEDBIXX=1
 #ifndef USECPPDB
 USECPPDB=1
 #endif
+#ifndef PROGRAMNAME
+PROGRAMNAME=oastat
+#endif
 
 BASE_LIBS=-lgcrypt -lboost_program_options -lgpg-error
 BASE_CFLAGS=-c -g -O2 -Wall -std=c++0x
@@ -31,19 +34,20 @@ endif
 O_FILES+= db/Db2Xml.o
 BASE_CFLAGS+= -DUSEXML=1
 
-total: oastat
+total: ${PROGRAMNAME}
 
 clean: 
-	rm -f */*.o *.o *.P */*.P oastat
+	rm -f */*.o *.o *.P */*.P */*/*.P ${PROGRAMNAME}
 
-oastat: $(O_FILES)
+${PROGRAMNAME}: $(O_FILES)
 	$(CXX) -O -o oastat $(O_FILES) $(BASE_LIBS)
 
 %.o : %.cpp
-	$(CXX) -MD $(BASE_CFLAGS) -o $@ $<
-	@cp $*.d $*.P; \
+	$(CXX) -MD ${BASE_CFLAGS} -o $@ $<
+	@mkdir -p .$(CROSS)deps/$(basename $*); cp $*.d .$(CROSS)deps/$*.P; \
              sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
-                 -e '/^$$/ d' -e 's/$$/ :/' < $*.d >> $*.P; \
+                 -e '/^$$/ d' -e 's/$$/ :/' < $*.d >> .$(CROSS)deps/$*.P; \
              rm -f $*.d
 
--include *.P
+-include .$(CROSS)deps/*.P
+-include .$(CROSS)deps/*/*.P

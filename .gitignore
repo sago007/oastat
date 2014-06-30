@@ -1,0 +1,6 @@
+*~
+*.o
+*.P
+*nbproject*
+src/oastat
+*.exe
