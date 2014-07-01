@@ -7,6 +7,9 @@ USECPPDB=1
 #ifndef PROGRAMNAME
 PROGRAMNAME=oastat
 #endif
+#ifdef CROSS
+CXX=$(CROSS)g++
+#endif
 
 BASE_LIBS=-lgcrypt -lboost_program_options -lgpg-error
 BASE_CFLAGS=-c -g -O2 -Wall -std=c++0x
@@ -40,7 +43,7 @@ clean:
 	rm -f */*.o *.o *.P */*.P */*/*.P ${PROGRAMNAME}
 
 ${PROGRAMNAME}: $(O_FILES)
-	$(CXX) -O -o oastat $(O_FILES) $(BASE_LIBS)
+	$(CXX) -O -o ${PROGRAMNAME} $(O_FILES) $(BASE_LIBS)
 
 %.o : %.cpp
 	$(CXX) -MD ${BASE_CFLAGS} -o $@ $<
