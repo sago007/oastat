@@ -1,6 +1,7 @@
 *~
 *.o
 *.P
+*.zip
 *nbproject*
 src/oastat
 *.exe
