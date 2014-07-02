@@ -40,6 +40,9 @@ Writing to a mySQL database is easy too:
     oastat -f "~/.openarena/baseoa/games.log" --backend "DbiXX" --dbarg "mysql dbname oastat username openarena"
 
 ## Windows version 
+A precompiled version for Windows can be found at: http://files.poulsander.com/~poul19/public_files/oastat/
+This version is compiled on a Debian system using MXE (http://mxe.cc/). 
+
 The windows version only has support for XMl output and sqlite. The reason it does not support mySQL and PostgreSQL is because I was not able to compile a version of cppdb that supported it.
 
 The Windows version includes two scripts:
