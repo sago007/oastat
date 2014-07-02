@@ -2,6 +2,8 @@
 
 Here you will be introduced on how to get data into oastat and how to get the data out again. Oastat can read both from file or pipe and can write output to either an SQL server or an XML file.
 
+Homepage: https://code.google.com/p/oastat/
+Mirror of the code: https://github.com/sago007/oastat-copy
 
 # Details 
 
@@ -43,3 +45,12 @@ The windows version only has support for XMl output and sqlite. The reason it do
 The Windows version includes two scripts:
 * oastat_create_db.bat - Creates a sqlite3-database
 * oastat_fill_db.bat - Fills the database with data from "%APPDATA%/OpenArena/baseoa/games.log"
+
+The windows version cannot read from stdin or use the "--tail" command but it does demonstrate the duplicate check.  
+
+For looking at the sqlite-file generated I recommend Sqliteman (http://sqliteman.com/)
+
+## License
+The program is licences under GNU GPL v2 or any later version. See COPYING for details. 
+The Windows version may include files from CPPDB (http://cppcms.com/sql/cppdb/) that are licensed under the Boost Software License 1.0 or The MIT license at your opinion.
+The windows version may also be packed with sqlite3.exe that are in the public domain. 
