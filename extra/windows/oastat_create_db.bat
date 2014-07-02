@@ -1,0 +1,1 @@
+sqlite3.exe -init oastat_create_tables_sqlite.sql defoastat.db3
