@@ -13,3 +13,7 @@ cp ~/git/mxe/usr/i686-pc-mingw32/bin/libcppdb.dll ./
 cp ~/git/mxe/usr/i686-pc-mingw32/bin/libcppdb_sqlite3.dll ./
 cp ~/git/mxe/usr/i686-pc-mingw32/bin/sqlite3.exe ./
 cp ../COPYING ./COPYING.txt
+cp ../extra/windows/oastat_fill_db.bat ./
+cp ../extra/windows/oastat_create_db.bat ./
+cd ..
+zip -r oastat-win oastat-win
