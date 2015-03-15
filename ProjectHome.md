@@ -1,0 +1,1 @@
+This program reads from stdin and outputs to a database. It is supposed to be easy to add new database backends and log entries and can therefore be extended further.
