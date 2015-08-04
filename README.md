@@ -2,8 +2,27 @@
 
 Here you will be introduced on how to get data into oastat and how to get the data out again. Oastat can read both from file or pipe and can write output to either an SQL server or an XML file.
 
-Homepage: https://code.google.com/p/oastat/
-Mirror of the code: https://github.com/sago007/oastat-copy
+Homepage: https://github.com/sago007/oastat/
+
+# Building
+
+## Dependencies
+
+  * CppDb - http://cppcms.com/sql/cppdb/
+  * libgcrypt
+  * boost_program_options
+
+On Ubuntu (15.04 or later) all requirements can be installed with: sudo apt-get install build-essential libboost-program-options-dev libcppdb-dev libgcrypt20-dev
+On earlier versions CppDb must be installed manually.
+
+CppDb can be disabled from the build by adding the line:
+USECPPDB=0 to src/Makefile.local (file must be created)
+
+libdbi-dev can be used instead by adding:
+USEDBIXX=1 to src/Makefile.local (file must be created)
+
+Go to ./src and type "make"
+The executable will be in the same folder.
 
 # Details 
 

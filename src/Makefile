@@ -1,5 +1,5 @@
 #ifndef USEDBIXX
-USEDBIXX=1
+USEDBIXX=0
 #endif
 #ifndef USECPPDB
 USECPPDB=1
@@ -12,7 +12,7 @@ CXX=$(CROSS)g++
 #endif
 
 BASE_LIBS=-lgcrypt -lboost_program_options -lgpg-error
-BASE_CFLAGS=-c -g -O2 -Wall -std=c++0x
+BASE_CFLAGS=-c -g -O2 -Wall -std=c++11
 
 -include Makefile.local
 

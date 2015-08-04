@@ -191,7 +191,6 @@ string getHashedId(string unhashedID)
 
 	unhashedID = hash_hex;
 
-	//free(out);
 	return  unhashedID; //Replace with md5 at some point
 }
 
@@ -216,7 +215,7 @@ int main (int argc, const char* argv[])
 		("backend", boost::program_options::value<string>(), "The DB backend to use")
 		("dbargs", boost::program_options::value<string>(), "Arguments passed to the DB backend")
 		("filename,f", boost::program_options::value<string>(), "Filename to read. Providing a blank string will read from stdin")
-		("tail", "Use tail on the filename given to read the file")
+		("tail", "Use tail on the filename given to read the file. This will be ignored on Windows.")
 		("integration-test", "Perform integration test")
 		;
 		boost::program_options::variables_map vm;

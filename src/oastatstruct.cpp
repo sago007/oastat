@@ -144,12 +144,10 @@ map<string,string> OaStatStruct::GetInfostring(string restOfLine) const
 			key = restOfLine.substr(lastPos,curPos-lastPos);
 		} else {
 			value = restOfLine.substr(lastPos,curPos-lastPos);
-			//list.insert(pair<string,string>(key,value));
 			makeLower(key);
 			if (key.length()>0) {
 				list[key] = value;
 			}
-			//cout << key << ":" << value << endl;
 		}
 		iskey = !iskey;
 		lastPos = curPos+1;
