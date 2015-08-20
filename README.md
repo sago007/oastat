@@ -24,6 +24,12 @@ USEDBIXX=1 to src/Makefile.local (file must be created)
 Go to ./src and type "make"
 The executable will be in the same folder.
 
+To create the database scripts:
+cd sql/create_tables/
+./create_specific.sh
+
+This will create the scripts for PostgreSQL, MySQL and SQLite
+
 # Details 
 
 ## Writing to XML-files 
