@@ -1,7 +1,7 @@
 language: cpp
 
 before_install:
-  sudo apt-get install libcppdb-dev build-essential libboost-program-options-dev libgcrypt20-dev
+  sudo apt-get install build-essential libboost-program-options-dev libgcrypt11-dev
 
 compiler:
   - gcc

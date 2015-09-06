@@ -1,4 +1,4 @@
 #! /bin/bash
 set +e
 cd src
-make
+make USECPPDB=0
