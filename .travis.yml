@@ -9,8 +9,8 @@ addons:
     - gcc-4.9
     - g++-4.9
     - build-essential
-    - libboost-dev
-    - libboost-program-options-dev
+    - libboost1.55-dev
+    - libboost-program-options1.55-dev
     - libgcrypt11-dev
 
 cache:
