@@ -1,10 +1,31 @@
+sudo: required
 language: cpp
 
-before_install:
-  sudo apt-get install build-essential libboost-program-options-dev libgcrypt11-dev
+addons:
+  apt:
+    packages:
+    - g++-4.9
+    - build-essential
+    - libboost-program-options-dev
+    - libgcrypt11-dev
 
-compiler:
-  - gcc
+cache:
+  apt: true
+  directories:
+  - download
+  - cppdb-0.3.1
+
+before_install:
+  - mkdir download && cd download
+  - if [ ! -f cppdb-0.3.1.tar.bz2 ]; then wget --no-verbose http://downloads.sourceforge.net/project/cppcms/cppdb/0.3.1/cppdb-0.3.1.tar.bz2; fi
+  - cd ..
+  - if [ ! -d cppdb-0.3.1 ]; then tar xjf download/cppdb-0.3.1.tar.bz2; fi
+
+install:
+  - export CXX="g++-4.9" CC="gcc-4.9"
+  - mkdir -p cppdb-0.3.1/build && cd cppdb-0.3.1/build
+  - cmake .. && make && sudo make install
+  - cd ../..
 
 script: ./travis_build.script
 
