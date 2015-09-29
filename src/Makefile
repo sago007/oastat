@@ -1,15 +1,15 @@
-#ifndef USEDBIXX
+ifndef USEDBIXX
 USEDBIXX=0
-#endif
-#ifndef USECPPDB
+endif
+ifndef USECPPDB
 USECPPDB=1
-#endif
-#ifndef PROGRAMNAME
+endif
+ifndef PROGRAMNAME
 PROGRAMNAME=oastat
-#endif
-#ifdef CROSS
+endif
+ifdef CROSS
 CXX=$(CROSS)g++
-#endif
+endif
 
 BASE_LIBS=-lgcrypt -lboost_program_options -lgpg-error
 BASE_CFLAGS=-c -g -O2 -Wall -std=c++11
