@@ -215,12 +215,21 @@ int main (int argc, const char* argv[])
 		("backend", boost::program_options::value<string>(), "The DB backend to use")
 		("dbargs", boost::program_options::value<string>(), "Arguments passed to the DB backend")
 		("filename,f", boost::program_options::value<string>(), "Filename to read. Providing a blank string will read from stdin")
+		("config,c", boost::program_options::value<vector<string> >(), "Read a config file with the values. Can be given multiple times")
 		("tail", "Use tail on the filename given to read the file. This will be ignored on Windows.")
 		("integration-test", "Perform integration test")
 		;
 		boost::program_options::variables_map vm;
 		boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
 		boost::program_options::notify(vm);
+		if (vm.count("config")) {
+			vector<string> config_filenames = vm["config"].as<vector<string> >();
+			for ( const string& s : config_filenames) {
+				ifstream config_file(s);
+				store(parse_config_file(config_file, desc), vm);
+				notify(vm);
+			}
+		}
 		if (vm.count("help")) {
 			cout << desc << endl;
 			cout << "Examples: " << endl;
