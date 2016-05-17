@@ -40,11 +40,11 @@ class Db2Xml : public Database
 {
 public:
 	Db2Xml();
-	Db2Xml(string dbargs);
+	Db2Xml(std::string dbargs);
 	Db2Xml(const Db2Xml& orig);
 	virtual ~Db2Xml();
 	void createTables();
-	void startGame(int gametype, const string &mapname, const string &basegame, const string &servername, const OaStatStruct &oss);
+	void startGame(int gametype, const std::string &mapname, const std::string &basegame, const std::string &servername, const OaStatStruct &oss);
 	void addGameCvar(const std::string &cvar, const std::string &value);
 	void endGame(int second);
 	int getGameNumber();
@@ -64,22 +64,22 @@ public:
 	void addGenericTeamEvent(int second, int team, int amount, const std::string &gametype, const std::string &player1, const std::string &player2, int event, int generic1);
 	void doNotCommit();
 private:
-	string p_output_dir;
-	string p_servername; //Used for filename
+	std::string p_output_dir;
+	std::string p_servername; //Used for filename
 	tm p_gametime; //Used for filename
-	string p_xmlcontent;
-	string p_postscript;
+	std::string p_xmlcontent;
+	std::string p_postscript;
 	bool isOk;
 
 	/*
 	 * To make it easier to parse the XML file oastat will generate a unique id for each game
 	 * This is used then converting back to a log file
 	 */
-	map<string,int> psoudo_playerids;
+	std::map<std::string,int> psoudo_playerids;
 	int nextId;
 
-	int getPsoudoId(const string &guid);
-	string getXmlEscaped(const string &org);
+	int getPsoudoId(const std::string &guid);
+	std::string getXmlEscaped(const std::string &org);
 };
 
 #endif	/* DB2XML_HPP */

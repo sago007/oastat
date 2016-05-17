@@ -31,7 +31,6 @@ http://code.google.com/p/oastat/
 #include <sstream>
 #include <set>
 
-using namespace std;
 using namespace dbixx;
 
 class Db2DbiXX  : public Database

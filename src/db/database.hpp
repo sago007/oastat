@@ -28,8 +28,6 @@ http://code.google.com/p/oastat/
 #include <iostream>
 #include "../oastatstruct.h"
 
-using namespace std;
-
 /*
  This is the class that all database connections need to inherit to be able to recieve data from the program
  */

@@ -23,6 +23,10 @@ http://code.google.com/p/oastat/
 
 #include "Db2Xml.hpp"
 
+using std::cout;
+using std::ofstream;
+using std::string;
+using std::stringstream;
 
 Db2Xml::Db2Xml()
 {
@@ -35,10 +39,10 @@ Db2Xml::Db2Xml()
 	fmkdir % p_output_dir;
 	int fmkdir_ret = system(fmkdir.str().c_str());
 	if (fmkdir_ret) {
-		cout << "Attemting to create \"" << path << "\" with \"" << fmkdir.str() << "\", but return code was: " << fmkdir_ret << endl;
+		cout << "Attemting to create \"" << path << "\" with \"" << fmkdir.str() << "\", but return code was: " << fmkdir_ret << "\n";
 	}
 }
-Db2Xml::Db2Xml(string dbargs)
+Db2Xml::Db2Xml(std::string dbargs)
 {
 	boost::format path("%1%/oastat");
 	path % getenv("HOME");
@@ -69,7 +73,7 @@ Db2Xml::Db2Xml(string dbargs)
 	fmkdir % p_output_dir;
 	int fmkdir_ret = system(fmkdir.str().c_str());
 	if (fmkdir_ret) {
-		cout << "Attemting to create \"" << path << "\" with \"" << fmkdir.str() << "\", but return code was: " << fmkdir_ret << endl;
+		cout << "Attemting to create \"" << path << "\" with \"" << fmkdir.str() << "\", but return code was: " << fmkdir_ret << "\n";
 	}
 }
 Db2Xml::Db2Xml(const Db2Xml& orig)
@@ -116,11 +120,11 @@ void Db2Xml::endGame(int second)
 		ofstream outfile;
 		outfile.open (filename.c_str());
 		if (outfile.fail()) {
-			cout << "could not create " << filename << endl;
+			cout << "could not create " << filename << "\n";
 		}
 		outfile << p_xmlcontent;
 		outfile.close();
-		cout << "End game at " << second << "with size " << p_xmlcontent.length() << " written to " << filename << endl;
+		cout << "End game at " << second << "with size " << p_xmlcontent.length() << " written to " << filename << "\n";
 	}
 }
 int Db2Xml::getGameNumber()

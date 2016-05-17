@@ -21,7 +21,7 @@ cache:
   - cppdb-0.3.1
 
 before_install:
-  - mkdir download && cd download
+  - mkdir -p download && cd download
   - if [ ! -f cppdb-0.3.1.tar.bz2 ]; then wget --no-verbose http://downloads.sourceforge.net/project/cppcms/cppdb/0.3.1/cppdb-0.3.1.tar.bz2; fi
   - cd ..
   - if [ ! -d cppdb-0.3.1 ]; then tar xjf download/cppdb-0.3.1.tar.bz2; fi

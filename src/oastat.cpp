@@ -36,7 +36,10 @@ http://code.google.com/p/oastat/
 #include <boost/program_options.hpp>
 
 
-using namespace std;
+using std::string;
+using std::vector;
+using std::list;
+using std::ifstream;
 
 #include "db/database.hpp"
 #ifdef USEDBIXX
@@ -238,7 +241,7 @@ int main (int argc, const char* argv[])
 			cout << argv[0] << " -f %APPDATA%/OpenArena/baseoa/games.log --backend \"CppDb\" --dbarg \"sqlite3:db=defoastat.db3\"" << endl;
 			cout << "tail -f \"~/.openarena/baseoa/games.log\" | "<< argv[0] << " -f \"\" --backend \"Xml\" --dbarg \"outputdir ~/oastat\"" << endl;
 			cout << endl;
-			cout << "Look at http://code.google.com/p/oastat for more help and more details" << endl;
+			cout << "Look at https://github.com/sago007/oastat for more help and more details" << endl;
 			return 1;
 		}
 		if (vm.count("backend")) {
