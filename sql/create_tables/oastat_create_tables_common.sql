@@ -58,7 +58,7 @@ CREATE TABLE oastat_gamecvars (
     gamenumber bigint unsigned NOT NULL, -- will be used as primary key later
     cvar character varying(100) NOT NULL, -- will be used as primary key later
     value character varying(256), -- defined as MAX_CVAR_VALUE_STRING in q_shared.h
-    numericvalue float -- if value is a float or int, then the value will also be stored here for easier comparison
+    numericvalue NUMERIC(15,2) -- if value is a float or int, then the value will also be stored here for easier comparison
 );
 
 CREATE TABLE oastat_kills (
@@ -107,7 +107,7 @@ CREATE TABLE oastat_uservars (
     userinfoevent bigint unsigned NOT NULL, -- will be used as primary key
     thekey character varying(100) NOT NULL, -- will be used as primary key later
     thevalue character varying(256),
-    numericvalue float -- if value is a float or int, then the value will also be stored here for easier comparison
+    numericvalue NUMERIC(15,2) -- if value is a float or int, then the value will also be stored here for easier comparison
 );
 
 CREATE TABLE oastat_config (
