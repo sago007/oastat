@@ -12,7 +12,7 @@ CXX=$(CROSS)g++
 endif
 
 BASE_LIBS=-lgcrypt -lboost_program_options -lgpg-error
-BASE_CFLAGS=-c -g -O2 -Wall -std=c++11
+BASE_CFLAGS=-c -g -O1 -Wall -std=c++11
 
 -include Makefile.local
 

@@ -106,8 +106,8 @@ void Db2CppDb::createTables()
 
 void Db2CppDb::startGame(int gametype, const string &mapname, const string &basegame, const string &servername, const OaStatStruct &oss)
 {
-	sql = shared_ptr<cppdb::session>(new cppdb::session(connectstring));
 	commitlock = nullptr;
+	sql = shared_ptr<cppdb::session>(new cppdb::session(connectstring));
 	commitlock = shared_ptr<transaction>(new transaction(*sql));
 	Rollback(); //in case there was some garbage that could be comitted (like warmup or an unfinished game)
 	SetOk(true);
