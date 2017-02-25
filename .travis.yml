@@ -1,36 +1,9 @@
 sudo: required
+
 language: cpp
 
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    - boost-latest
-    packages:
-    - gcc-4.9
-    - g++-4.9
-    - build-essential
-    - libboost1.55-dev
-    - libboost-program-options1.55-dev
-    - libgcrypt11-dev
-
-cache:
-  apt: true
-  directories:
-  - download
-  - cppdb-0.3.1
-
-before_install:
-  - mkdir -p download && cd download
-  - if [ ! -f cppdb-0.3.1.tar.bz2 ]; then wget --no-verbose http://downloads.sourceforge.net/project/cppcms/cppdb/0.3.1/cppdb-0.3.1.tar.bz2; fi
-  - cd ..
-  - if [ ! -d cppdb-0.3.1 ]; then tar xjf download/cppdb-0.3.1.tar.bz2; fi
-
-install:
-  - export CXX="g++-4.9" CC="gcc-4.9"
-  - mkdir -p cppdb-0.3.1/build && cd cppdb-0.3.1/build
-  - cmake .. && make && sudo make install
-  - cd ../..
+services:
+  - docker
 
 script: ./travis_build.script
 
