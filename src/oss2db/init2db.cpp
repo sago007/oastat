@@ -52,7 +52,7 @@ void Init2Db::process(const OaStatStruct &oss)
 	oss_copy.setTimeStamp(arguments["g_timestamp"]);
 
 	dp->startGame(gametype,mapname,basegame,servername,oss_copy);
-	for (std::pair<std::string, std::string> it : arguments) {
+	for (const std::pair<std::string, std::string>& it : arguments) {
 		if(
 			it.first == "g_gametype" ||
 			it.first == "gamename" ||
