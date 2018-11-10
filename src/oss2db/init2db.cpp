@@ -52,17 +52,16 @@ void Init2Db::process(const OaStatStruct &oss)
 	oss_copy.setTimeStamp(arguments["g_timestamp"]);
 
 	dp->startGame(gametype,mapname,basegame,servername,oss_copy);
-	std::map<std::string,std::string>::iterator it;
-	for (it = arguments.begin(); it != arguments.end(); it++) {
+	for (std::pair<std::string, std::string> it : arguments) {
 		if(
-			it->first == "g_gametype" ||
-			it->first == "gamename" ||
-			it->first == "mapname" ||
-			it->first == "sv_hostname" /*||
-                it->first == "g_timestamp" do not skip this one*/
+			it.first == "g_gametype" ||
+			it.first == "gamename" ||
+			it.first == "mapname" ||
+			it.first == "sv_hostname" /*||
+                it.first == "g_timestamp" do not skip this one*/
 		) {
 			continue;    //Skip the ones on the games-table
 		}
-		dp->addGameCvar(it->first,it->second);
+		dp->addGameCvar(it.first,it.second);
 	}
 }

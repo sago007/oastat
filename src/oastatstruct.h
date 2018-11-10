@@ -54,7 +54,7 @@ public:
 	/*
 	 *Parses the rest of the line to an info string
 	 */
-	std::map<std::string,std::string> GetInfostring(std::string restOfLine) const;
+	std::map<std::string,std::string> GetInfostring(const std::string& restOfLine) const;
 
 	/*
 	 *Same but uses this.restOfLine

@@ -38,7 +38,7 @@ public:
 	/*
 	 * The object will need a database interface to cummunicate to. This is given here
 	 */
-	void setDb(boost::shared_ptr<Database> &d)
+	void setDb(std::shared_ptr<Database> &d)
 	{
 		dp = d;
 	}
@@ -69,7 +69,7 @@ public:
 	};
 
 protected:
-	boost::shared_ptr<Database> dp; //Pointer to the used db
+	std::shared_ptr<Database> dp; //Pointer to the used db
 };
 
 

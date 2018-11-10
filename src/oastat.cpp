@@ -66,7 +66,7 @@ https://github.com/sago007/oastat/
 
 std::vector<std::string> clientIdMap;
 
-static int processStdIn(std::istream &in_p,std::vector<boost::shared_ptr<Struct2Db> > &commands);
+static int processStdIn(std::istream &in_p,std::vector<std::shared_ptr<Struct2Db> > &commands);
 
 
 
@@ -76,28 +76,28 @@ static int processStdIn(std::istream &in_p,std::vector<boost::shared_ptr<Struct2
  *
  * @param[in] db The database object. May not be freed once given as an argument to this function
  */
-static void addCommands(boost::shared_ptr<Database> &db,std::vector<boost::shared_ptr<Struct2Db> > &commands)
+static void addCommands(std::shared_ptr<Database> &db,std::vector<std::shared_ptr<Struct2Db> > &commands)
 {
 	if (!db) {
 		throw std::runtime_error("db was uninizialized in addCommands");
 	}
 
 	//Add new commands here
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Kill2Db() ) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Init2Db() ) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Shutdown2Db() ) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Userinfo2Db()) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Disconnect2Db()) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Award2Db()) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Ctf2Db()) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Point2Db()) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Ctf1f2Db()) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Elimination2Db()) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new CtfElimination2Db()) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Harvester2Db()) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Challenge2Db()) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Warmup2Db()) );
-	commands.push_back(boost::shared_ptr<Struct2Db>(new Accuracy2Db()) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Kill2Db() ) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Init2Db() ) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Shutdown2Db() ) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Userinfo2Db()) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Disconnect2Db()) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Award2Db()) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Ctf2Db()) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Point2Db()) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Ctf1f2Db()) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Elimination2Db()) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new CtfElimination2Db()) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Harvester2Db()) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Challenge2Db()) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Warmup2Db()) );
+	commands.push_back(std::shared_ptr<Struct2Db>(new Accuracy2Db()) );
 	//Add more commands just above here
 
 	for (unsigned int i=0; i<commands.size(); i++) {
@@ -107,7 +107,7 @@ static void addCommands(boost::shared_ptr<Database> &db,std::vector<boost::share
 
 
 
-static int processStdIn(std::istream &in_p, std::vector<boost::shared_ptr<Struct2Db> > &commands)
+static int processStdIn(std::istream &in_p, std::vector<std::shared_ptr<Struct2Db> > &commands)
 {
 	bool done = true;
 	OaStatStruct *startstruct;
@@ -135,20 +135,10 @@ static int processStdIn(std::istream &in_p, std::vector<boost::shared_ptr<Struct
 						oss = osslist.front();
 						osslist.pop_front();
 						for(unsigned int i=0; i<commands.size(); i++) {
-							//try {
-							//cout << "checking " << commands.at(i)->getCommand() << endl;
 							if(commands.at(i)->canProcess(oss)) {
-								//cout << "Execturedg by " << commands.at(i)->getCommand();
 								commands.at(i)->process(oss);
 							}
-							/*} catch (exception &e)
-							{
-							    cerr << "oastat: Sql_error at line: \"" << line << "\"" << endl <<
-							            "oastat:   Error is: " << e.what() <<
-							            "oastat:   Last error will be ignored" << endl;
-							}*/
 						}
-						//cout << "returned" << endl;
 					}
 					startstruct = NULL;
 				}
@@ -198,7 +188,7 @@ int main (int argc, const char* argv[])
 		std::string backend = "Xml";
 		bool useTail = false;
 		bool doIntegrationTest = false;
-		std::vector<boost::shared_ptr<Struct2Db> > commands;
+		std::vector<std::shared_ptr<Struct2Db> > commands;
 		/////////////
 		//dbargs = "mysql dbname oastat";
 		boost::format f("%1%/.openarena/baseoa/games.log");
@@ -252,15 +242,15 @@ int main (int argc, const char* argv[])
 		if (vm.count("integration-test")) {
 			doIntegrationTest = true;
 		}
-		boost::shared_ptr<Database> db;
+		std::shared_ptr<Database> db;
 
 #if USEDBIXX
 		if (backend == "DbiXX") {
 			cout << "Using DBI" << endl;
 			if (dbargs.length()<1) {
-				db = boost::shared_ptr<Database>(new Db2DbiXX() );
+				db = std::shared_ptr<Database>(new Db2DbiXX() );
 			} else {
-				db = boost::shared_ptr<Database>(new Db2DbiXX(dbargs) );
+				db = std::shared_ptr<Database>(new Db2DbiXX(dbargs) );
 			}
 		}
 #endif
@@ -268,18 +258,18 @@ int main (int argc, const char* argv[])
 		if (backend == "CppDb") {
 			std::cout << "Using CppDb\n";
 			if (dbargs.length()<1) {
-				db = boost::shared_ptr<Database>(new Db2CppDb() );
+				db = std::shared_ptr<Database>(new Db2CppDb() );
 			} else {
-				db = boost::shared_ptr<Database>(new Db2CppDb(dbargs) );
+				db = std::shared_ptr<Database>(new Db2CppDb(dbargs) );
 			}
 		}
 #endif
 		if (backend == "Xml") {
 			std::cout << "Using XML\n";
 			if (dbargs.length()<1) {
-				db = boost::shared_ptr<Database>(new Db2Xml() );
+				db = std::shared_ptr<Database>(new Db2Xml() );
 			} else {
-				db = boost::shared_ptr<Database>(new Db2Xml(dbargs) );
+				db = std::shared_ptr<Database>(new Db2Xml(dbargs) );
 			}
 		}
 

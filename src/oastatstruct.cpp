@@ -21,28 +21,19 @@ https://github.com/sago007/oastat/
 ===========================================================================
 */
 
-using namespace std;
-
 #include "oastatstruct.h"
 #include <stdlib.h>
 #include <sstream>
 #include <iostream>
 #include <iomanip>
 
-using namespace std;
-
-namespace
-{
-
-void makeLower(string &x)
+static void makeLower(std::string &x)
 {
 	for (unsigned int i=0; i<x.length(); i++) {
 		if (x[i] >= 'A' && x[i] <= 'X') {
 			x[i] = x[i]-'A'+'a';
 		}
 	}
-}
-
 }
 
 //tm OaStatStruct::_datetime;
@@ -76,12 +67,12 @@ void OaStatStruct::clear()
 	restOfLine = "";
 }
 
-void OaStatStruct::parseLine(string line)
+void OaStatStruct::parseLine(std::string line)
 {
 	//Parse time
 	//cout << line << endl;
 	//try{
-	string tempTimeString = line.substr(0,7);
+	std::string tempTimeString = line.substr(0,7);
 	int posColon = tempTimeString.find(":");
 	int minute = atoi(tempTimeString.substr(0,posColon).c_str());
 	/*time_t thetime = time(NULL);
@@ -97,7 +88,7 @@ void OaStatStruct::parseLine(string line)
 		line = line.substr(posColon+2,line.length()); //Also remove the colon and the first space after it (+2)
 
 		posColon = line.find_first_not_of(" -0123456789"); //First non-number or space
-		stringstream ss;
+		std::stringstream ss;
 		ss << line.substr(0,posColon);
 		int counter = 0; //to ensure that we don't go on forever
 		while (ss && counter++<10) {
@@ -114,7 +105,7 @@ void OaStatStruct::parseLine(string line)
 			}
 		}
 		line = line.substr(posColon,line.length());
-	} catch (exception &e) {
+	} catch (std::exception &e) {
 		//The last part does not always exist... ignore it
 		restOfLine = "";
 		return;
@@ -125,13 +116,13 @@ void OaStatStruct::parseLine(string line)
 }
 
 
-map<string,string> OaStatStruct::GetInfostring(string restOfLine) const
+std::map<std::string,std::string> OaStatStruct::GetInfostring(const std::string& restOfLine) const
 {
-	map<string,string> list;
+	std::map<std::string,std::string> list;
 	int curPos = 0;
 	unsigned int lastPos = 0;
 	bool iskey = true;
-	string key, value;
+	std::string key, value;
 	if (restOfLine[0] == '\\') {
 		lastPos++;
 	}
@@ -155,7 +146,7 @@ map<string,string> OaStatStruct::GetInfostring(string restOfLine) const
 	return list;
 }
 
-map<string,string> OaStatStruct::GetInfostring() const
+std::map<std::string,std::string> OaStatStruct::GetInfostring() const
 {
 	return GetInfostring(restOfLine);
 }
@@ -165,27 +156,27 @@ const tm OaStatStruct::getDateTime() const
 	return _datetime;
 }
 
-string ZeroPadNumber(int num, int size = 2)
+std::string ZeroPadNumber(int num, int size = 2)
 {
 	std::ostringstream ss;
 	ss.clear();
-	ss << setw( size ) << setfill( '0' ) << num;
+	ss << std::setw( size ) << std::setfill( '0' ) << num;
 	return ss.str();
 }
 
-string OaStatStruct::getTimeStamp() const
+std::string OaStatStruct::getTimeStamp() const
 {
-	string s;
+	std::string s;
 	s = "TIMESTAMP \'" + ZeroPadNumber(_datetime.tm_year+1900,4) + "-" + ZeroPadNumber(_datetime.tm_mon+1) + "-"
 		+ ZeroPadNumber(_datetime.tm_mday) + " " + ZeroPadNumber(_datetime.tm_hour) + ":"
 		+ ZeroPadNumber(_datetime.tm_min) + ":" + ZeroPadNumber(_datetime.tm_sec) + "\'";
 	return s;
 }
 
-void OaStatStruct::setTimeStamp(const string &timestring)
+void OaStatStruct::setTimeStamp(const std::string &timestring)
 {
 	std::stringstream ss(timestring);
-	string tmp;
+	std::string tmp;
 	getline(ss,tmp,'-');
 	_datetime.tm_year = atoi(tmp.c_str())-1900;
 	getline(ss,tmp,'-');
