@@ -37,12 +37,14 @@ https://github.com/sago007/oastat/
 class OaStatStruct
 {
 public:
-	OaStatStruct();
-	OaStatStruct(const OaStatStruct& orig);
-	virtual ~OaStatStruct();
+	OaStatStruct() = default;
+	OaStatStruct(const OaStatStruct& orig) = default;
+	virtual ~OaStatStruct() = default;
+	
+	OaStatStruct& operator=(const OaStatStruct& orig) = default;
 
 	//There are no reason to make any variables private.
-	int second; //number of seconds
+	int second = 0; //number of seconds
 	std::string command; //Like 'ClientConnect', 'Award' and 'Kill'
 	std::vector<int> parameters; //The parameters for the command.
 	std::string restOfLine;
@@ -72,7 +74,7 @@ public:
 	 */
 	void setTimeStamp(const std::string &timestring);
 private:
-	tm _datetime; 
+	tm _datetime = {}; 
 };
 
 #endif	/* _OASTATSTRUCT_H */

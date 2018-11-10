@@ -31,11 +31,11 @@ class Userinfo2Db : public Struct2Db
 {
 public:
 
-	std::string getCommand() const;
+	std::string getCommand() const override;
 
-	bool canProcess(const OaStatStruct &oss) const;
+	bool canProcess(const OaStatStruct &oss) const override;
 
-	void process(const OaStatStruct &oss);
+	void process(const OaStatStruct &oss) override;
 private:
 
 };

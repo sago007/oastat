@@ -58,10 +58,10 @@ private:
 	std::shared_ptr<cppdb::session> sql;
 	std::shared_ptr<cppdb::transaction> commitlock;
 	std::string connectstring;
-	bool isok;
-	bool debug;
-	int gamenumber; /** Gamenumber we are currently working on */
-	tm timestamp; /** Start time of the game we are currently working on */
+	bool isok = false;
+	bool debug = false;
+	int gamenumber = 0; /** Gamenumber we are currently working on */
+	tm timestamp = {}; /** Start time of the game we are currently working on */
 	int getNextGameNumber();
 	int getLastGameNumber();
 	void Commit();
@@ -75,7 +75,7 @@ private:
 	int getPlayerId(const std::string &guid);
 	std::map<std::string,int> playerids;
 	std::string sql_backend;
-	bool last_value;
+	bool last_value = false;
 	std::set<std::string> cvars2save;
 	std::set<std::string> uservars2save;
 };

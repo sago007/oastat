@@ -36,28 +36,6 @@ static void makeLower(std::string &x)
 	}
 }
 
-//tm OaStatStruct::_datetime;
-
-OaStatStruct::OaStatStruct()
-{
-	second = 0;
-	command = "";
-	parameters.clear();
-	restOfLine = "";
-}
-
-OaStatStruct::OaStatStruct(const OaStatStruct& orig)
-{
-	second = orig.second;
-	command = orig.command;
-	parameters = orig.parameters;
-	restOfLine = orig.restOfLine;
-	_datetime = orig._datetime;
-}
-
-OaStatStruct::~OaStatStruct()
-{
-}
 
 void OaStatStruct::clear()
 {

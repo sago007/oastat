@@ -26,10 +26,8 @@ https://github.com/sago007/oastat/
 #include <sstream>
 #include <set>
 
-using namespace std;
-using namespace cppdb;
 
-void Db2CppDb::InitStrings(const string &backend)
+void Db2CppDb::InitStrings(const std::string &backend)
 {
 	last_value = true;
 	if (backend == "pgsql") {
@@ -43,7 +41,7 @@ void Db2CppDb::InitStrings(const string &backend)
 
 void Db2CppDb::ReadConfigFromDb()
 {
-	string value;
+	std::string value;
 	cppdb::result res = *sql<<"SELECT thekey FROM oastat_config_uservars2save";
 	while (res.next()) {
 		res >> value;
@@ -56,7 +54,7 @@ void Db2CppDb::ReadConfigFromDb()
 	}
 }
 
-bool Db2CppDb::IsDuplicate(const string &servername,const tm &thetime)
+bool Db2CppDb::IsDuplicate(const std::string &servername,const tm &thetime)
 {
 	cppdb::result res = *sql << "SELECT 'X' FROM oastat_games WHERE servername = ? AND time = ?"<<servername<<thetime;
 	if (res.next()) {
@@ -66,25 +64,23 @@ bool Db2CppDb::IsDuplicate(const string &servername,const tm &thetime)
 	}
 }
 
-Db2CppDb::Db2CppDb()
+Db2CppDb::Db2CppDb() : connectstring("pgsql:database=oastat")
 {
-	connectstring = "pgsql:database=oastat";
-	sql = shared_ptr<cppdb::session>(new cppdb::session(connectstring));
-	commitlock = shared_ptr<transaction>(new transaction(*sql));
+	sql = std::shared_ptr<cppdb::session>(new cppdb::session(connectstring));
+	commitlock = std::shared_ptr<cppdb::transaction>(new cppdb::transaction(*sql));
 	InitStrings("pgsql");
 	ReadConfigFromDb();
-	debug = false;
 }
 
-Db2CppDb::Db2CppDb(const string &dbargs)
+Db2CppDb::Db2CppDb(const std::string &dbargs)
 {
-	stringstream stream(stringstream::in | stringstream::out);
+	std::stringstream stream(std::stringstream::in | std::stringstream::out);
 	stream << dbargs;
-	string holder;
+	std::string holder;
 	getline(stream,holder,':');
 	connectstring = dbargs;
-	sql = shared_ptr<cppdb::session>(new cppdb::session(connectstring));
-	commitlock = shared_ptr<transaction>(new transaction(*sql));
+	sql = std::shared_ptr<cppdb::session>(new cppdb::session(connectstring));
+	commitlock = std::shared_ptr<cppdb::transaction>(new cppdb::transaction(*sql));
 	InitStrings(holder);
 	ReadConfigFromDb();
 	debug = false;
@@ -92,7 +88,7 @@ Db2CppDb::Db2CppDb(const string &dbargs)
 
 Db2CppDb::Db2CppDb(const Db2CppDb& orig)
 {
-	throw runtime_error("May not make copy of Db2CppDb");
+	throw std::runtime_error("May not make copy of Db2CppDb");
 }
 
 Db2CppDb::~Db2CppDb()
@@ -104,26 +100,26 @@ void Db2CppDb::createTables()
 
 }
 
-void Db2CppDb::startGame(int gametype, const string &mapname, const string &basegame, const string &servername, const OaStatStruct &oss)
+void Db2CppDb::startGame(int gametype, const std::string &mapname, const std::string &basegame, const std::string &servername, const OaStatStruct &oss)
 {
 	commitlock = nullptr;
-	sql = shared_ptr<cppdb::session>(new cppdb::session(connectstring));
-	commitlock = shared_ptr<transaction>(new transaction(*sql));
+	sql = std::shared_ptr<cppdb::session>(new cppdb::session(connectstring));
+	commitlock = std::shared_ptr<cppdb::transaction>(new cppdb::transaction(*sql));
 	Rollback(); //in case there was some garbage that could be comitted (like warmup or an unfinished game)
 	SetOk(true);
 	timestamp = oss.getDateTime();
-	if (oss.restOfLine.find("\\isWarmup\\1") != string::npos) {
+	if (oss.restOfLine.find("\\isWarmup\\1") != std::string::npos) {
 		SetOk(false);
-		cout << "Warmup: " << servername << ", " << oss.getTimeStamp() << endl;
+		std::cout << "Warmup: " << servername << ", " << oss.getTimeStamp() << "\n";
 		return;
 	}
 	if (IsDuplicate(servername,timestamp)) {
 		SetOk(false);
-		cout << "Duplicate:" << servername << ", " << oss.getTimeStamp() << endl;
+		std::cout << "Duplicate:" << servername << ", " << oss.getTimeStamp() << "\n";
 		return;
 	}
 	if (last_value) {
-		statement st = *sql << "INSERT INTO oastat_games(gametype, mapname, basegame,servername,time) VALUES (?,LOWER(?),?,?,?)"; //<<gametype<<mapname<<basegame<<servername<<timestamp<<exec;
+		cppdb::statement st = *sql << "INSERT INTO oastat_games(gametype, mapname, basegame,servername,time) VALUES (?,LOWER(?),?,?,?)"; //<<gametype<<mapname<<basegame<<servername<<timestamp<<exec;
 		st.bind(gametype);
 		st.bind(mapname);
 		st.bind(basegame);
@@ -133,12 +129,12 @@ void Db2CppDb::startGame(int gametype, const string &mapname, const string &base
 		gamenumber = st.last_insert_id();
 		if (gamenumber < 1) {
 			SetOk(false);
-			cout << "Must FAIL!" << endl;
+			std::cout << "Must FAIL!\n";
 		}
 	} else {
 		gamenumber = getNextGameNumber();
 		*sql << "INSERT INTO oastat_games(gamenumber,gametype, mapname, basegame,servername,time) VALUES (?,?,LOWER(?),?,?,?)"<<
-			 gamenumber<<gametype<<mapname<<basegame<<servername<<timestamp<<exec;
+			 gamenumber << gametype << mapname << basegame << servername << timestamp << cppdb::exec;
 	}
 	DebugMessage("startGame");
 }
@@ -151,7 +147,7 @@ void Db2CppDb::addGameCvar(const std::string &cvar, const std::string &value)
 	if (cvars2save.find(cvar) == cvars2save.end()) {
 		return;    //not to be saved
 	}
-	*sql << "INSERT INTO oastat_gamecvars(gamenumber,cvar,value,numericvalue) VALUES (?,LOWER(?),?,?)" << gamenumber << cvar << value << 0 << exec;
+	*sql << "INSERT INTO oastat_gamecvars(gamenumber,cvar,value,numericvalue) VALUES (?,LOWER(?),?,?)" << gamenumber << cvar << value << 0 << cppdb::exec;
 	DebugMessage("addCvar");
 }
 
@@ -163,7 +159,7 @@ void Db2CppDb::endGame(int second)
 	if (!isok) {
 		return;
 	}
-	*sql << "UPDATE oastat_games SET second=? WHERE gamenumber = ?" << second << gamenumber << exec;
+	*sql << "UPDATE oastat_games SET second=? WHERE gamenumber = ?" << second << gamenumber << cppdb::exec;
 	Commit(); //Game have ended, transaction is in a stable state
 	DebugMessage("endgame");
 }
@@ -180,31 +176,31 @@ void Db2CppDb::setPlayerInfo(const std::string &guid, const std::string &nicknam
 	}
 	if (team>-1) {
 		try {
-			statement st = sql->create_statement("SAVEPOINT SETPLAYER");
+			cppdb::statement st = sql->create_statement("SAVEPOINT SETPLAYER");
 			st.exec();
 			*sql << "INSERT INTO oastat_players(guid,nickname,lastseen,isBot, model, headmodel) VALUES (?,?,?,?,?,?)" << 
-					guid << nickname << timestamp << (isBot? "y":"n") << model << headmodel << exec;
-			statement str = sql->create_statement("RELEASE SAVEPOINT SETPLAYER");
+					guid << nickname << timestamp << (isBot? "y":"n") << model << headmodel << cppdb::exec;
+			cppdb::statement str = sql->create_statement("RELEASE SAVEPOINT SETPLAYER");
 			str.exec();
 		} catch (cppdb::cppdb_error &e) {
-			DebugMessage("Already inserted? "+(string)e.what());
-			statement str = sql->create_statement("ROLLBACK TO SAVEPOINT SETPLAYER");
+			DebugMessage("Already inserted? "+(std::string)e.what());
+			cppdb::statement str = sql->create_statement("ROLLBACK TO SAVEPOINT SETPLAYER");
 			str.exec();
 		}
 		*sql << "UPDATE oastat_players SET nickname = ?,lastseen = ?,isBot = ?, model = ?, headmodel = ? WHERE guid = ? AND lastseen < ?" << 
-				nickname << timestamp << (isBot? "y":"n") << model << headmodel << guid << timestamp << exec;
+				nickname << timestamp << (isBot? "y":"n") << model << headmodel << guid << timestamp << cppdb::exec;
 	}
 	try {
-		statement st = sql->create_statement("SAVEPOINT SETUSERINFO");
+		cppdb::statement st = sql->create_statement("SAVEPOINT SETUSERINFO");
 		st.exec();
-		*sql << "INSERT INTO oastat_userinfo(gamenumber,second,player,team,model,skill) VALUES (?,?,?,?,?,?)" << gamenumber << second << getPlayerId(guid) << team << model << skill << exec;
-		statement str = sql->create_statement("RELEASE SAVEPOINT SETUSERINFO");
+		*sql << "INSERT INTO oastat_userinfo(gamenumber,second,player,team,model,skill) VALUES (?,?,?,?,?,?)" << gamenumber << second << getPlayerId(guid) << team << model << skill << cppdb::exec;
+		cppdb::statement str = sql->create_statement("RELEASE SAVEPOINT SETUSERINFO");
 		str.exec();
-	} catch (cppdb_error &e) {
-		statement str = sql->create_statement("ROLLBACK TO SAVEPOINT SETUSERINFO");
+	} catch (cppdb::cppdb_error &e) {
+		cppdb::statement str = sql->create_statement("ROLLBACK TO SAVEPOINT SETUSERINFO");
 		str.exec();
 		*sql << "UPDATE oastat_userinfo SET team = ?, model = ?, skill = ? WHERE gamenumber = ? AND second = ? AND player = ?" << 
-				team << model << skill << gamenumber << second << getPlayerId(guid) << exec;
+				team << model << skill << gamenumber << second << getPlayerId(guid) << cppdb::exec;
 	}
 	DebugMessage("setPlayerInfo for "+nickname+" with GUID: "+guid);
 }
@@ -214,7 +210,7 @@ void Db2CppDb::addKill(int second, const std::string &attackerID, const std::str
 	if (!isok) {
 		return;
 	}
-	*sql<< "INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES(?,?,?,?,?)" << gamenumber << second << getPlayerId(attackerID) << getPlayerId(targetID) << type << exec;
+	*sql<< "INSERT INTO oastat_kills(gamenumber,second,attacker,target,modtype) VALUES(?,?,?,?,?)" << gamenumber << second << getPlayerId(attackerID) << getPlayerId(targetID) << type << cppdb::exec;
 	DebugMessage("addKill");
 }
 
@@ -223,7 +219,7 @@ void Db2CppDb::addAward(int second, const std::string &player, int award)
 	if (!isok) {
 		return;
 	}
-	*sql << "INSERT INTO oastat_awards(gamenumber,second,player,award) VALUES (?,?,?,?)" << gamenumber << second << getPlayerId(player) << award << exec;
+	*sql << "INSERT INTO oastat_awards(gamenumber,second,player,award) VALUES (?,?,?,?)" << gamenumber << second << getPlayerId(player) << award << cppdb::exec;
 	DebugMessage("addAward");
 }
 
@@ -232,7 +228,7 @@ void Db2CppDb::addScoreInfo(int second, const std::string &player, int score)
 	if (!isok) {
 		return;
 	}
-	*sql << "INSERT INTO oastat_points(gamenumber,second,player,score) VALUES (?,?,?,?)" << gamenumber << second << getPlayerId(player) << score << exec;
+	*sql << "INSERT INTO oastat_points(gamenumber,second,player,score) VALUES (?,?,?,?)" << gamenumber << second << getPlayerId(player) << score << cppdb::exec;
 	DebugMessage("addScoreInfo");
 }
 
@@ -241,7 +237,7 @@ void Db2CppDb::addCtf(int second, const std::string &player, int team, int event
 	if (!isok) {
 		return;
 	}
-	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,?,'ctf',?)" << gamenumber << second << team << getPlayerId(player) << event << exec;
+	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,?,'ctf',?)" << gamenumber << second << team << getPlayerId(player) << event << cppdb::exec;
 	DebugMessage("addCtf");
 }
 
@@ -250,7 +246,7 @@ void Db2CppDb::addCtf1f(int second, const std::string &player, int team, int eve
 	if (!isok) {
 		return;
 	}
-	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,?,'1fctf',?)" << gamenumber << second << team << getPlayerId(player) << event << exec;
+	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,player,gametype,eventtype) VALUES (?,?,?,?,'1fctf',?)" << gamenumber << second << team << getPlayerId(player) << event << cppdb::exec;
 	DebugMessage("addCtf1f");
 }
 
@@ -260,7 +256,7 @@ void Db2CppDb::addElimination(int second, int roundnumber, int team, int event)
 		return;
 	}
 	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,eventtype,generic1,gametype) VALUES (?,?,?,?,?,'elimination')" <<
-		 gamenumber << second << team << event << roundnumber << exec;
+		 gamenumber << second << team << event << roundnumber << cppdb::exec;
 	DebugMessage("addElimination");
 }
 
@@ -270,7 +266,7 @@ void Db2CppDb::addCtfElimination(int second, int roundnumber, const std::string 
 		return;
 	}
 	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,player,eventtype,generic1,gametype) VALUES (?,?,?,?,?,?,'ctfelim')" << gamenumber << second <<
-			team << getPlayerId(player) << event << roundnumber << exec;
+			team << getPlayerId(player) << event << roundnumber << cppdb::exec;
 	DebugMessage("addCtfElimination");
 }
 
@@ -280,7 +276,7 @@ void Db2CppDb::addHarvester(int second, const std::string &player1, const std::s
 		return;
 	}
 	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,player,player2,eventtype,amount,gametype) VALUES (?,?,?,?,?,?,?,'harvester')" << 
-		 gamenumber << second << team << getPlayerId(player1) << getPlayerId(player2) << event << score << exec;
+		 gamenumber << second << team << getPlayerId(player1) << getPlayerId(player2) << event << score << cppdb::exec;
 	DebugMessage("addHarvester");
 }
 
@@ -290,7 +286,7 @@ void Db2CppDb::addGenericTeamEvent(int second, int team, int amount, const std::
 		return;
 	}
 	*sql << "INSERT INTO oastat_team_events(gamenumber,second,team,player,player2,eventtype,amount,generic1,gametype) VALUES (?,?,?,?,?,?,?,?,?)" << 
-		 gamenumber << second << team << getPlayerId(player1) << getPlayerId(player2) << event << amount << generic1 << gametype << exec;
+		 gamenumber << second << team << getPlayerId(player1) << getPlayerId(player2) << event << amount << generic1 << gametype << cppdb::exec;
 	DebugMessage("addGenericTeamEvent");
 }
 
@@ -299,7 +295,7 @@ void Db2CppDb::addChallenge(int second, const std::string &player, int challenge
 	if (!isok) {
 		return;
 	}
-	*sql << "INSERT INTO oastat_challenges(gamenumber,player,challenge,amount) VALUES (?,?,?,?)" << gamenumber << getPlayerId(player) << challenge << amount << exec;
+	*sql << "INSERT INTO oastat_challenges(gamenumber,player,challenge,amount) VALUES (?,?,?,?)" << gamenumber << getPlayerId(player) << challenge << amount << cppdb::exec;
 	DebugMessage("addChallenge");
 }
 
@@ -309,28 +305,28 @@ void Db2CppDb::addAccuracy(int second, const std::string &player, int type, int 
 		return;
 	}
 	try {
-		statement st = sql->create_statement("SAVEPOINT SETACCURACY");
+		cppdb::statement st = sql->create_statement("SAVEPOINT SETACCURACY");
 		st.exec();
-		*sql << "INSERT INTO oastat_accuracy(gamenumber,player,shotsfired,shotshit,modtype) VALUES (?,?,?,?,?)" << gamenumber << getPlayerId(player) << shotsFired << shotsHit << type << exec;
-		statement str = sql->create_statement("RELEASE SAVEPOINT SETACCURACY");
+		*sql << "INSERT INTO oastat_accuracy(gamenumber,player,shotsfired,shotshit,modtype) VALUES (?,?,?,?,?)" << gamenumber << getPlayerId(player) << shotsFired << shotsHit << type << cppdb::exec;
+		cppdb::statement str = sql->create_statement("RELEASE SAVEPOINT SETACCURACY");
 		str.exec();
-	} catch (cppdb_error &e) {
-		statement str = sql->create_statement("ROLLBACK TO SAVEPOINT SETACCURACY");
+	} catch (cppdb::cppdb_error &e) {
+		cppdb::statement str = sql->create_statement("ROLLBACK TO SAVEPOINT SETACCURACY");
 		str.exec();
-		*sql << "UPDATE oastat_accuracy SET shotsfired = ?, shotshit = ?, modtype = ? WHERE player = ? AND gamenumber = ?" << shotsFired << shotsHit << type << getPlayerId(player) << gamenumber << exec;
+		*sql << "UPDATE oastat_accuracy SET shotsfired = ?, shotshit = ?, modtype = ? WHERE player = ? AND gamenumber = ?" << shotsFired << shotsHit << type << getPlayerId(player) << gamenumber << cppdb::exec;
 	}
 }
 
 int Db2CppDb::getNextGameNumber()
 {
 	int ret = -1;
-	result res = *sql<< "SELECT nextval('oastat_games_gamenumber_seq')";
+	cppdb::result res = *sql<< "SELECT nextval('oastat_games_gamenumber_seq')";
 	DebugMessage("Gettings next game number");
 	if (res.next()) {
 		res >> ret;
 		return ret;
 	} else {
-		throw runtime_error("Could not get next gamenumber");
+		throw std::runtime_error("Could not get next gamenumber");
 	}
 }
 
@@ -346,10 +342,10 @@ int Db2CppDb::getLastGameNumber()
 	DebugMessage("Gettings last game number");
 	if (res.next()) {
 		res>> result;
-		cout << "Game number: " << result << endl;
+		std::cout << "Game number: " << result << "\n";
 		return result;
 	} else {
-		throw runtime_error("Could not get last gamenumber");
+		throw std::runtime_error("Could not get last gamenumber");
 	}
 }
 
@@ -365,7 +361,7 @@ void Db2CppDb::Commit()
 	}
 	commitlock->commit();
 	commitlock = nullptr;
-	commitlock = shared_ptr<transaction>(new transaction(*sql));
+	commitlock = std::shared_ptr<cppdb::transaction>(new cppdb::transaction(*sql));
 	DebugMessage("Commited");
 }
 
@@ -373,7 +369,7 @@ void Db2CppDb::Rollback()
 {
 	commitlock->rollback();
 	commitlock = nullptr;
-	commitlock = shared_ptr<transaction>(new transaction(*sql));
+	commitlock = std::shared_ptr<cppdb::transaction>(new cppdb::transaction(*sql));
 	DebugMessage("Rollback");
 }
 
@@ -392,20 +388,20 @@ void Db2CppDb::doNotCommit()
 	SetOk(false);
 }
 
-void Db2CppDb::DebugMessage(const string &msg)
+void Db2CppDb::DebugMessage(const std::string &msg)
 {
 	if (debug) {
-		cout << "oastat: " << msg << endl;
+		std::cout << "oastat: " << msg << "\n";
 	}
 }
 
-int Db2CppDb::getPlayerId(const string& guid)
+int Db2CppDb::getPlayerId(const std::string& guid)
 {
 	int ret = 0;
 	if (playerids.count(guid)) {
 		ret = playerids[guid];
 	} else {
-		result res = *sql << "SELECT playerid FROM oastat_players WHERE guid = ?" << guid;
+		cppdb::result res = *sql << "SELECT playerid FROM oastat_players WHERE guid = ?" << guid;
 		if (res.next()) {
 			res >> ret;
 			playerids[guid] = ret;
