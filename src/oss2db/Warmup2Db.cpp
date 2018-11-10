@@ -23,7 +23,7 @@ http://code.google.com/p/oastat/
 
 #include "Warmup2Db.hpp"
 
-string Warmup2Db::getCommand() const
+std::string Warmup2Db::getCommand() const
 {
 	return "Warmup";
 }

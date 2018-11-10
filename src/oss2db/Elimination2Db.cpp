@@ -24,7 +24,7 @@ http://code.google.com/p/oastat/
 #include "Elimination2Db.hpp"
 
 
-string Elimination2Db::getCommand() const
+std::string Elimination2Db::getCommand() const
 {
 	return "ELIMINATION";
 }

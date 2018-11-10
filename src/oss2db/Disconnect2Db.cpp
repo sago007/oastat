@@ -24,7 +24,7 @@ http://code.google.com/p/oastat/
 #include "Disconnect2Db.h"
 
 
-string Disconnect2Db::getCommand() const
+std::string Disconnect2Db::getCommand() const
 {
 	return "ClientDisconnect";
 }
@@ -43,7 +43,7 @@ void Disconnect2Db::process(const OaStatStruct &oss)
 		return;    //Invalid oss
 	}
 
-	string player = clientIdMap.at(oss.parameters.at(0));
+	std::string player = clientIdMap.at(oss.parameters.at(0));
 
 	dp->setPlayerInfo(player,"",false,oss.second,-1,"","",-1);
 }

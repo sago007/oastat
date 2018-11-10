@@ -24,7 +24,7 @@ http://code.google.com/p/oastat/
 #include "Ctf1f2Db.hpp"
 
 
-string Ctf1f2Db::getCommand() const
+std::string Ctf1f2Db::getCommand() const
 {
 	return "1FCTF";
 }
@@ -43,7 +43,7 @@ void Ctf1f2Db::process(const OaStatStruct &oss)
 		return;    //Invalid oss
 	}
 
-	string player = "";
+	std::string player = "";
 	if (oss.parameters.at(0)!=-1) {
 		player= clientIdMap.at(oss.parameters.at(0));
 	}

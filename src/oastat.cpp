@@ -35,12 +35,6 @@ http://code.google.com/p/oastat/
 #include <boost/shared_ptr.hpp>
 #include <boost/program_options.hpp>
 
-
-using std::string;
-using std::vector;
-using std::list;
-using std::ifstream;
-
 #include "db/database.hpp"
 #ifdef USEDBIXX
 #include "db/Db2DbiXX.hpp"
@@ -70,9 +64,9 @@ using std::ifstream;
 #include "oss2db/Challenge2Db.hpp"
 #include "oss2db/Warmup2Db.hpp"
 
-vector<string> clientIdMap;
+std::vector<std::string> clientIdMap;
 
-static int processStdIn(istream &in_p,vector<boost::shared_ptr<Struct2Db> > &commands);
+static int processStdIn(std::istream &in_p,std::vector<boost::shared_ptr<Struct2Db> > &commands);
 
 
 
@@ -82,10 +76,10 @@ static int processStdIn(istream &in_p,vector<boost::shared_ptr<Struct2Db> > &com
  *
  * @param[in] db The database object. May not be freed once given as an argument to this function
  */
-static void addCommands(boost::shared_ptr<Database> &db,vector<boost::shared_ptr<Struct2Db> > &commands)
+static void addCommands(boost::shared_ptr<Database> &db,std::vector<boost::shared_ptr<Struct2Db> > &commands)
 {
 	if (!db) {
-		throw runtime_error("db was uninizialized in addCommands");
+		throw std::runtime_error("db was uninizialized in addCommands");
 	}
 
 	//Add new commands here
@@ -113,17 +107,17 @@ static void addCommands(boost::shared_ptr<Database> &db,vector<boost::shared_ptr
 
 
 
-static int processStdIn(istream &in_p,vector<boost::shared_ptr<Struct2Db> > &commands)
+static int processStdIn(std::istream &in_p, std::vector<boost::shared_ptr<Struct2Db> > &commands)
 {
 	bool done = true;
 	OaStatStruct *startstruct;
 	startstruct = NULL;
 	do {
-		string line = "";
+		std::string line = "";
 		OaStatStruct oss;
-		list<OaStatStruct> osslist;
+		std::list<OaStatStruct> osslist;
 		try {
-			while ( getline(in_p,line) ) {
+			while ( std::getline(in_p,line) ) {
 				oss.clear();
 				oss.parseLine(line);
 				osslist.push_back(oss);
@@ -164,8 +158,8 @@ static int processStdIn(istream &in_p,vector<boost::shared_ptr<Struct2Db> > &com
 			 If there is an error write it in the log and try again continue
 			 */
 			osslist.clear();
-			cerr << "oastat: Crashed (NEAR FATAL EXCEPTION) at line: \"" << line << "\"" << endl <<
-			     "oastat:   Error is: " << e2.what() << endl;
+			std::cerr << "oastat: Crashed (NEAR FATAL EXCEPTION) at line: \"" << line << "\"\n"<<
+			     "oastat:   Error is: " << e2.what() << "\n";
 			done = false;
 		}
 	} while (!done);
@@ -178,7 +172,7 @@ static int processStdIn(istream &in_p,vector<boost::shared_ptr<Struct2Db> > &com
  * @param unhashedID - The unhashed id
  * @return the hashed id
  */
-string getHashedId(string unhashedID)
+std::string getHashedId(std::string unhashedID)
 {
 	int msg_len = unhashedID.length();
 	int hash_len = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
@@ -200,12 +194,12 @@ string getHashedId(string unhashedID)
 int main (int argc, const char* argv[])
 {
 	try {
-		string dbargs = "";
-		string filename = "";
-		string backend = "Xml";
+		std::string dbargs = "";
+		std::string filename = "";
+		std::string backend = "Xml";
 		bool useTail = false;
 		bool doIntegrationTest = false;
-		vector<boost::shared_ptr<Struct2Db> > commands;
+		std::vector<boost::shared_ptr<Struct2Db> > commands;
 		/////////////
 		//dbargs = "mysql dbname oastat";
 		boost::format f("%1%/.openarena/baseoa/games.log");
@@ -215,10 +209,10 @@ int main (int argc, const char* argv[])
 		boost::program_options::options_description desc("Allowed options");
 		desc.add_options()
 		("help,h", "Print basic usage information to stdout and quits")
-		("backend", boost::program_options::value<string>(), "The DB backend to use")
-		("dbargs", boost::program_options::value<string>(), "Arguments passed to the DB backend")
-		("filename,f", boost::program_options::value<string>(), "Filename to read. Providing a blank string will read from stdin")
-		("config,c", boost::program_options::value<vector<string> >(), "Read a config file with the values. Can be given multiple times")
+		("backend", boost::program_options::value<std::string>(), "The DB backend to use")
+		("dbargs", boost::program_options::value<std::string>(), "Arguments passed to the DB backend")
+		("filename,f", boost::program_options::value<std::string>(), "Filename to read. Providing a blank string will read from stdin")
+		("config,c", boost::program_options::value<std::vector<std::string> >(), "Read a config file with the values. Can be given multiple times")
 		("tail", "Use tail on the filename given to read the file. This will be ignored on Windows.")
 		("integration-test", "Perform integration test")
 		;
@@ -226,32 +220,32 @@ int main (int argc, const char* argv[])
 		boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
 		boost::program_options::notify(vm);
 		if (vm.count("config")) {
-			vector<string> config_filenames = vm["config"].as<vector<string> >();
-			for ( const string& s : config_filenames) {
-				ifstream config_file(s);
+			std::vector<std::string> config_filenames = vm["config"].as<std::vector<std::string> >();
+			for ( const std::string& s : config_filenames) {
+				std::ifstream config_file(s);
 				store(parse_config_file(config_file, desc), vm);
 				notify(vm);
 			}
 		}
 		if (vm.count("help")) {
-			cout << desc << endl;
-			cout << "Examples: " << endl;
-			cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"DbiXX\" --dbarg \"mysql dbname oastat username openarena\"" << endl;
-			cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"DbiXX\" --dbarg \"pgsql dbname oastat username openarena\"" << endl;
-			cout << argv[0] << " -f %APPDATA%/OpenArena/baseoa/games.log --backend \"CppDb\" --dbarg \"sqlite3:db=defoastat.db3\"" << endl;
-			cout << "tail -f \"~/.openarena/baseoa/games.log\" | "<< argv[0] << " -f \"\" --backend \"Xml\" --dbarg \"outputdir ~/oastat\"" << endl;
-			cout << endl;
-			cout << "Look at https://github.com/sago007/oastat for more help and more details" << endl;
+			std::cout << desc << "n";
+			std::cout << "Examples: \n";
+			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"DbiXX\" --dbarg \"mysql dbname oastat username openarena\"\n";
+			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"DbiXX\" --dbarg \"pgsql dbname oastat username openarena\"\n";
+			std::cout << argv[0] << " -f %APPDATA%/OpenArena/baseoa/games.log --backend \"CppDb\" --dbarg \"sqlite3:db=defoastat.db3\"\n";
+			std::cout << "tail -f \"~/.openarena/baseoa/games.log\" | "<< argv[0] << " -f \"\" --backend \"Xml\" --dbarg \"outputdir ~/oastat\"\n";
+			std::cout << "\n";
+			std::cout << "Look at https://github.com/sago007/oastat for more help and more details\n";
 			return 1;
 		}
 		if (vm.count("backend")) {
-			backend = vm["backend"].as<string>();
+			backend = vm["backend"].as<std::string>();
 		}
 		if (vm.count("dbargs")) {
-			dbargs = vm["dbargs"].as<string>();
+			dbargs = vm["dbargs"].as<std::string>();
 		}
 		if (vm.count("filename")) {
-			filename = vm["filename"].as<string>();
+			filename = vm["filename"].as<std::string>();
 		}
 		if (vm.count("tail")) {
 			useTail = true;
@@ -273,7 +267,7 @@ int main (int argc, const char* argv[])
 #endif
 #if USECPPDB
 		if (backend == "CppDb") {
-			cout << "Using CppDb" << endl;
+			std::cout << "Using CppDb\n";
 			if (dbargs.length()<1) {
 				db = boost::shared_ptr<Database>(new Db2CppDb() );
 			} else {
@@ -282,7 +276,7 @@ int main (int argc, const char* argv[])
 		}
 #endif
 		if (backend == "Xml") {
-			cout << "Using XML" << endl;
+			std::cout << "Using XML\n";
 			if (dbargs.length()<1) {
 				db = boost::shared_ptr<Database>(new Db2Xml() );
 			} else {
@@ -291,9 +285,9 @@ int main (int argc, const char* argv[])
 		}
 
 		if (!db) {
-			string error("Failed to find backend: ");
+			std::string error("Failed to find backend: ");
 			error += backend;
-			throw runtime_error(error);
+			throw std::runtime_error(error);
 		}
 
 		addCommands(db,commands);
@@ -303,7 +297,7 @@ int main (int argc, const char* argv[])
 			oss_test.setTimeStamp("2013-12-08 20:42:30");
 			db->startGame(1,"oasago2","baseoa-mod","testserver",oss_test);
 			db->addGenericTeamEvent(5,2,0,"sometype","","",3,4);
-			cerr << "Test called" << endl;
+			std::cerr << "Test called\n";
 			return 1;
 		}
 
@@ -316,15 +310,15 @@ int main (int argc, const char* argv[])
 			else
 #endif 
 			{
-				ifstream in(filename.c_str(),ifstream::in);
+				std::ifstream in(filename.c_str(), std::ifstream::in);
 				processStdIn(in,commands);
 			}
 		} else {
-			processStdIn(cin,commands);
+			processStdIn(std::cin, commands);
 		}
 
 	} catch (std::exception &e) {
-		cerr << "Crashed: " << e.what() << endl;
+		std::cerr << "Crashed: " << e.what() << "\n";
 		return 2;
 	}
 

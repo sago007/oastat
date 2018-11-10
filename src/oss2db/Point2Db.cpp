@@ -24,7 +24,7 @@ http://code.google.com/p/oastat/
 #include "Point2Db.hpp"
 
 
-string Point2Db::getCommand() const
+std::string Point2Db::getCommand() const
 {
 	return "PlayerScore";
 }
@@ -43,7 +43,7 @@ void Point2Db::process(const OaStatStruct &oss)
 		return;    //Invalid oss
 	}
 
-	string player = clientIdMap.at(oss.parameters.at(0));
+	std::string player = clientIdMap.at(oss.parameters.at(0));
 
 	dp->addScoreInfo(oss.second,player,oss.parameters.at(1));
 }

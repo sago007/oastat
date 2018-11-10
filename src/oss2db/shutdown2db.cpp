@@ -25,7 +25,7 @@ http://code.google.com/p/oastat/
 
 
 
-string Shutdown2Db::getCommand() const
+std::string Shutdown2Db::getCommand() const
 {
 	return "ShutdownGame";
 }

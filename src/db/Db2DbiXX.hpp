@@ -31,8 +31,6 @@ http://code.google.com/p/oastat/
 #include <sstream>
 #include <set>
 
-using namespace dbixx;
-
 class Db2DbiXX  : public Database
 {
 public:
@@ -60,8 +58,8 @@ public:
 	void addGenericTeamEvent(int second, int team, int amount, const std::string &gametype, const std::string &player1, const std::string &player2, int event, int generic1);
 	void doNotCommit();
 private:
-	session *sql;
-	transaction *commitlock;
+	dbixx::session *sql;
+	dbixx::transaction *commitlock;
 	bool isok;
 	bool debug;
 	int gamenumber; /** Gamenumber we are currently working on */
@@ -72,16 +70,16 @@ private:
 	void Rollback();
 	bool Ok();
 	void SetOk(bool ok);
-	void DebugMessage(const string &msg);
-	void InitStrings(const string &backend);
+	void DebugMessage(const std::string &msg);
+	void InitStrings(const std::string &backend);
 	void ReadConfigFromDb();
-	bool IsDuplicate(const string &servername, const tm &thetime);
-	int getPlayerId(const string &guid);
+	bool IsDuplicate(const std::string &servername, const tm &thetime);
+	int getPlayerId(const std::string &guid);
 	std::map<std::string,int> playerids;
-	string sql_backend;
+	std::string sql_backend;
 	bool last_value;
-	set<string> cvars2save;
-	set<string> uservars2save;
+	std::set<std::string> cvars2save;
+	std::set<std::string> uservars2save;
 };
 
 #endif	/* DB2DBIXX_HPP */

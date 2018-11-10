@@ -27,7 +27,7 @@ http://code.google.com/p/oastat/
 #include <boost/format.hpp>
 
 
-string Userinfo2Db::getCommand() const
+std::string Userinfo2Db::getCommand() const
 {
 	return "ClientUserinfoChanged";
 }
@@ -46,7 +46,7 @@ void Userinfo2Db::process(const OaStatStruct &oss)
 		return; //Invalid oss
 	}
 	bool isBot = false;
-	map<string,string> arguments = oss.GetInfostring();
+	std::map<std::string,std::string> arguments = oss.GetInfostring();
 
 	//grow clientIdMap until oss.parameters.at(0)+1
 	while ((int)clientIdMap.size() < oss.parameters.at(0)+2) {
@@ -65,7 +65,7 @@ void Userinfo2Db::process(const OaStatStruct &oss)
 		clientIdMap[oss.parameters.at(0)] = (boost::format("%1%_client%2%") % arguments["n"] % oss.parameters.at(0) ).str();
 		isBot = true;
 	}
-	string player = clientIdMap[oss.parameters.at(0)];
+	std::string player = clientIdMap[oss.parameters.at(0)];
 
 	dp->setPlayerInfo(player,arguments["n"],isBot,oss.second,atoi(arguments["t"].c_str()), arguments["model"],arguments["hmodel"],-1);
 }

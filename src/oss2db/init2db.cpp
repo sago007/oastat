@@ -25,7 +25,7 @@ http://code.google.com/p/oastat/
 #include <stdlib.h>
 
 
-string Init2Db::getCommand() const
+std::string Init2Db::getCommand() const
 {
 	return "InitGame";
 }
@@ -44,15 +44,15 @@ void Init2Db::process(const OaStatStruct &oss)
 		return;    //Invalid oss
 	}
 	OaStatStruct oss_copy(oss);
-	map<string,string> arguments = oss_copy.GetInfostring();
+	std::map<std::string,std::string> arguments = oss_copy.GetInfostring();
 	int gametype = atoi(arguments["g_gametype"].c_str());
-	string basegame = arguments["gamename"];
-	string mapname = arguments["mapname"];
-	string servername = arguments["sv_hostname"];
+	std::string basegame = arguments["gamename"];
+	std::string mapname = arguments["mapname"];
+	std::string servername = arguments["sv_hostname"];
 	oss_copy.setTimeStamp(arguments["g_timestamp"]);
 
 	dp->startGame(gametype,mapname,basegame,servername,oss_copy);
-	map<string,string>::iterator it;
+	std::map<std::string,std::string>::iterator it;
 	for (it = arguments.begin(); it != arguments.end(); it++) {
 		if(
 			it->first == "g_gametype" ||

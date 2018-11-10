@@ -25,7 +25,7 @@ http://code.google.com/p/oastat/
 #include <boost/format.hpp>
 
 
-string Accuracy2Db::getCommand() const
+std::string Accuracy2Db::getCommand() const
 {
 	return "Accuracy";
 }
@@ -48,9 +48,9 @@ void Accuracy2Db::process(const OaStatStruct &oss)
 		return;    //Not valid player
 	}
 
-	string player = clientIdMap.at(oss.parameters.at(0));
+	std::string player = clientIdMap.at(oss.parameters.at(0));
 
-	map<string,string> arguments = oss.GetInfostring();
+	std::map<std::string,std::string> arguments = oss.GetInfostring();
 
 	boost::format hformat("h%1%");
 	boost::format fformat("f%1%");

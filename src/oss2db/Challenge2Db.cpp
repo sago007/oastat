@@ -23,7 +23,7 @@ http://code.google.com/p/oastat/
 
 #include "Challenge2Db.hpp"
 
-string Challenge2Db::getCommand() const
+std::string Challenge2Db::getCommand() const
 {
 	return "Challenge";
 }
@@ -47,7 +47,7 @@ void Challenge2Db::process(const OaStatStruct &oss)
 		return;    //Not valid player
 	}
 
-	string player = clientIdMap.at(oss.parameters.at(0));
+	std::string player = clientIdMap.at(oss.parameters.at(0));
 
 	dp->addChallenge(oss.second,player,oss.parameters.at(1),oss.parameters.at(2));
 }

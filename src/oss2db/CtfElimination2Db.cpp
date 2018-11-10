@@ -23,7 +23,7 @@ http://code.google.com/p/oastat/
 
 #include "CtfElimination2Db.hpp"
 
-string CtfElimination2Db::getCommand() const
+std::string CtfElimination2Db::getCommand() const
 {
 	return "ELIMINATION";
 }
@@ -42,7 +42,7 @@ void CtfElimination2Db::process(const OaStatStruct &oss)
 		return;    //Invalid oss
 	}
 
-	string player = "";
+	std::string player = "";
 	if (oss.parameters.at(1)!=-1) {
 		player= clientIdMap.at(oss.parameters.at(1));
 	}

@@ -25,7 +25,7 @@ http://code.google.com/p/oastat/
 
 
 
-string Award2Db::getCommand() const
+std::string Award2Db::getCommand() const
 {
 	return "Award";
 }
@@ -48,7 +48,7 @@ void Award2Db::process(const OaStatStruct &oss)
 		return;    //Not valid player
 	}
 
-	string player = clientIdMap.at(oss.parameters.at(0));
+	std::string player = clientIdMap.at(oss.parameters.at(0));
 
 	dp->addAward(oss.second,player,oss.parameters.at(1));
 }

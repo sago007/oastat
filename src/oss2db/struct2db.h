@@ -29,8 +29,6 @@ http://code.google.com/p/oastat/
 #include <string>
 #include <boost/shared_ptr.hpp>
 
-using namespace std;
-
 /*
  This is the struct to database class that all classes that interpret a log line must inherit
  */

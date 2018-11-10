@@ -25,6 +25,9 @@ http://code.google.com/p/oastat/
 
 #include "Db2DbiXX.hpp"
 
+
+using namespace dbixx;
+
 void Db2DbiXX::InitStrings(const string &backend)
 {
 	last_value = false;

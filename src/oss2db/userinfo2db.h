@@ -31,7 +31,7 @@ class Userinfo2Db : public Struct2Db
 {
 public:
 
-	string getCommand() const;
+	std::string getCommand() const;
 
 	bool canProcess(const OaStatStruct &oss) const;
 

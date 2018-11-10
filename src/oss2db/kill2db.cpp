@@ -24,7 +24,7 @@ http://code.google.com/p/oastat/
 
 #include "kill2db.h"
 
-string Kill2Db::getCommand() const
+std::string Kill2Db::getCommand() const
 {
 	return "Kill";
 }
@@ -42,8 +42,8 @@ void Kill2Db::process(const OaStatStruct &oss)
 	if (!canProcess(oss)) {
 		return;    //Invalid oss
 	}
-	string target = ""; //Parameter 1
-	string killer = ""; //Parameter 0
+	std::string target = ""; //Parameter 1
+	std::string killer = ""; //Parameter 0
 	//mod is parameter 2
 	if (oss.parameters.at(1)>-1 && oss.parameters.at(1)<(int)clientIdMap.size() && oss.parameters.at(1)!=1022 ) {
 		target = clientIdMap.at(oss.parameters.at(1));

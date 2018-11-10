@@ -23,7 +23,7 @@ http://code.google.com/p/oastat/
 
 #include "Harvester2Db.hpp"
 
-string Harvester2Db::getCommand() const
+std::string Harvester2Db::getCommand() const
 {
 	return "HARVESTER";
 }
@@ -42,8 +42,8 @@ void Harvester2Db::process(const OaStatStruct &oss)
 		return;    //Invalid oss
 	}
 
-	string player1 = ""; //Parameter 0
-	string player2 = ""; //Parameter 3
+	std::string player1 = ""; //Parameter 0
+	std::string player2 = ""; //Parameter 3
 
 	if (oss.parameters.at(0)>-1 && oss.parameters.at(0)<(int)clientIdMap.size() && oss.parameters.at(0)!=1022) {
 		player1 = clientIdMap.at(oss.parameters.at(0));
