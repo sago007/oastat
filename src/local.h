@@ -32,7 +32,7 @@ https://github.com/sago007/oastat/
 extern std::vector<std::string> clientIdMap;
 
 /* returns the SHA-1 code of the parameter */
-extern std::string getHashedId(std::string unhashedID);
+std::string getHashedId(const std::string& unhashedID);
 
 #endif	/* _LOCAL_H */
 

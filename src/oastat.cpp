@@ -172,30 +172,29 @@ static int processStdIn(std::istream &in_p, std::vector<boost::shared_ptr<Struct
  * @param unhashedID - The unhashed id
  * @return the hashed id
  */
-std::string getHashedId(std::string unhashedID)
+std::string getHashedId(const std::string& unhashedID)
 {
 	int msg_len = unhashedID.length();
 	int hash_len = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
-	unsigned char hash_binary[ hash_len ];
-	char hash_hex[ hash_len*2+1 ]; //surpriseingly this works
-	char *out = hash_hex; //(char *) malloc( sizeof(char) * ((hash_len*2)+1) );
+	std::vector<unsigned char> hash_binary(hash_len);
+	std::vector<char> hash_hex(hash_len*2+1);
+	char *out = &hash_hex.at(0);
 	char *p = out;
 
-	gcry_md_hash_buffer( GCRY_MD_SHA1, hash_binary, unhashedID.c_str(), msg_len );
+	gcry_md_hash_buffer( GCRY_MD_SHA1, &hash_binary[0], unhashedID.c_str(), msg_len );
 	for ( int i = 0; i < hash_len; i++, p += 2 ) {
 		snprintf ( p, 3, "%02x", hash_binary[i] );
 	}
 
-	unhashedID = hash_hex;
+	std::string hashedID = &hash_hex.at(0);
 
-	return  unhashedID; //Replace with md5 at some point
+	return  hashedID; //Replace with md5 at some point
 }
 
 int main (int argc, const char* argv[])
 {
 	try {
 		std::string dbargs = "";
-		std::string filename = "";
 		std::string backend = "Xml";
 		bool useTail = false;
 		bool doIntegrationTest = false;
@@ -204,7 +203,7 @@ int main (int argc, const char* argv[])
 		//dbargs = "mysql dbname oastat";
 		boost::format f("%1%/.openarena/baseoa/games.log");
 		f % getenv("HOME");
-		filename = f.str();
+		std::string filename = f.str();
 		////////////
 		boost::program_options::options_description desc("Allowed options");
 		desc.add_options()
