@@ -4,13 +4,13 @@ Here you will be introduced on how to get data into oastat and how to get the da
 
 Homepage: https://github.com/sago007/oastat/
 
-# Building
+## Building
 
-## Dependencies
+### Dependencies
 
-  * CppDb - http://cppcms.com/sql/cppdb/
-  * libgcrypt
-  * boost_program_options
+* CppDb - http://cppcms.com/sql/cppdb/
+* libgcrypt
+* boost_program_options
 
 On Ubuntu (15.04 or later) all requirements can be installed with: sudo apt-get install build-essential libboost-program-options-dev libcppdb-dev libgcrypt20-dev
 On earlier versions CppDb must be installed manually.
@@ -30,9 +30,9 @@ cd sql/create_tables/
 
 This will create the scripts for PostgreSQL, MySQL and SQLite
 
-# Details 
+## Details 
 
-## Writing to XML-files 
+### Writing to XML-files 
 
 The general arguments are like this:
 
@@ -52,7 +52,7 @@ Reading from stdin:
 
 This will generate XML-files in the choosen output dir in this case *~/oastat*
 
-## Writing to database 
+### Writing to database 
 Writing to a postgreSQL database is very simple, at least if the database has been setup on the local machine with unix socket authentication.
 
     oastat -f "~/.openarena/baseoa/games.log" --backend "DbiXX" --dbarg "pgsql dbname oastat username openarena"
@@ -65,7 +65,7 @@ Writing to a mySQL database is easy too:
     oastat -f "~/.openarena/baseoa/games.log" --backend "DbiXX" --dbarg "mysql dbname oastat username openarena"
 
 ## Windows version 
-A precompiled version for Windows can be found at: http://files.poulsander.com/~poul19/public_files/oastat/
+A precompiled version for Windows can be found at: https://files.poulsander.com/~poul19/public_files/oastat/
 This version is compiled on a Debian system using MXE (http://mxe.cc/). 
 
 The windows version only has support for XMl output and sqlite. The reason it does not support mySQL and PostgreSQL is because I was not able to compile a version of cppdb that supported it.
