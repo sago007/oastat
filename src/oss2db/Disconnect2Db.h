@@ -31,10 +31,10 @@ class Disconnect2Db : public Struct2Db
 {
 public:
 
-	std::string getCommand() const;
-	bool canProcess(const OaStatStruct &oss) const;
+	std::string getCommand() const override;
+	bool canProcess(const OaStatStruct &oss) const override;
 
-	void process(const OaStatStruct &oss);
+	void process(const OaStatStruct &oss) override;
 private:
 
 };
