@@ -36,9 +36,6 @@ https://github.com/sago007/oastat/
 #include <boost/program_options.hpp>
 
 #include "db/database.hpp"
-#ifdef USEDBIXX
-#include "db/Db2DbiXX.hpp"
-#endif
 #ifdef USECPPDB
 #include "db/Db2CppDb.hpp"
 #endif
@@ -219,8 +216,8 @@ int main (int argc, const char* argv[])
 		if (vm.count("help")) {
 			std::cout << desc << "n";
 			std::cout << "Examples: \n";
-			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"DbiXX\" --dbarg \"mysql dbname oastat username openarena\"\n";
-			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"DbiXX\" --dbarg \"pgsql dbname oastat username openarena\"\n";
+			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"Cppdb\" --dbarg \"mysql:database=oastat;username=openarena\"\n";
+			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"CppDb\" --dbarg \"pgsql:database=oastat;username=openarena\"\n";
 			std::cout << argv[0] << " -f %APPDATA%/OpenArena/baseoa/games.log --backend \"CppDb\" --dbarg \"sqlite3:db=defoastat.db3\"\n";
 			std::cout << "tail -f \"~/.openarena/baseoa/games.log\" | "<< argv[0] << " -f \"\" --backend \"Xml\" --dbarg \"outputdir ~/oastat\"\n";
 			std::cout << "\n";
@@ -244,16 +241,6 @@ int main (int argc, const char* argv[])
 		}
 		std::shared_ptr<Database> db;
 
-#if USEDBIXX
-		if (backend == "DbiXX") {
-			cout << "Using DBI" << endl;
-			if (dbargs.length()<1) {
-				db = std::shared_ptr<Database>(new Db2DbiXX() );
-			} else {
-				db = std::shared_ptr<Database>(new Db2DbiXX(dbargs) );
-			}
-		}
-#endif
 #if USECPPDB
 		if (backend == "CppDb") {
 			std::cout << "Using CppDb\n";

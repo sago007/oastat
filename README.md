@@ -18,9 +18,6 @@ On earlier versions CppDb must be installed manually.
 CppDb can be disabled from the build by adding the line:
 USECPPDB=0 to src/Makefile.local (file must be created)
 
-libdbi-dev can be used instead by adding:
-USEDBIXX=1 to src/Makefile.local (file must be created)
-
 Go to ./src and type "make"
 The executable will be in the same folder.
 
@@ -53,7 +50,7 @@ Reading from stdin:
 This will generate XML-files in the choosen output dir in this case *~/oastat*
 
 ### Writing to database
-The recommended backend is CppDb. Writing to a MySQL server is done like this:
+The database backend is called CppDb. Writing to a MySQL server is done like this:
 
 `oastat --backend "CppDb" --dbarg "mysql:database=oastat;user=<USERNAME>;password=<PASSWORD>"`
 
