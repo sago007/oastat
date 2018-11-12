@@ -3,10 +3,16 @@
 *.P
 *.zip
 *nbproject*
-src/oastat
+oastat
 *.exe
 oastat-win.zip
 oastat-win/
 sql/create_tables/oastat_create_tables_mysql.sql
 sql/create_tables/oastat_create_tables_posgrel.sql
 sql/create_tables/oastat_create_tables_sqlite.sql
+
+cmake_install.cmake
+CMake*
+-CMakeLists.txt
+CPack*
+Makefile

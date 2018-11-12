@@ -31,7 +31,7 @@ https://github.com/sago007/oastat/
 #include <vector>
 #include <gcrypt.h>
 #include <stdio.h>
-#include <list>
+#include <deque>
 #include <boost/shared_ptr.hpp>
 #include <boost/program_options.hpp>
 
@@ -112,7 +112,7 @@ static int processStdIn(std::istream &in_p, std::vector<std::shared_ptr<Struct2D
 	do {
 		std::string line = "";
 		OaStatStruct oss;
-		std::list<OaStatStruct> osslist;
+		std::deque<OaStatStruct> osslist;
 		try {
 			while ( std::getline(in_p,line) ) {
 				oss.clear();

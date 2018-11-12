@@ -12,14 +12,14 @@ Homepage: <https://github.com/sago007/oastat/>
 * libgcrypt
 * boost_program_options
 
-On Ubuntu (15.04 or later) all requirements can be installed with: sudo apt-get install build-essential libboost-program-options-dev libcppdb-dev libgcrypt20-dev
+On Ubuntu (15.04 or later) all requirements can be installed with: sudo apt-get install build-essential libboost-program-options-dev libcppdb-dev libgcrypt20-dev cmake
 On earlier versions CppDb must be installed manually.
 
-CppDb can be disabled from the build by adding the line:
-USECPPDB=0 to src/Makefile.local (file must be created)
-
-Go to ./src and type "make"
-The executable will be in the same folder.
+To compile:
+```
+cmake .
+make
+```
 
 To create the database scripts:
 cd sql/create_tables/
