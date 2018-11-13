@@ -216,7 +216,7 @@ int main (int argc, const char* argv[])
 		if (vm.count("help")) {
 			std::cout << desc << "n";
 			std::cout << "Examples: \n";
-			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"Cppdb\" --dbarg \"mysql:database=oastat;username=openarena\"\n";
+			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"CppDb\" --dbarg \"mysql:database=oastat;username=openarena\"\n";
 			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"CppDb\" --dbarg \"pgsql:database=oastat;username=openarena\"\n";
 			std::cout << argv[0] << " -f %APPDATA%/OpenArena/baseoa/games.log --backend \"CppDb\" --dbarg \"sqlite3:db=defoastat.db3\"\n";
 			std::cout << "tail -f \"~/.openarena/baseoa/games.log\" | "<< argv[0] << " -f \"\" --backend \"Xml\" --dbarg \"outputdir ~/oastat\"\n";
