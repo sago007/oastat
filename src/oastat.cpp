@@ -25,9 +25,6 @@ https://github.com/sago007/oastat/
 
 #include <iostream>
 #include <fstream>
-#ifndef _WIN32
-#include "pstream.h" //<pstreams/pstream.h>
-#endif
 #include <vector>
 #include <gcrypt.h>
 #include <stdio.h>
@@ -183,7 +180,6 @@ int main (int argc, const char* argv[])
 	try {
 		std::string dbargs = "";
 		std::string backend = "Xml";
-		bool useTail = false;
 		bool doIntegrationTest = false;
 		std::vector<std::shared_ptr<Struct2Db> > commands;
 		/////////////
@@ -219,7 +215,6 @@ int main (int argc, const char* argv[])
 			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"CppDb\" --dbarg \"mysql:database=oastat;username=openarena\"\n";
 			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"CppDb\" --dbarg \"pgsql:database=oastat;username=openarena\"\n";
 			std::cout << argv[0] << " -f %APPDATA%/OpenArena/baseoa/games.log --backend \"CppDb\" --dbarg \"sqlite3:db=defoastat.db3\"\n";
-			std::cout << "tail -f \"~/.openarena/baseoa/games.log\" | "<< argv[0] << " -f \"\" --backend \"Xml\" --dbarg \"outputdir ~/oastat\"\n";
 			std::cout << "\n";
 			std::cout << "Look at https://github.com/sago007/oastat for more help and more details\n";
 			return 1;
@@ -232,9 +227,6 @@ int main (int argc, const char* argv[])
 		}
 		if (vm.count("filename")) {
 			filename = vm["filename"].as<std::string>();
-		}
-		if (vm.count("tail")) {
-			useTail = true;
 		}
 		if (vm.count("integration-test")) {
 			doIntegrationTest = true;
@@ -278,13 +270,6 @@ int main (int argc, const char* argv[])
 		}
 
 		if (filename.length()>0) {
-#ifndef _WIN32
-			if (useTail) {
-				redi::ipstream in("tail -s 1 -f "+filename);
-				processStdIn(in,commands);
-			} 
-			else
-#endif 
 			{
 				std::ifstream in(filename.c_str(), std::ifstream::in);
 				processStdIn(in,commands);

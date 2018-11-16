@@ -97,22 +97,21 @@ void OaStatStruct::parseLine(std::string line)
 std::map<std::string,std::string> OaStatStruct::GetInfostring(const std::string& restOfLine) const
 {
 	std::map<std::string,std::string> list;
-	int curPos = 0;
 	unsigned int lastPos = 0;
 	bool iskey = true;
-	std::string key, value;
+	std::string key;
 	if (restOfLine[0] == '\\') {
 		lastPos++;
 	}
 	while (lastPos<restOfLine.length()) {
-		curPos = restOfLine.find_first_of("\\", lastPos);
+		int curPos = restOfLine.find_first_of("\\", lastPos);
 		if (curPos<0) {
 			curPos = restOfLine.length();
 		}
 		if (iskey) {
 			key = restOfLine.substr(lastPos,curPos-lastPos);
 		} else {
-			value = restOfLine.substr(lastPos,curPos-lastPos);
+			const std::string& value = restOfLine.substr(lastPos,curPos-lastPos);
 			makeLower(key);
 			if (key.length()>0) {
 				list[key] = value;
@@ -144,8 +143,7 @@ std::string ZeroPadNumber(int num, int size = 2)
 
 std::string OaStatStruct::getTimeStamp() const
 {
-	std::string s;
-	s = "TIMESTAMP \'" + ZeroPadNumber(_datetime.tm_year+1900,4) + "-" + ZeroPadNumber(_datetime.tm_mon+1) + "-"
+	std::string s = "TIMESTAMP \'" + ZeroPadNumber(_datetime.tm_year+1900,4) + "-" + ZeroPadNumber(_datetime.tm_mon+1) + "-"
 		+ ZeroPadNumber(_datetime.tm_mday) + " " + ZeroPadNumber(_datetime.tm_hour) + ":"
 		+ ZeroPadNumber(_datetime.tm_min) + ":" + ZeroPadNumber(_datetime.tm_sec) + "\'";
 	return s;

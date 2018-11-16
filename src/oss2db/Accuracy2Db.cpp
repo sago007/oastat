@@ -48,7 +48,7 @@ void Accuracy2Db::process(const OaStatStruct &oss)
 		return;    //Not valid player
 	}
 
-	std::string player = clientIdMap.at(oss.parameters.at(0));
+	const std::string& player = clientIdMap.at(oss.parameters.at(0));
 
 	std::map<std::string,std::string> arguments = oss.GetInfostring();
 
