@@ -86,10 +86,6 @@ Db2CppDb::Db2CppDb(const std::string &dbargs)
 	debug = false;
 }
 
-Db2CppDb::Db2CppDb(const Db2CppDb& orig)
-{
-	throw std::runtime_error("May not make copy of Db2CppDb");
-}
 
 Db2CppDb::~Db2CppDb()
 {
@@ -290,7 +286,7 @@ void Db2CppDb::addGenericTeamEvent(int second, int team, int amount, const std::
 	DebugMessage("addGenericTeamEvent");
 }
 
-void Db2CppDb::addChallenge(int second, const std::string &player, int challenge, int amount)
+void Db2CppDb::addChallenge(int, const std::string &player, int challenge, int amount)
 {
 	if (!isok) {
 		return;
@@ -299,7 +295,7 @@ void Db2CppDb::addChallenge(int second, const std::string &player, int challenge
 	DebugMessage("addChallenge");
 }
 
-void Db2CppDb::addAccuracy(int second, const std::string &player, int type, int shotsFired, int shotsHit)
+void Db2CppDb::addAccuracy(int, const std::string &player, int type, int shotsFired, int shotsHit)
 {
 	if (!isok) {
 		return;
@@ -319,20 +315,18 @@ void Db2CppDb::addAccuracy(int second, const std::string &player, int type, int 
 
 int Db2CppDb::getNextGameNumber()
 {
-	int ret = -1;
 	cppdb::result res = *sql<< "SELECT nextval('oastat_games_gamenumber_seq')";
 	DebugMessage("Gettings next game number");
 	if (res.next()) {
+		int ret = -1;
 		res >> ret;
 		return ret;
-	} else {
-		throw std::runtime_error("Could not get next gamenumber");
-	}
+	} 
+	throw std::runtime_error("Could not get next gamenumber");
 }
 
 int Db2CppDb::getLastGameNumber()
 {
-	int result = -1;
 	cppdb::result res;
 	if (sql_backend == "mysql") {
 		res = *sql << "SELECT LAST_INSERT_ID() FROM DUAL";
@@ -341,12 +335,12 @@ int Db2CppDb::getLastGameNumber()
 	}
 	DebugMessage("Gettings last game number");
 	if (res.next()) {
+		int result = -1;
 		res>> result;
 		std::cout << "Game number: " << result << "\n";
 		return result;
-	} else {
-		throw std::runtime_error("Could not get last gamenumber");
-	}
+	} 
+	throw std::runtime_error("Could not get last gamenumber");
 }
 
 

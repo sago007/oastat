@@ -32,8 +32,9 @@ https://github.com/sago007/oastat/
 class Db2CppDb : public Database {
 public:
 	Db2CppDb();
-	Db2CppDb(const std::string &dbargs);
-	Db2CppDb(const Db2CppDb& orig);
+	explicit Db2CppDb(const std::string &dbargs);
+	Db2CppDb(const Db2CppDb& orig) = delete;
+	Db2CppDb& operator=(const Db2CppDb&) = delete;
 	virtual ~Db2CppDb();
 	void createTables() override;
 	void startGame(int gametype, const std::string &mapname, const std::string &basegame, const std::string &servername, const OaStatStruct &oss) override;

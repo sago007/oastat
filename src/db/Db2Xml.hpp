@@ -33,15 +33,15 @@ https://github.com/sago007/oastat/
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include <boost/format.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
 class Db2Xml : public Database
 {
 public:
 	Db2Xml();
-	Db2Xml(std::string dbargs);
-	Db2Xml(const Db2Xml& orig);
+	explicit Db2Xml(std::string dbargs);
+	Db2Xml(const Db2Xml& orig) = delete;
+	Db2Xml& operator=(const Db2Xml&) = delete;
 	virtual ~Db2Xml();
 	void createTables() override;
 	void startGame(int gametype, const std::string &mapname, const std::string &basegame, const std::string &servername, const OaStatStruct &oss) override;

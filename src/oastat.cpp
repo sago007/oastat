@@ -32,7 +32,7 @@ https://github.com/sago007/oastat/
 #include <gcrypt.h>
 #include <stdio.h>
 #include <deque>
-#include <boost/shared_ptr.hpp>
+#include <boost/format.hpp>
 #include <boost/program_options.hpp>
 
 #include "db/database.hpp"

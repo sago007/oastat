@@ -22,6 +22,7 @@ https://github.com/sago007/oastat/
 */
 
 #include "Db2Xml.hpp"
+#include <boost/format.hpp>
 
 using std::cout;
 using std::ofstream;
@@ -76,10 +77,7 @@ Db2Xml::Db2Xml(std::string dbargs)
 		cout << "Attemting to create \"" << path << "\" with \"" << fmkdir.str() << "\", but return code was: " << fmkdir_ret << "\n";
 	}
 }
-Db2Xml::Db2Xml(const Db2Xml& orig)
-{
 
-}
 Db2Xml::~Db2Xml()
 {
 
