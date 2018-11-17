@@ -45,19 +45,15 @@ void OaStatStruct::clear()
 	restOfLine = "";
 }
 
-void OaStatStruct::parseLine(std::string line)
+void OaStatStruct::parseLine(const std::string& orgLine)
 {
 	//Parse time
-	//cout << line << endl;
-	//try{
-	std::string tempTimeString = line.substr(0,7);
+	std::string tempTimeString = orgLine.substr(0,7);
 	int posColon = tempTimeString.find(":");
 	int minute = atoi(tempTimeString.substr(0,posColon).c_str());
-	/*time_t thetime = time(NULL);
-	gmtime_r(&thetime,&_datetime);*/
 	second = atoi(tempTimeString.substr(posColon+1,7).c_str());
 	second+=minute*60;
-	line = line.substr(7,line.length()); //Cut the first part of the string.
+	std::string line = orgLine.substr(7, orgLine.length()); //Cut the first part of the string.
 
 	//Parse command name:
 	posColon = line.find(":");

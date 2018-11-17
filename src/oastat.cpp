@@ -104,8 +104,7 @@ static void addCommands(std::shared_ptr<Database> &db,std::vector<std::shared_pt
 static int processStdIn(std::istream &in_p, std::vector<std::shared_ptr<Struct2Db> > &commands)
 {
 	bool done = true;
-	OaStatStruct *startstruct;
-	startstruct = NULL;
+	OaStatStruct *startstruct = nullptr;
 	do {
 		std::string line = "";
 		OaStatStruct oss;
@@ -183,7 +182,6 @@ int main (int argc, const char* argv[])
 		bool doIntegrationTest = false;
 		std::vector<std::shared_ptr<Struct2Db> > commands;
 		/////////////
-		//dbargs = "mysql dbname oastat";
 		boost::format f("%1%/.openarena/baseoa/games.log");
 		f % getenv("HOME");
 		std::string filename = f.str();
@@ -195,7 +193,6 @@ int main (int argc, const char* argv[])
 		("dbargs", boost::program_options::value<std::string>(), "Arguments passed to the DB backend")
 		("filename,f", boost::program_options::value<std::string>(), "Filename to read. Providing a blank string will read from stdin")
 		("config,c", boost::program_options::value<std::vector<std::string> >(), "Read a config file with the values. Can be given multiple times")
-		("tail", "Use tail on the filename given to read the file. This will be ignored on Windows.")
 		("integration-test", "Perform integration test")
 		;
 		boost::program_options::variables_map vm;
@@ -266,7 +263,7 @@ int main (int argc, const char* argv[])
 			db->startGame(1,"oasago2","baseoa-mod","testserver",oss_test);
 			db->addGenericTeamEvent(5,2,0,"sometype","","",3,4);
 			std::cerr << "Test called\n";
-			return 1;
+			return 0;
 		}
 
 		if (filename.length()>0) {

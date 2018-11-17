@@ -23,44 +23,37 @@ https://github.com/sago007/oastat/
 
 #include "Db2Xml.hpp"
 #include <boost/format.hpp>
+#include "../sago/platform_folders.h"
 
-using std::cout;
-using std::ofstream;
-using std::string;
-using std::stringstream;
 
 Db2Xml::Db2Xml()
 {
 	psoudo_playerids.clear();
 	nextId = 1;
-	boost::format path("%1%/oastat");
-	path % getenv("HOME");
-	p_output_dir = path.str();
-	boost::format fmkdir("mkdir -p %1%");
+	p_output_dir = sago::getCacheDir()+"/oastat/xml/";
+	boost::format fmkdir("mkdir -p \"%1%\"");
 	fmkdir % p_output_dir;
 	int fmkdir_ret = system(fmkdir.str().c_str());
 	if (fmkdir_ret) {
-		cout << "Attemting to create \"" << path << "\" with \"" << fmkdir.str() << "\", but return code was: " << fmkdir_ret << "\n";
+		std::cout << "Attemting to create \"" << p_output_dir << "\" with \"" << fmkdir.str() << "\", but return code was: " << fmkdir_ret << "\n";
 	}
 }
 Db2Xml::Db2Xml(std::string dbargs)
 {
-	boost::format path("%1%/oastat");
-	path % getenv("HOME");
-	p_output_dir = path.str();
+	p_output_dir = sago::getCacheDir()+"/oastat/xml/";
 	p_postscript = "";
 	psoudo_playerids.clear();
 	nextId = 1;
 	//mkdir(p_output_dir.c_str());
 
-	stringstream stream(stringstream::in | stringstream::out);
+	std::stringstream stream(std::stringstream::in | std::stringstream::out);
 	stream << dbargs;
-	string holder;
+	std::string holder;
 	//stream >> holder;
 	while (!stream.eof()) {
 		stream >> holder;
 		if (!stream.eof()) {
-			string param;
+			std::string param;
 			stream >> param;
 			if(holder == "outputdir") {
 				p_output_dir = param;
@@ -74,7 +67,7 @@ Db2Xml::Db2Xml(std::string dbargs)
 	fmkdir % p_output_dir;
 	int fmkdir_ret = system(fmkdir.str().c_str());
 	if (fmkdir_ret) {
-		cout << "Attemting to create \"" << path << "\" with \"" << fmkdir.str() << "\", but return code was: " << fmkdir_ret << "\n";
+		std::cout << "Attemting to create \"" << p_output_dir << "\" with \"" << fmkdir.str() << "\", but return code was: " << fmkdir_ret << "\n";
 	}
 }
 
@@ -82,7 +75,7 @@ Db2Xml::~Db2Xml()
 {
 
 }
-void Db2Xml::startGame(int gametype, const string &mapname, const string &basegame, const string &servername, const OaStatStruct &oss)
+void Db2Xml::startGame(int gametype, const std::string &mapname, const std::string &basegame, const std::string &servername, const OaStatStruct &oss)
 {
 	isOk = true;
 	p_xmlcontent = "";
@@ -112,17 +105,17 @@ void Db2Xml::endGame(int second)
 	if (isOk) {
 		p_xmlcontent += (boost::format("    <second>%1%</second>\n") % second).str();
 		p_xmlcontent += "</OaStatGame>\n";
-		string filename = (boost::format("%1%/%2%_%3%-%4%-%5%_%6%-%7%-%8%.xml") % p_output_dir % p_servername
+		std::string filename = (boost::format("%1%/%2%_%3%-%4%-%5%_%6%-%7%-%8%.xml") % p_output_dir % p_servername
 						   % (p_gametime.tm_year+1900) % (p_gametime.tm_mon+1) % (p_gametime.tm_mday)
 						   % (p_gametime.tm_hour) % (p_gametime.tm_min) % (p_gametime.tm_sec) ).str();
-		ofstream outfile;
+		std::ofstream outfile;
 		outfile.open (filename.c_str());
 		if (outfile.fail()) {
-			cout << "could not create " << filename << "\n";
+			std::cout << "could not create " << filename << "\n";
 		}
 		outfile << p_xmlcontent;
 		outfile.close();
-		cout << "End game at " << second << "with size " << p_xmlcontent.length() << " written to " << filename << "\n";
+		std::cout << "End game at " << second << "with size " << p_xmlcontent.length() << " written to " << filename << "\n";
 	}
 }
 int Db2Xml::getGameNumber()
@@ -294,7 +287,7 @@ void Db2Xml::doNotCommit()
 	isOk = false;
 }
 
-int Db2Xml::getPsoudoId(const string &guid)
+int Db2Xml::getPsoudoId(const std::string &guid)
 {
 	int ret = psoudo_playerids[guid];
 	if (ret > 0) {
@@ -308,14 +301,14 @@ int Db2Xml::getPsoudoId(const string &guid)
 	return ret;
 }
 
-string Db2Xml::getXmlEscaped(const string &org)
+std::string Db2Xml::getXmlEscaped(const std::string &org)
 {
-	string result = org;
-	boost::algorithm::replace_all(result,(string)"&",(string)"&amp;");
-	boost::algorithm::replace_all(result,(string)"<",(string)"&lt;");
-	boost::algorithm::replace_all(result,(string)">",(string)"&gt;");
-	boost::algorithm::replace_all(result,(string)"\"",(string)"&quot;");
-	boost::algorithm::replace_all(result,(string)"'",(string)"&apos;");
+	std::string result = org;
+	boost::algorithm::replace_all(result, "&", "&amp;");
+	boost::algorithm::replace_all(result, "<", "&lt;");
+	boost::algorithm::replace_all(result, ">", "&gt;");
+	boost::algorithm::replace_all(result, "\"", "&quot;");
+	boost::algorithm::replace_all(result, "'", "&apos;");
 
 	return result;
 }

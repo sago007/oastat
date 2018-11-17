@@ -50,7 +50,7 @@ public:
 	std::string restOfLine;
 	const tm getDateTime() const;
 
-	void parseLine(std::string line);
+	void parseLine(const std::string& line);
 	void clear();
 
 	/*
