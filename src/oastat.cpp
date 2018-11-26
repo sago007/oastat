@@ -207,10 +207,11 @@ int main (int argc, const char* argv[])
 			}
 		}
 		if (vm.count("help")) {
-			std::cout << desc << "n";
+			std::cout << desc << "\n";
 			std::cout << "Examples: \n";
 			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"CppDb\" --dbarg \"mysql:database=oastat;username=openarena\"\n";
 			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"CppDb\" --dbarg \"pgsql:database=oastat;username=openarena\"\n";
+			std::cout << "cat \"~/.openarena/baseoa/games.log\" |" << argv[0] << " -f \"\" --backend \"CppDb\" --dbarg \"pgsql:database=oastat;username=openarena\"\n";
 			std::cout << argv[0] << " -f %APPDATA%/OpenArena/baseoa/games.log --backend \"CppDb\" --dbarg \"sqlite3:db=defoastat.db3\"\n";
 			std::cout << "\n";
 			std::cout << "Look at https://github.com/sago007/oastat for more help and more details\n";
