@@ -29,7 +29,7 @@ https://github.com/sago007/oastat/
 
 static void makeLower(std::string &x)
 {
-	for (unsigned int i=0; i<x.length(); i++) {
+	for (size_t i=0; i<x.length(); ++i) {
 		if (x[i] >= 'A' && x[i] <= 'X') {
 			x[i] = x[i]-'A'+'a';
 		}
@@ -93,7 +93,7 @@ void OaStatStruct::parseLine(const std::string& orgLine)
 std::map<std::string,std::string> OaStatStruct::GetInfostring(const std::string& restOfLine) const
 {
 	std::map<std::string,std::string> list;
-	unsigned int lastPos = 0;
+	size_t lastPos = 0;
 	bool iskey = true;
 	std::string key;
 	if (restOfLine[0] == '\\') {

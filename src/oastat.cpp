@@ -94,7 +94,7 @@ static void addCommands(std::shared_ptr<Database> &db,std::vector<std::shared_pt
 	commands.push_back(std::shared_ptr<Struct2Db>(new Accuracy2Db()) );
 	//Add more commands just above here
 
-	for (unsigned int i=0; i<commands.size(); i++) {
+	for (size_t i=0; i<commands.size(); i++) {
 		commands.at(i)->setDb(db);
 	}
 }
@@ -127,7 +127,7 @@ static int processStdIn(std::istream &in_p, std::vector<std::shared_ptr<Struct2D
 					while(!osslist.empty()) {
 						oss = osslist.front();
 						osslist.pop_front();
-						for(unsigned int i=0; i<commands.size(); i++) {
+						for(size_t i=0; i<commands.size(); ++i) {
 							if(commands.at(i)->canProcess(oss)) {
 								commands.at(i)->process(oss);
 							}
@@ -177,6 +177,7 @@ std::string getHashedId(const std::string& unhashedID)
 int main (int argc, const char* argv[])
 {
 	try {
+		std::ios_base::sync_with_stdio(false);
 		std::string dbargs = "";
 		std::string backend = "Xml";
 		bool doIntegrationTest = false;
