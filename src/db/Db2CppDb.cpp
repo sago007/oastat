@@ -102,16 +102,18 @@ void Db2CppDb::startGame(int gametype, const std::string &mapname, const std::st
 	sql = std::shared_ptr<cppdb::session>(new cppdb::session(connectstring));
 	commitlock = std::shared_ptr<cppdb::transaction>(new cppdb::transaction(*sql));
 	Rollback(); //in case there was some garbage that could be comitted (like warmup or an unfinished game)
-	SetOk(true);
+	SetOk(false);
 	timestamp = oss.getDateTime();
 	if (oss.restOfLine.find("\\isWarmup\\1") != std::string::npos) {
-		SetOk(false);
 		std::cout << "Warmup: " << servername << ", " << oss.getTimeStamp() << "\n";
 		return;
 	}
 	if (IsDuplicate(servername,timestamp)) {
-		SetOk(false);
 		std::cout << "Duplicate:" << servername << ", " << oss.getTimeStamp() << "\n";
+		return;
+	}
+	if (oss.getDateTime().tm_year+1900 == 0) {
+		std::cout << "No timestamp: "<< servername << "\n";
 		return;
 	}
 	if (last_value) {
@@ -124,13 +126,16 @@ void Db2CppDb::startGame(int gametype, const std::string &mapname, const std::st
 		st.exec();
 		gamenumber = st.last_insert_id();
 		if (gamenumber < 1) {
-			SetOk(false);
 			std::cout << "Must FAIL!\n";
+		}
+		else {
+			SetOk(true);
 		}
 	} else {
 		gamenumber = getNextGameNumber();
 		*sql << "INSERT INTO oastat_games(gamenumber,gametype, mapname, basegame,servername,time) VALUES (?,?,LOWER(?),?,?,?)"<<
 			 gamenumber << gametype << mapname << basegame << servername << timestamp << cppdb::exec;
+		SetOk(true);
 	}
 	DebugMessage("startGame");
 }

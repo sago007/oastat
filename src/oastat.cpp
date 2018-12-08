@@ -103,9 +103,10 @@ static void addCommands(std::shared_ptr<Database> &db,std::vector<std::shared_pt
 
 static int processStdIn(std::istream &in_p, std::vector<std::shared_ptr<Struct2Db> > &commands)
 {
-	bool done = true;
+	bool done = false;
 	OaStatStruct *startstruct = nullptr;
-	do {
+	while(!done) {
+		done = true;
 		std::string line = "";
 		OaStatStruct oss;
 		std::deque<OaStatStruct> osslist;
@@ -140,12 +141,13 @@ static int processStdIn(std::istream &in_p, std::vector<std::shared_ptr<Struct2D
 			/*
 			 If there is an error write it in the log and try again continue
 			 */
+			startstruct = nullptr;
 			osslist.clear();
 			std::cerr << "oastat: Crashed (NEAR FATAL EXCEPTION) at line: \"" << line << "\"\n"<<
 			     "oastat:   Error is: " << e2.what() << "\n";
 			done = false;
 		}
-	} while (!done);
+	}
 	return 0;
 }
 
@@ -210,8 +212,8 @@ int main (int argc, const char* argv[])
 		if (vm.count("help")) {
 			std::cout << desc << "\n";
 			std::cout << "Examples: \n";
-			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"CppDb\" --dbarg \"mysql:database=oastat;username=openarena\"\n";
-			std::cout << argv[0] << " -f \"~/.openarena/baseoa/games.log\" --backend \"CppDb\" --dbarg \"pgsql:database=oastat;username=openarena\"\n";
+			std::cout << argv[0] << " -f \""<< f << "/.openarena/baseoa/games.log\" --backend \"CppDb\" --dbarg \"mysql:database=oastat;user=openarena\"\n";
+			std::cout << argv[0] << " -f \"" << f << "/.openarena/baseoa/games.log\" --backend \"CppDb\" --dbarg \"pgsql:database=oastat;username=openarena\"\n";
 			std::cout << "cat \"~/.openarena/baseoa/games.log\" |" << argv[0] << " -f \"\" --backend \"CppDb\" --dbarg \"pgsql:database=oastat;username=openarena\"\n";
 			std::cout << argv[0] << " -f %APPDATA%/OpenArena/baseoa/games.log --backend \"CppDb\" --dbarg \"sqlite3:db=defoastat.db3\"\n";
 			std::cout << "\n";
