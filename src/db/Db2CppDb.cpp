@@ -30,12 +30,6 @@ https://github.com/sago007/oastat/
 void Db2CppDb::InitStrings(const std::string &backend)
 {
 	last_value = true;
-	if (backend == "pgsql") {
-		last_value = true; //Now also use last for PostgreSQL
-	}
-	if (backend == "mysql") {
-		last_value = true;
-	}
 	sql_backend = backend;
 }
 
@@ -84,6 +78,7 @@ Db2CppDb::Db2CppDb(const std::string &dbargs)
 	InitStrings(holder);
 	ReadConfigFromDb();
 	debug = false;
+	ignoreMissingTimestamp = std::getenv(OASTAT_CPPDB_IGNORE_MISSING_TIMESTAMP);
 }
 
 
@@ -104,6 +99,10 @@ void Db2CppDb::startGame(int gametype, const std::string &mapname, const std::st
 	Rollback(); //in case there was some garbage that could be comitted (like warmup or an unfinished game)
 	SetOk(false);
 	timestamp = oss.getDateTime();
+	if (!ignoreMissingTimestamp && oss.restOfLine.find("\\g_timestamp\\") == std::string::npos) {
+		std::cout << "g_timestamp not set! Skipping!\n";
+		return;
+	}
 	if (oss.restOfLine.find("\\isWarmup\\1") != std::string::npos) {
 		std::cout << "Warmup: " << servername << ", " << oss.getTimeStamp() << "\n";
 		return;

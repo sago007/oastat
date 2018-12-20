@@ -147,6 +147,11 @@ std::string OaStatStruct::getTimeStamp() const
 
 void OaStatStruct::setTimeStamp(const std::string &timestring)
 {
+	if (timestring.empty()) {
+		std::time_t t = std::time(0);
+		_datetime = *std::gmtime(&t);
+		return;
+	}
 	std::stringstream ss(timestring);
 	std::string tmp;
 	getline(ss,tmp,'-');

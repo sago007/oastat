@@ -29,6 +29,8 @@ https://github.com/sago007/oastat/
 #include <set>
 #include <cppdb/frontend.h>
 
+#define OASTAT_CPPDB_IGNORE_MISSING_TIMESTAMP "OASTAT_CPPDB_IGNORE_MISSING_TIMESTAMP"
+
 class Db2CppDb : public Database {
 public:
 	Db2CppDb();
@@ -77,6 +79,7 @@ private:
 	std::map<std::string,int> playerids;
 	std::string sql_backend;
 	bool last_value = false;
+	bool ignoreMissingTimestamp = false;
 	std::set<std::string> cvars2save;
 	std::set<std::string> uservars2save;
 };

@@ -71,10 +71,12 @@ public:
 
 	/*
 	 Sets _datetime. Requires input in the format: "YYYY-MM-DD HH:MM:SS"
+	 * If input is blank the timestamp will be set to current UTC time.
+	 * For any other input the behavior is unspecified.
 	 */
 	void setTimeStamp(const std::string &timestring);
 private:
-	tm _datetime = {}; 
+	tm _datetime = {};
 };
 
 #endif	/* _OASTATSTRUCT_H */

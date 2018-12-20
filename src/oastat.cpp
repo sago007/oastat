@@ -217,7 +217,10 @@ int main (int argc, const char* argv[])
 			std::cout << "cat \"~/.openarena/baseoa/games.log\" |" << argv[0] << " -f \"\" --backend \"CppDb\" --dbarg \"pgsql:database=oastat;username=openarena\"\n";
 			std::cout << argv[0] << " -f %APPDATA%/OpenArena/baseoa/games.log --backend \"CppDb\" --dbarg \"sqlite3:db=defoastat.db3\"\n";
 			std::cout << "\n";
-			std::cout << "Look at https://github.com/sago007/oastat for more help and more details\n";
+			std::cout << "CppDb backend options:\n";
+			std::cout << "If the environment variable " << OASTAT_CPPDB_IGNORE_MISSING_TIMESTAMP << " is set and g_gametime is missing then oastat will use current time as timestamp\n";
+			std::cout << "Deplicate elimination will not work with " << OASTAT_CPPDB_IGNORE_MISSING_TIMESTAMP << " set\n";
+			std::cout << "\nLook at https://github.com/sago007/oastat for more help and more details\n";
 			return 1;
 		}
 		if (vm.count("backend")) {
