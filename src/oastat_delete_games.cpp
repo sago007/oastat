@@ -28,6 +28,30 @@ https://github.com/sago007/oastat/
 #include <boost/program_options.hpp>
 #include "db/DbExtra.hpp"
 
+
+static void AppendGamesWithNoKills(cppdb::session& session, std::vector<int>& inout) {
+	const char* sqlSelect = "select gamenumber from oastat_games where gamenumber not in (select gamenumber from oastat_kills)";
+	cppdb::result res = session << sqlSelect;
+	while(res.next()) {
+		int gamenumber = -1;
+		res >> gamenumber;
+		inout.push_back(gamenumber);
+	}
+}
+
+static void AppendGamesWithNoHumanKills(cppdb::session& session, std::vector<int>& inout) {
+	const char* sqlSelect = "select gamenumber from oastat_games where gamenumber not in ("
+	" select k.gamenumber"
+	" from oastat_kills k, oastat_players p"
+	" where p.playerid = k.attacker and p.isbot = 'n' and k.target <> k.attacker and p.guid <> 'WORLD')";
+	cppdb::result res = session << sqlSelect;
+	while(res.next()) {
+		int gamenumber = -1;
+		res >> gamenumber;
+		inout.push_back(gamenumber);
+	}
+}
+
 int main (int argc, const char* argv[])
 {
 	std::string connectstring;
@@ -39,6 +63,8 @@ int main (int argc, const char* argv[])
 		("help,h", "Print basic usage information to stdout and quits")
 		("dbargs", boost::program_options::value<std::string>(), "Arguments passed to the DB backend")
 		("delete-game,d", boost::program_options::value<std::vector<int>>(), "Delete game with a given number from the database")
+		("delete-games-with-no-kills", "Delete games with no kills at all")
+		("delete-games-with-no-human-kills", "Delete games with no kills by a human")
 		("config,c", boost::program_options::value<std::vector<std::string> >(), "Read a config file with the values. Can be given multiple times")
 		;
 		boost::program_options::variables_map vm;
@@ -64,6 +90,14 @@ int main (int argc, const char* argv[])
 		}
 
 		session = std::make_shared<cppdb::session>(connectstring);
+		if (vm.count("delete-games-with-no-kills")) {
+			AppendGamesWithNoKills(*session, games_to_delete);
+		}
+
+		if (vm.count("delete-games-with-no-human-kills")) {
+			AppendGamesWithNoHumanKills(*session, games_to_delete);
+		}
+
 		cppdb::transaction(*session.get());
 		for (int game : games_to_delete) {
 			std::cout << "Deleting " << game << "..." << std::flush;
