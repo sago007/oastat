@@ -25,7 +25,7 @@ https://github.com/sago007/oastat/
 #define	_HARVESTER2DB_HPP
 
 #include "struct2db.h"
-#include "../local.h"
+#include "../common/local.h"
 
 class Harvester2Db : public Struct2Db
 {

@@ -26,22 +26,18 @@ https://github.com/sago007/oastat/
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <gcrypt.h>
 #include <stdio.h>
 #include <deque>
 #include <boost/format.hpp>
 #include <boost/program_options.hpp>
 
 #include "db/database.hpp"
-#ifdef USECPPDB
 #include "db/Db2CppDb.hpp"
-#endif
-
 #include "db/Db2Xml.hpp"
 
-#include "oastatstruct.h"
+#include "common/oastatstruct.h"
 #include "oss2db/struct2db.h"
-#include "local.h"
+#include "common/local.h"
 #include "oss2db/kill2db.h"
 #include "oss2db/init2db.h"
 #include "oss2db/shutdown2db.h"
@@ -58,7 +54,7 @@ https://github.com/sago007/oastat/
 #include "oss2db/Challenge2Db.hpp"
 #include "oss2db/Warmup2Db.hpp"
 
-std::vector<std::string> clientIdMap;
+
 
 static int processStdIn(std::istream &in_p,std::vector<std::shared_ptr<Struct2Db> > &commands);
 
@@ -151,30 +147,6 @@ static int processStdIn(std::istream &in_p, std::vector<std::shared_ptr<Struct2D
 	return 0;
 }
 
-/**
- * Hashes the user id so they cannot be recovered from the db.
- *
- * @param unhashedID - The unhashed id
- * @return the hashed id
- */
-std::string getHashedId(const std::string& unhashedID)
-{
-	int msg_len = unhashedID.length();
-	int hash_len = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
-	std::vector<unsigned char> hash_binary(hash_len);
-	std::vector<char> hash_hex(hash_len*2+1);
-	char *out = &hash_hex.at(0);
-	char *p = out;
-
-	gcry_md_hash_buffer( GCRY_MD_SHA1, &hash_binary[0], unhashedID.c_str(), msg_len );
-	for ( int i = 0; i < hash_len; i++, p += 2 ) {
-		snprintf ( p, 3, "%02x", hash_binary[i] );
-	}
-
-	std::string hashedID = &hash_hex.at(0);
-
-	return  hashedID; //Replace with md5 at some point
-}
 
 int main (int argc, const char* argv[])
 {
@@ -237,7 +209,6 @@ int main (int argc, const char* argv[])
 		}
 		std::shared_ptr<Database> db;
 
-#if USECPPDB
 		if (backend == "CppDb") {
 			std::cout << "Using CppDb\n";
 			if (dbargs.length()<1) {
@@ -246,7 +217,6 @@ int main (int argc, const char* argv[])
 				db = std::shared_ptr<Database>(new Db2CppDb(dbargs) );
 			}
 		}
-#endif
 		if (backend == "Xml") {
 			std::cout << "Using XML\n";
 			if (dbargs.length()<1) {

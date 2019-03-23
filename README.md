@@ -12,7 +12,7 @@ Homepage: <https://github.com/sago007/oastat/>
 * libgcrypt
 * boost_program_options
 
-On Ubuntu (15.04 or later) all requirements can be installed with: sudo apt-get install build-essential libboost-program-options-dev libcppdb-dev libgcrypt20-dev cmake
+On Ubuntu (16.04 or later) all requirements can be installed with: sudo apt-get install build-essential libboost-program-options-dev libcppdb-dev libgcrypt20-dev cmake
 On earlier versions CppDb must be installed manually.
 
 To compile:

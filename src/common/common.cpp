@@ -21,23 +21,33 @@ https://github.com/sago007/oastat/
 ===========================================================================
 */
 
-#ifndef _AWARD2DB_H
-#define	_AWARD2DB_H
+#include <string>
+#include <vector>
+#include <gcrypt.h>
 
-#include "struct2db.h"
-#include "../common/local.h"
+std::vector<std::string> clientIdMap;
 
-class Award2Db : public Struct2Db
+/**
+ * Hashes the user id so they cannot be recovered from the db.
+ *
+ * @param unhashedID - The unhashed id
+ * @return the hashed id
+ */
+std::string getHashedId(const std::string& unhashedID)
 {
-public:
+	int msg_len = unhashedID.length();
+	int hash_len = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
+	std::vector<unsigned char> hash_binary(hash_len);
+	std::vector<char> hash_hex(hash_len*2+1);
+	char *out = &hash_hex.at(0);
+	char *p = out;
 
-	std::string getCommand() const override;
-	bool canProcess(const OaStatStruct &oss) const override;
+	gcry_md_hash_buffer( GCRY_MD_SHA1, &hash_binary[0], unhashedID.c_str(), msg_len );
+	for ( int i = 0; i < hash_len; i++, p += 2 ) {
+		snprintf ( p, 3, "%02x", hash_binary[i] );
+	}
 
-	void process(const OaStatStruct &oss) override;
-private:
+	std::string hashedID = &hash_hex.at(0);
 
-};
-
-#endif	/* _AWARD2DB_H */
-
+	return  hashedID; //Replace with md5 at some point
+}

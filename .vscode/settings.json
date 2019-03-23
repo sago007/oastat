@@ -1,0 +1,11 @@
+{
+    "editor.insertSpaces": false,
+    "files.exclude": {
+        "**/*.db3": true,
+        "**/*.o": true,
+        "**/*~": true,
+        "*/*.tgz": true,
+        "Makefile": true,
+        "nbproject": true
+    }
+}

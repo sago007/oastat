@@ -26,7 +26,7 @@ https://github.com/sago007/oastat/
 
 #include <string>
 #include <iostream>
-#include "../oastatstruct.h"
+#include "../common/oastatstruct.h"
 
 /*
  This is the class that all database connections need to inherit to be able to recieve data from the program

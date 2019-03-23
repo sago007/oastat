@@ -25,7 +25,7 @@ https://github.com/sago007/oastat/
 #define	_DISCONNECT2DB_H
 
 #include "struct2db.h"
-#include "../local.h"
+#include "../common/local.h"
 
 class Disconnect2Db : public Struct2Db
 {

@@ -24,7 +24,7 @@ https://github.com/sago007/oastat/
 #ifndef _STRUCT2DB_H
 #define	_STRUCT2DB_H
 
-#include "../oastatstruct.h"
+#include "../common/oastatstruct.h"
 #include "../db/database.hpp"
 #include <string>
 #include <boost/shared_ptr.hpp>

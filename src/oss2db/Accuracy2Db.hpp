@@ -25,7 +25,7 @@ https://github.com/sago007/oastat/
 #define	ACCURACY2DB_HPP
 
 #include "struct2db.h"
-#include "../local.h"
+#include "../common/local.h"
 
 class Accuracy2Db : public Struct2Db {
 public:
