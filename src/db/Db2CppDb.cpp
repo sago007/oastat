@@ -58,12 +58,30 @@ bool Db2CppDb::IsDuplicate(const std::string &servername,const tm &thetime)
 	}
 }
 
+static void DoDbDataInit(cppdb::session& sql)
+{
+	std::string checkWorldSql = "SELECT 'X' FROM oastat_players WHERE guid = 'WORLD'";
+	std::string insertWorldSql = "INSERT INTO oastat_players (guid,lastseen, isbot, model,headmodel,nickname) VALUES ('WORLD',date('now'),'n','-','-','-')";
+	std::string updateWorldSql = "UPDATE oastat_players SET playerid = 0 WHERE guid = 'WORLD'";
+	cppdb::result res = sql << checkWorldSql;
+	if (res.next()) {
+		//The WORLD record already exist
+		return;
+	}
+	sql << insertWorldSql << cppdb::exec;
+	sql << updateWorldSql << cppdb::exec;
+}
+
 Db2CppDb::Db2CppDb() : connectstring("pgsql:database=oastat")
 {
 	sql = std::shared_ptr<cppdb::session>(new cppdb::session(connectstring));
 	commitlock = std::shared_ptr<cppdb::transaction>(new cppdb::transaction(*sql));
 	InitStrings("pgsql");
 	ReadConfigFromDb();
+	DoDbDataInit(*sql);
+	commitlock->commit();
+	commitlock = nullptr;
+	commitlock = std::shared_ptr<cppdb::transaction>(new cppdb::transaction(*sql));
 }
 
 Db2CppDb::Db2CppDb(const std::string &dbargs)
@@ -77,8 +95,12 @@ Db2CppDb::Db2CppDb(const std::string &dbargs)
 	commitlock = std::shared_ptr<cppdb::transaction>(new cppdb::transaction(*sql));
 	InitStrings(holder);
 	ReadConfigFromDb();
+	DoDbDataInit(*sql);
 	debug = false;
 	ignoreMissingTimestamp = std::getenv(OASTAT_CPPDB_IGNORE_MISSING_TIMESTAMP);
+	commitlock->commit();
+	commitlock = nullptr;
+	commitlock = std::shared_ptr<cppdb::transaction>(new cppdb::transaction(*sql));
 }
 
 
