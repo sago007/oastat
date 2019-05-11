@@ -178,6 +178,15 @@ void Db2CppDb::addGameCvar(const std::string &cvar, const std::string &value)
  */
 void Db2CppDb::endGame(int second)
 {
+	if (true) {
+		//Not ok if no human kills
+		cppdb::result res = *sql << "select k.gamenumber"
+			" from oastat_kills k, oastat_players p"
+			" where p.playerid = k.attacker and p.isbot = 'n' and k.target <> k.attacker and p.guid <> 'WORLD' and k.gamenumber = ?" << gamenumber;
+		if (!res.next()) {
+			isok = false;
+		}
+	}
 	if (!isok) {
 		return;
 	}
