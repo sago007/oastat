@@ -188,6 +188,7 @@ void Db2CppDb::endGame(int second)
 		}
 	}
 	if (!isok) {
+		Rollback();
 		return;
 	}
 	*sql << "UPDATE oastat_games SET second=? WHERE gamenumber = ?" << second << gamenumber << cppdb::exec;
