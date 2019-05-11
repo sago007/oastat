@@ -98,11 +98,19 @@ int main (int argc, const char* argv[])
 			AppendGamesWithNoHumanKills(*session, games_to_delete);
 		}
 
-		cppdb::transaction(*session.get());
+		int deletes_since_last_commit = 0;
+
+		cppdb::transaction my_scope(*session.get());
 		for (int game : games_to_delete) {
 			std::cout << "Deleting " << game << "..." << std::flush;
 			deleteGame(session.get(), game);
 			std::cout << "done!\n";
+			++deletes_since_last_commit;
+			if (deletes_since_last_commit >= 100) {
+				std::cout << "Commit!\n";
+				deletes_since_last_commit = 0;
+				my_scope.commit();
+			}
 		}
 		session->commit();
 
