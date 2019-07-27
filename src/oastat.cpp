@@ -56,8 +56,6 @@ https://github.com/sago007/oastat/
 
 
 
-static int processStdIn(std::istream &in_p,std::vector<std::shared_ptr<Struct2Db> > &commands);
-
 
 
 /**
@@ -96,56 +94,60 @@ static void addCommands(std::shared_ptr<Database> &db,std::vector<std::shared_pt
 }
 
 
+class OastatStreamProcessor {
+	std::deque<OaStatStruct> osslist;
 
-static int processStdIn(std::istream &in_p, std::vector<std::shared_ptr<Struct2Db> > &commands)
-{
-	bool done = false;
-	OaStatStruct *startstruct = nullptr;
-	while(!done) {
-		done = true;
-		std::string line = "";
-		OaStatStruct oss;
-		std::deque<OaStatStruct> osslist;
-		try {
-			while ( std::getline(in_p,line) ) {
-				oss.clear();
-				oss.parseLine(line);
-				osslist.push_back(oss);
-				if (oss.command=="InitGame") {
-					startstruct = &osslist.back();
-				}
-				if (oss.command=="Warmup" && startstruct) {
-					//Workaround to stop warmup
-					//If we spot a warmup command we add a cvar to the start struct
-					//Warmup is a attribute that affect he whole game
-					startstruct->restOfLine += "\\isWarmup\\1";
-				}
-				if (oss.command=="ShutdownGame") {
-					while(!osslist.empty()) {
-						oss = osslist.front();
-						osslist.pop_front();
-						for(size_t i=0; i<commands.size(); ++i) {
-							if(commands.at(i)->canProcess(oss)) {
-								commands.at(i)->process(oss);
+public:
+
+	int processStdIn(std::istream &in_p, std::vector<std::shared_ptr<Struct2Db> > &commands)
+	{
+		bool done = false;
+		OaStatStruct *startstruct = nullptr;
+		while(!done) {
+			done = true;
+			OaStatStruct oss;
+			std::string line = "";
+			try {
+				while ( std::getline(in_p,line) ) {
+					oss.clear();
+					oss.parseLine(line);
+					osslist.push_back(oss);
+					if (oss.command=="InitGame") {
+						startstruct = &osslist.back();
+					}
+					if (oss.command=="Warmup" && startstruct) {
+						//Workaround to stop warmup
+						//If we spot a warmup command we add a cvar to the start struct
+						//Warmup is a attribute that affect he whole game
+						startstruct->restOfLine += "\\isWarmup\\1";
+					}
+					if (oss.command=="ShutdownGame") {
+						while(!osslist.empty()) {
+							oss = osslist.front();
+							osslist.pop_front();
+							for(size_t i=0; i<commands.size(); ++i) {
+								if(commands.at(i)->canProcess(oss)) {
+									commands.at(i)->process(oss);
+								}
 							}
 						}
+						startstruct = NULL;
 					}
-					startstruct = NULL;
 				}
+			} catch (std::exception &e2) {
+				/*
+				If there is an error write it in the log and try again continue
+				*/
+				startstruct = nullptr;
+				osslist.clear();
+				std::cerr << "oastat: Crashed (NEAR FATAL EXCEPTION) at line: \"" << line << "\"\n"<<
+					"oastat:   Error is: " << e2.what() << "\n";
+				done = false;
 			}
-		} catch (std::exception &e2) {
-			/*
-			 If there is an error write it in the log and try again continue
-			 */
-			startstruct = nullptr;
-			osslist.clear();
-			std::cerr << "oastat: Crashed (NEAR FATAL EXCEPTION) at line: \"" << line << "\"\n"<<
-			     "oastat:   Error is: " << e2.what() << "\n";
-			done = false;
 		}
+		return 0;
 	}
-	return 0;
-}
+};
 
 
 int main (int argc, const char* argv[])
@@ -154,6 +156,7 @@ int main (int argc, const char* argv[])
 		std::ios_base::sync_with_stdio(false);
 		std::string dbargs = "";
 		std::string backend = "Xml";
+		bool useTail = false;
 		bool doIntegrationTest = false;
 		std::vector<std::shared_ptr<Struct2Db> > commands;
 		/////////////
@@ -168,6 +171,7 @@ int main (int argc, const char* argv[])
 		("dbargs", boost::program_options::value<std::string>(), "Arguments passed to the DB backend")
 		("filename,f", boost::program_options::value<std::string>(), "Filename to read. Providing a blank string will read from stdin")
 		("config,c", boost::program_options::value<std::vector<std::string> >(), "Read a config file with the values. Can be given multiple times")
+		("tail", "Continue to minitor the file given by the filename")
 		("integration-test", "Perform integration test")
 		;
 		boost::program_options::variables_map vm;
@@ -203,6 +207,9 @@ int main (int argc, const char* argv[])
 		}
 		if (vm.count("filename")) {
 			filename = vm["filename"].as<std::string>();
+		}
+		if (vm.count("tail")) {
+			useTail = true;
 		}
 		if (vm.count("integration-test")) {
 			doIntegrationTest = true;
@@ -243,13 +250,30 @@ int main (int argc, const char* argv[])
 			return 0;
 		}
 
+		OastatStreamProcessor stream_processor;
 		if (filename.length()>0) {
-			{
+			if (useTail) {
+				size_t last_position=0;
+				while (true) {
+					std::ifstream in(filename.c_str(), std::ifstream::in);
+					in.seekg(0, std::ios::end);
+					size_t filesize = in.tellg();
+					if (filesize < last_position) {
+						last_position = 0;
+					}
+					in.seekg( last_position, std::ios::beg);
+					stream_processor.processStdIn(in, commands);
+					in.clear();  // processStdIn leves in a bad state. tellg will not work unless we clear it
+					last_position = in.tellg();
+					sleep(2);
+				}
+			}
+			else {
 				std::ifstream in(filename.c_str(), std::ifstream::in);
-				processStdIn(in,commands);
+				stream_processor.processStdIn(in,commands);
 			}
 		} else {
-			processStdIn(std::cin, commands);
+			stream_processor.processStdIn(std::cin, commands);
 		}
 
 	} catch (std::exception &e) {
