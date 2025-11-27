@@ -436,6 +436,9 @@ int Db2CppDb::getPlayerId(const std::string& guid)
 			res >> ret;
 			playerids[guid] = ret;
 		}
+		else {
+			std::cerr << "Player ID not found for GUID: " << guid << "\n";
+		}
 	}
 	return ret;
 }
