@@ -26,6 +26,9 @@ https://github.com/sago007/oastat/
 
 #define MAX_ID 128
 
+/* This is a hardcoded value in the Quake 3 engine to distinguish environmental deaths from player-inflicted kills */
+#define ENTITYNUM_WORLD_1022 1022
+
 #include "oastatstruct.h"
 
 /* This array contains all the guid hashes of the players in a game */

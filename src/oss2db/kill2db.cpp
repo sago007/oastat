@@ -45,13 +45,13 @@ void Kill2Db::process(const OaStatStruct &oss)
 	std::string target = ""; //Parameter 1
 	std::string killer = ""; //Parameter 0
 	//mod is parameter 2
-	if (oss.parameters.at(1)>-1 && oss.parameters.at(1)<(int)clientIdMap.size() && oss.parameters.at(1)!=1022 ) {
+	if (oss.parameters.at(1)>-1 && oss.parameters.at(1)<(int)clientIdMap.size() && oss.parameters.at(1)!=ENTITYNUM_WORLD_1022 ) {
 		target = clientIdMap.at(oss.parameters.at(1));
 	} else {
 		target ="WORLD";    //Should not be possible... except maybe for NPC-creatures
 	}
 
-	if (oss.parameters.at(0)>-1 && oss.parameters.at(0)<(int)clientIdMap.size() && oss.parameters.at(0)!=1022) {
+	if (oss.parameters.at(0)>-1 && oss.parameters.at(0)<(int)clientIdMap.size() && oss.parameters.at(0)!=ENTITYNUM_WORLD_1022) {
 		killer = clientIdMap.at(oss.parameters.at(0));
 	} else {
 		killer ="WORLD";

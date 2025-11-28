@@ -400,6 +400,7 @@ void Db2CppDb::Rollback()
 	commitlock->rollback();
 	commitlock = nullptr;
 	commitlock = std::shared_ptr<cppdb::transaction>(new cppdb::transaction(*sql));
+	playerids.clear();  //Clear player cache on rollback or we might get wrong playerids
 	DebugMessage("Rollback");
 }
 
@@ -437,7 +438,7 @@ int Db2CppDb::getPlayerId(const std::string& guid)
 			playerids[guid] = ret;
 		}
 		else {
-			std::cerr << "Player ID not found for GUID: " << guid << "\n";
+			throw std::runtime_error("Player ID not found for GUID: " + guid);
 		}
 	}
 	return ret;
