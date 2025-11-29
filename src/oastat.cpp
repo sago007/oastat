@@ -55,6 +55,7 @@ https://github.com/sago007/oastat/
 #include "oss2db/Warmup2Db.hpp"
 
 
+const char* const SAGO_CONNECTION_STRING = "SAGO_CONNECTION_STRING";
 
 
 
@@ -155,6 +156,10 @@ int main (int argc, const char* argv[])
 	try {
 		std::ios_base::sync_with_stdio(false);
 		std::string dbargs = "";
+		const char* connectstring_env = getenv(SAGO_CONNECTION_STRING);
+		if (connectstring_env) {
+			dbargs = connectstring_env;
+		}
 		std::string backend = "Xml";
 		bool useTail = false;
 		bool doIntegrationTest = false;
