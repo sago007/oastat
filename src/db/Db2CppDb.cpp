@@ -48,12 +48,21 @@ void Db2CppDb::ReadConfigFromDb()
 	}
 }
 
+void Db2CppDb::IgnoreGame(const std::string &servername,const tm &thetime)
+{
+	*sql << "INSERT INTO oastat_games_ignore(time,servername) VALUES (?,?)"<<thetime<<servername<<cppdb::exec;
+}
+
 bool Db2CppDb::IsDuplicate(const std::string &servername,const tm &thetime)
 {
 	cppdb::result res = *sql << "SELECT 'X' FROM oastat_games WHERE servername = ? AND time = ?"<<servername<<thetime;
 	if (res.next()) {
 		return true;
 	} else {
+		res = *sql << "SELECT 'X' FROM oastat_games_ignore WHERE servername = ? AND time = ?"<<servername<<thetime;
+		if (res.next()) {
+			return true;
+		}
 		return false;
 	}
 }
@@ -137,6 +146,7 @@ void Db2CppDb::startGame(int gametype, const std::string &mapname, const std::st
 		std::cout << "No timestamp: "<< servername << "\n";
 		return;
 	}
+	this->servername = servername;
 	if (last_value) {
 		cppdb::statement st = *sql << "INSERT INTO oastat_games(gametype, mapname, basegame,servername,time) VALUES (?,LOWER(?),?,?,?)"; //<<gametype<<mapname<<basegame<<servername<<timestamp<<exec;
 		st.bind(gametype);
@@ -189,6 +199,12 @@ void Db2CppDb::endGame(int second)
 	}
 	if (!isok) {
 		Rollback();
+		// Insert into duplicate table here
+		if (!IsDuplicate(servername,timestamp)) {
+			SetOk(true);
+			IgnoreGame(servername, timestamp);
+			Commit();
+		}
 		return;
 	}
 	*sql << "UPDATE oastat_games SET second=? WHERE gamenumber = ?" << second << gamenumber << cppdb::exec;

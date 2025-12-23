@@ -65,6 +65,7 @@ private:
 	bool debug = false;
 	int gamenumber = 0; /** Gamenumber we are currently working on */
 	tm timestamp = {}; /** Start time of the game we are currently working on */
+	std::string servername; /** Servername of the server we are currently working on */
 	int getNextGameNumber();
 	int getLastGameNumber();
 	void Commit();
@@ -75,6 +76,7 @@ private:
 	void InitStrings(const std::string &backend);
 	void ReadConfigFromDb();
 	bool IsDuplicate(const std::string &servername, const tm &thetime);
+	void IgnoreGame(const std::string &servername, const tm &thetime);
 	int getPlayerId(const std::string &guid);
 	std::map<std::string,int> playerids;
 	std::string sql_backend;

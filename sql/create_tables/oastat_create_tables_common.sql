@@ -54,6 +54,14 @@ CREATE TABLE oastat_games (
 
 COMMENT ON TABLE oastat_games IS 'Has the information common for an entire match/map'; -- RESTRICT2POSTGRESQL
 
+CREATE TABLE oastat_games_ignore (
+    time DATETIME NOT NULL,
+    servername character varying(64) DEFAULT 'noname' NOT NULL
+);
+
+ALTER TABLE oastat_games_ignore
+    ADD CONSTRAINT oastat_games_ignore_check UNIQUE (time, servername);
+
 CREATE TABLE oastat_gamecvars (
     gamenumber bigint unsigned NOT NULL, -- will be used as primary key later
     cvar character varying(100) NOT NULL, -- will be used as primary key later
